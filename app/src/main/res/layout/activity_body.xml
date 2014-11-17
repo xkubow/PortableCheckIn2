@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btnSiulety"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/silueta_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:id="@+id/lblLogetUser01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="@string/LogetUser"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="10dp" />
+
+    <ImageView
+        android:id="@+id/imgViewSilueta"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:contentDescription="@string/BluePrint"
+        android:scaleType="fitCenter"
+        android:src="@drawable/lavy_bok"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/btnPhoto" />
+
+    <RelativeLayout
+        android:id="@+id/rlPoints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imgViewSilueta"
+        android:layout_alignTop="@+id/imgViewSilueta"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignLeft="@+id/imgViewSilueta"
+        android:layout_alignRight="@+id/imgViewSilueta">
+
+    </RelativeLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/horizontalScrollView">
+
+        <LinearLayout
+            android:id="@+id/llPhotos"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="horizontal" >
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <RadioGroup
+        android:id="@+id/rdbPohledy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignBottom="@+id/btnPhoto"
+        android:layout_alignLeft="@+id/lblLogetUser01"
+        android:layout_alignStart="@+id/lblLogetUser01">
+
+        <RadioButton
+            android:id="@+id/rbtnSil_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:tag="0"
+            android:text="@string/LevyBok" />
+
+        <RadioButton
+            android:id="@+id/rbtnSil_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="1"
+            android:text="@string/ZadnaCast" />
+
+        <RadioButton
+            android:id="@+id/rbtnSil_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="2"
+            android:text="@string/PravyBok" />
+
+        <RadioButton
+            android:id="@+id/rbtnStavPal4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="3"
+            android:text="@string/PrednaCast" />
+
+        <RadioButton
+            android:id="@+id/rbtnStavPal3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="4"
+            android:text="@string/Strecha" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/lblPohledy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Pohledy"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:layout_alignLeft="@+id/rdbPohledy"
+        android:layout_alignStart="@+id/rdbPohledy"
+        android:layout_above="@+id/rdbPohledy" />
+
+    <RadioGroup
+        android:id="@+id/rdbExterier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/rdbPohledy"
+        android:layout_marginLeft="50dp"
+        android:layout_toRightOf="@+id/rdbPohledy"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rbtnStavPal2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/A" />
+
+        <RadioButton
+            android:id="@+id/rbtnB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/B" />
+
+        <RadioButton
+            android:id="@+id/rbtnStavPal1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/C" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/lblExterier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rdbExterier"
+        android:layout_alignLeft="@+id/rdbExterier"
+        android:text="@string/Exterier"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black" />
+
+    <Switch
+        android:id="@+id/chkOderky"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblOderky"
+        android:layout_marginLeft="50dp"
+        android:layout_toRightOf="@+id/rdbExterier" />
+
+    <TextView
+        android:id="@+id/lblOderky"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rdbExterier"
+        android:layout_alignLeft="@+id/chkOderky"
+        android:text="@string/Oderky"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black" />
+
+    <Button
+        android:id="@+id/btnPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/camera"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/horizontalScrollView"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp" />
+
+</RelativeLayout>

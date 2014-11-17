@@ -1,0 +1,37 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/WindowTitleBackground</item>
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+
+    </style>
+    <style name="NoActionBarTheme" parent="@android:style/Theme.NoTitleBar">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="TransparentActivity" parent="@android:style/Theme.Black.NoTitleBar">
+    	<item name="android:windowBackground">@android:color/transparent</item>
+    	<item name="android:colorBackgroundCacheHint">@null</item>
+    	<item name="android:windowIsTranslucent">true</item>
+    	<item name="android:windowAnimationStyle">@android:style/Animation</item>
+    	<item name="android:windowNoTitle">true</item>
+	</style>
+	
+    <style name="WindowTitleBackground" parent="@android:style/Widget.Holo.Light.ActionBar">
+		<item name="android:background">@drawable/alu_navigation</item>                   
+    </style>
+
+</resources>

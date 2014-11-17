@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="2" >
+
+    <Button
+        android:id="@+id/btnBrand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="false"
+        android:layout_centerVertical="true"
+        android:background="@drawable/brand_nologo"
+        android:layout_gravity="right"
+        android:layout_alignParentLeft="false"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/lblLoggetUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/LogetUser"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:id="@+id/lblCheckIn_nr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="CHECKIN_NUMBER"
+        android:text="@string/CheckInNR"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/gray"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/lblLoggetUser"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp" />
+
+    <LinearLayout
+        android:id="@+id/CaptionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/caption_bg"
+        android:orientation="vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/btnBrand"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:id="@+id/lblMainTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/InformaceOVozidle"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dataContainer"
+        style="@android:style/Theme.Light"
+        android:layout_width="match_parent"
+        android:layout_height="355dp"
+        android:layout_gravity="bottom"
+        android:baselineAligned="false"
+        android:weightSum="100"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/CaptionContainer">
+
+        <LinearLayout
+            android:id="@+id/llLabels01"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/lblSPZ"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="0dp"
+                android:gravity="bottom"
+                android:text="@string/SPZ"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblScenar"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/Scenar"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblPredajDat"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/PredajDat"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblPoist_prp"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/PoistPripad"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblSTK"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/STK"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblOTP"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/OTP"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblStavPaliva"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/StavPaliva"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@id/mainValuelayout1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="30"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/txtSPZ"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/btnSPZ"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapCharacters|textNoSuggestions"
+                android:tag="LICENSE_TAG"
+                android:textAllCaps="true" />
+
+            <Spinner
+                android:id="@+id/spScenar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtSPZ"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:ems="10"
+                android:inputType="text"
+                android:tag="CHECK_SCENARIO_TEXT" />
+
+            <EditText
+                android:id="@+id/txtPredajDat"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/spScenar"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:inputType="text"
+                android:tag="LICENSE_DATE" />
+
+            <Switch
+                android:id="@+id/chkPoist_prp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtPredajDat"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:tag="INSURANCE_CASE" />
+
+            <EditText
+                android:id="@+id/txtSTK"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/chkPoist_prp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/btnSTK"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:inputType="date"
+                android:tag="TI_VALID_UNTIL" />
+
+            <Switch
+                android:id="@+id/chkOTP"
+                style="android:Theme.Holo.switchStyle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/txtSTK"
+                android:layout_gravity="bottom|right"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:tag="CRW_EXISTS" />
+
+            <RadioGroup
+                android:id="@+id/rdbStavPaliva"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/chkOTP"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/btnPalivo"
+                android:gravity="bottom|right"
+                android:orientation="horizontal"
+                android:tag="FUEL_LEVEL" >
+
+                <RadioButton
+                    android:id="@+id/rbtnStavPal0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/prazna" />
+
+                <RadioButton
+                    android:id="@+id/rbtnStavPal1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/stvrtina" />
+
+                <RadioButton
+                    android:id="@+id/rbtnStavPal2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/polovica" />
+
+                <RadioButton
+                    android:id="@+id/rbtnStavPal3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/tristvrtina" />
+
+                <RadioButton
+                    android:id="@+id/rbtnStavPal4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/P" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnSPZ"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/spScenar"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/info"
+                android:minHeight="32dip"
+                android:minWidth="32dip"
+                android:onClick="showPlanZakazky" />
+
+            <Button
+                android:id="@+id/btnSTK"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/chkOTP"
+                android:layout_toRightOf="@+id/txtSPZ"
+                android:background="@drawable/kalendar" />
+
+            <Button
+                android:id="@+id/btnPalivo"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/rdbStavPaliva"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="14dp"
+                android:layout_toRightOf="@+id/txtSPZ"
+                android:background="@drawable/info"
+                android:minHeight="32dip"
+                android:minWidth="32dip"
+                android:tag="FUEL_ID" />
+
+            <EditText
+                android:id="@+id/EditText01"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignBaseline="@+id/txtPredajDat"
+                android:layout_alignBottom="@+id/txtPredajDat"
+                android:layout_alignRight="@+id/spScenar"
+                android:layout_toRightOf="@+id/txtPredajDat"
+                android:ems="10"
+                android:inputType="text"
+                android:tag="MY" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llLabels02"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="20"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/lblVIN"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="0dp"
+                android:gravity="bottom"
+                android:text="@string/VIN"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblZakaznik"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/Zakaznik"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblVozPristavil"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/VozPristavil"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblStavTachometru"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/StavTachomeru"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblEmise"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/PlatnostEK"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblServisKnizka"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/ServisnaKnizka"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lblInterier"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="bottom"
+                android:text="@string/Interier"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@id/mainValuelayout2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="30"
+            android:orientation="vertical" >
+
+            <cz.tsystems.base.vinEditText
+                android:id="@+id/txtVIN"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:imeOptions="actionSearch"
+                android:inputType="textCapCharacters|textNoSuggestions|textFilter"
+                android:tag="VIN" />
+
+            <EditText
+                android:id="@+id/txtZakaznik"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtVIN"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:inputType="textPersonName"
+                android:tag="CUSTOMER_LABEL" />
+
+            <EditText
+                android:id="@+id/txtVozPristavil"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtZakaznik"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:tag="DRIVER_NAME_SURN" />
+
+            <EditText
+                android:id="@+id/txtStavTachomeru"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtVozPristavil"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:inputType="number"
+                android:tag="ODOMETER" />
+
+            <EditText
+                android:id="@+id/txtEmise"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/txtStavTachomeru"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/btnEmise"
+                android:ems="10"
+                android:hint="@string/Pozadovane"
+                android:inputType="date"
+                android:tag="EC_VALID_UNTIL" />
+
+            <Switch
+                android:id="@+id/chkServisKnizka"
+                style="android:Theme.Holo.switchStyle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/txtEmise"
+                android:layout_gravity="bottom|right"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="30dp"
+                android:tag="SERVBOOK_EXISTS" />
+
+            <RadioGroup
+                android:id="@+id/rdbInterier"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/chkServisKnizka"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@+id/btnEmise"
+                android:gravity="bottom|right"
+                android:orientation="horizontal"
+                android:tag="INTERIOR_STATE" >
+
+                <RadioButton
+                    android:id="@+id/rbtnInter0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/AA" />
+
+                <RadioButton
+                    android:id="@+id/rbtnInter1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/A" />
+
+                <RadioButton
+                    android:id="@+id/rbtnSil_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/B" />
+
+                <RadioButton
+                    android:id="@+id/rbtnSil_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/CC" />
+
+                <RadioButton
+                    android:id="@+id/rbtnSil_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/C" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnEmise"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/txtStavTachomeru"
+                android:layout_below="@+id/txtStavTachomeru"
+                android:background="@drawable/kalendar" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/pchi_base"
+        android:orientation="vertical"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/dataContainer"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPZ"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pz"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/btnMajak"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:id="@+id/btnMajak"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/majak"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp" />
+
+    <Button
+        android:id="@+id/btnMegafon"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/megaphone"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnMajak"
+        android:layout_margin="10dp" />
+
+</RelativeLayout>

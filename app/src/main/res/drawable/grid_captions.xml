@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@id/backgrounImage">
+        <bitmap android:src="@drawable/alutexture_login" />
+    </item>
+    <item android:id="@id/bacgrounMask">
+        <shape android:shape="rectangle" >
+            <corners android:radius="15dip" />
+<!--             128, 248, 235, 130 -->
+            <solid android:color="#80F8EB82" />
+
+            <stroke
+                android:width="1dp"
+                android:color="#bebfc1" />
+        </shape>
+    </item>
+
+</layer-list>
