@@ -3,9 +3,7 @@ package cz.tsystems.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.tsystems.data.DMVehicleHistory;
 import cz.tsystems.data.DMVybava;
-import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.TextView;
 
 public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 	private Context context;
@@ -37,7 +36,7 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
         }
         DMVybava vybava = filteredData.get(position);
         
-		EditText text = (EditText) v.findViewById(R.id.txtVybavaText);
+		TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
 		text.setText(vybava.vybava_txt);
 		return v;
 	}

@@ -1,6 +1,5 @@
 package cz.tsystems.adapters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.data.DMUnit;
@@ -32,7 +31,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         }
         DMUnit unit = data.get(position);
         
-		EditText text = (EditText) v.findViewById(R.id.txtVybavaText);
+		EditText text = (EditText) v.findViewById(R.id.lblVybavaText);
 		text.setText(unit.chck_part_txt);
 		return v;
 	}	

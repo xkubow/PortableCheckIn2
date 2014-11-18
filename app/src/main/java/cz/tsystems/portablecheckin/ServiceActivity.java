@@ -34,6 +34,12 @@ public class ServiceActivity extends BaseFragment {
     ListView listMaster, listDetail;
     private Cursor masterCursor = null;
 	private UnitArrayAdapter unitAdapter;
+    private OnItemClickListener onDetialClickListener = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.i(TAG, view.toString());
+        }
+    };
 
     public ServiceActivity() {
     }
@@ -49,10 +55,10 @@ public class ServiceActivity extends BaseFragment {
         }    	
         rootView = inflater.inflate(R.layout.activity_service, container, false);
         listMaster = (ListView) rootView.findViewById(R.id.listMaster);
-        listMaster.setAdapter(prehliadkyAdapter);
+//        listMaster.setAdapter(prehliadkyAdapter);
         listDetail = (ListView) rootView.findViewById(R.id.listDetail);
-        
-		listMaster.setOnItemClickListener(new OnItemClickListener() {
+
+        listMaster.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -67,9 +73,14 @@ public class ServiceActivity extends BaseFragment {
 				refreshDetail(data);
 			}
 		});
-        
-        
-        
+
+        listDetail.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, view.toString());
+            }
+        });
+
         return rootView;
     }
     
@@ -120,7 +131,6 @@ public class ServiceActivity extends BaseFragment {
 //			else
 //				unitAdapter.notifyDataSetChanged();		
 		}
-
     }
     
 	@Override
