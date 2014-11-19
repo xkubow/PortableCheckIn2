@@ -102,7 +102,8 @@
 	</string-array>
 	<string name="AA">AA</string>
 	<string name="CC">CC</string>
-	<string-array name="StavInterieru">
+    <string name="checkButton">checkButton</string>
+    <string-array name="StavInterieru">
 		<item>@string/AA</item>
 		<item>@string/A</item>
 		<item>@string/B</item>

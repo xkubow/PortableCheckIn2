@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 
@@ -30,8 +31,8 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
             v = vi.inflate(R.layout.item_vybava, null);
         }
         DMUnit unit = data.get(position);
-        
-		EditText text = (EditText) v.findViewById(R.id.lblVybavaText);
+
+        TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
 		text.setText(unit.chck_part_txt);
 		return v;
 	}	

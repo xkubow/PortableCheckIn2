@@ -26,6 +26,12 @@
         revision="19.1.0"
         sha1="d1257cbff6faa44c1f325ae0d9413522d4644383"/>
     <item
+        dex="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn\app\build\intermediates\pre-dexed\debug\support-v4-18.0.0-03d2a791fc6935636cde8425c513df13c348b3d3.jar"
+        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156"/>
+    <item
         dex="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn\app\build\intermediates\pre-dexed\debug\jackson-core-2.2.2-b7f8b3a85976efdc17822fab3f8e1f8e5eff5edd.jar"
         jar="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn\app\libs\jackson-core-2.2.2.jar"
         jumboMode="false"
@@ -43,11 +49,5 @@
         jumboMode="false"
         revision="19.1.0"
         sha1="bd9e8dc422bb8c8405359947fe9f4282b49f57f4"/>
-    <item
-        dex="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn\app\build\intermediates\pre-dexed\debug\support-v4-18.0.0-03d2a791fc6935636cde8425c513df13c348b3d3.jar"
-        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
-        jumboMode="false"
-        revision="19.1.0"
-        sha1="44ec51e9d395a47aab135e5e1b556c0007442156"/>
 
 </pre-dex-items>

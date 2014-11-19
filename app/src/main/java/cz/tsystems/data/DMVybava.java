@@ -17,6 +17,7 @@ public class DMVybava implements Comparable<DMVybava> {
 		this.vybava_txt = text;
 		this.checked = checked;
 		this.context = context;
+        this.obligatory_equipment = false;
 	}
 	
 	public DMVybava(Cursor c, boolean checked) {

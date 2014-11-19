@@ -11,21 +11,23 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageButton1"
-        android:descendantFocusability="blocksDescendants" >
+        android:layout_alignParentTop="false"
+        android:layout_toLeftOf="@+id/btnCheck"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_centerVertical="true">
 
     </TextView>
 
     <ImageButton
-        android:id="@+id/imageButton1"
+        android:id="@+id/btnCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/lblVybavaText"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentTop="false"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:src="@drawable/celky_povinny_ok" />
+        android:src="@drawable/celky_povinny_ok_dis"
+        android:contentDescription="@string/checkButton"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>

@@ -203,8 +203,10 @@ public class PortableCheckin extends Application {
 		this.selectedScenar = this.getScenarForId(scenarId);
 		PrehliadkyModel pm = new PrehliadkyModel(this);
 		UnitsModel um = new UnitsModel(this);
-		setUnitList(um.loadUnits(pm.getPrehliadky()));		
-	}	
+		setUnitList(um.loadUnits(pm.getPrehliadky()));
+
+        //TODO vymaz stare volne vybavy a nacitaj nove pre dany scenar
+	}
 
 	public DMBrand getSelectedBrand() {
 		return selectedBrand;
@@ -441,6 +443,9 @@ public class PortableCheckin extends Application {
 			vybavaList.add(new DMVybava(c, true));
 			c.moveToNext();
 		}
+
+        for(int i=0; i< selectedScenar.equipment_free_count; i++)
+            vybavaList.add(new DMVybava(this, 10000+i, "Volna Vybava", false));
 	}	
 
 	public DMVybava getVybava(final int location) {

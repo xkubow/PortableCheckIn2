@@ -19,8 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import static cz.tsystems.portablecheckin.R.*;
+import static cz.tsystems.portablecheckin.R.drawable.celky_povinny_ok;
 
 public class ServiceActivity extends BaseFragment {
 	
@@ -53,10 +58,10 @@ public class ServiceActivity extends BaseFragment {
                 parent.removeView(rootView);
         	return rootView;            
         }    	
-        rootView = inflater.inflate(R.layout.activity_service, container, false);
-        listMaster = (ListView) rootView.findViewById(R.id.listMaster);
+        rootView = inflater.inflate(layout.activity_service, container, false);
+        listMaster = (ListView) rootView.findViewById(id.listMaster);
 //        listMaster.setAdapter(prehliadkyAdapter);
-        listDetail = (ListView) rootView.findViewById(R.id.listDetail);
+        listDetail = (ListView) rootView.findViewById(id.listDetail);
 
         listMaster.setOnItemClickListener(new OnItemClickListener() {
 
@@ -77,7 +82,20 @@ public class ServiceActivity extends BaseFragment {
         listDetail.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, view.toString());
+
+                DMVybava vybava = vybavaAdapter.getItem(position);
+
+                ImageButton b = (ImageButton)view.findViewById(R.id.btnCheck);
+                if(vybava.checked) {
+                    vybava.checked = false;
+                    b.setSelected(vybava.checked);
+                    b.setImageDrawable(getActivity().getResources().getDrawable(drawable.celky_povinny_ok_dis));
+                }
+                else {
+                    vybava.checked = true;
+                    b.setSelected(vybava.checked);
+                    b.setImageDrawable(getActivity().getResources().getDrawable(celky_povinny_ok));
+                }
             }
         });
 
@@ -97,7 +115,7 @@ public class ServiceActivity extends BaseFragment {
     	masterCursor = prehliadkaModel.getPrehliadky();
     	
 		if (prehliadkyAdapter == null) {
-			prehliadkyAdapter = new PrehliadkyCursorAdapter(getActivity(), R.layout.item_prehliadky, masterCursor);
+			prehliadkyAdapter = new PrehliadkyCursorAdapter(getActivity(), layout.item_prehliadky, masterCursor);
 			listMaster.setAdapter(prehliadkyAdapter);
 		} else
 			prehliadkyAdapter.changeCursor(masterCursor);

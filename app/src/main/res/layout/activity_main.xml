@@ -191,10 +191,11 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/txtSPZ"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:ems="10"
                 android:inputType="text"
-                android:tag="CHECK_SCENARIO_TEXT" />
+                android:tag="CHECK_SCENARIO_TEXT"
+                android:layout_alignRight="@+id/btnSTK"
+                android:layout_alignEnd="@+id/btnSTK" />
 
             <EditText
                 android:id="@+id/txtPredajDat"

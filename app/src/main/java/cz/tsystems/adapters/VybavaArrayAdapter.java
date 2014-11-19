@@ -4,28 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.data.DMVybava;
+import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 	private Context context;
 	private List<DMVybava> data;
 	private List<DMVybava> filteredData;
-	private Filter filter;	
-	
+	private Filter filter;
+
 	public VybavaArrayAdapter(Context context, int resource, int textViewResourceId, List<DMVybava> objects) {
 		super(context, resource, textViewResourceId, new ArrayList<DMVybava>());
 		this.context = context;
 		this.data = objects;
 		this.filteredData  = new ArrayList<DMVybava>();
-	}
+    }
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -38,6 +41,14 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
         
 		TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
 		text.setText(vybava.vybava_txt);
+
+        ImageButton iButton = (ImageButton)v.findViewById(R.id.btnCheck);
+        Drawable d;
+        if(vybava.checked)
+            d = context.getResources().getDrawable(R.drawable.celky_povinny_ok);
+        else
+            d = context.getResources().getDrawable(R.drawable.celky_povinny_ok_dis);
+        iButton.setImageDrawable(d);
 		return v;
 	}
 	
