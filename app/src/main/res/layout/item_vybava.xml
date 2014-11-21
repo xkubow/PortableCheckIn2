@@ -18,16 +18,14 @@
 
     </TextView>
 
-    <ImageButton
+    <CheckBox
         android:id="@+id/btnCheck"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="false"
-        android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:src="@drawable/celky_povinny_ok_dis"
-        android:contentDescription="@string/checkButton"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 
 </RelativeLayout>

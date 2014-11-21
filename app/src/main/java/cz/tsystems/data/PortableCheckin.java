@@ -2,6 +2,7 @@ package cz.tsystems.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ public class PortableCheckin extends Application {
 	private List<DMOffers> offers;
 	private List<List<DMUnit>> unitList;
 	private List<DMVybava> vybavaList = new ArrayList<DMVybava>();
+    private List<DMService> serviceList = new ArrayList<DMService>();
 	private DMSilhouette selectedSilhouette;
 	private String login;
 	private String deviceID;
@@ -221,6 +223,7 @@ public class PortableCheckin extends Application {
 		this.selectedBrand = this.getBrand(brandId);
 		checkin.brand_id = brandId;
 		loadVybavy();
+        loadServices();
 	}	
 	
 	public Cursor getPaliva() {
@@ -445,31 +448,77 @@ public class PortableCheckin extends Application {
 		}
 
         for(int i=0; i< selectedScenar.equipment_free_count; i++)
-            vybavaList.add(new DMVybava(this, 10000+i, "Volna Vybava", false));
-	}	
+            vybavaList.add(new DMVybava(this, 10000+i, "Volna Vybava", false, true));
+	}
+
+    public void loadServices() {
+        android.text.format.Time now = new android.text.format.Time();
+        now.setToNow();
+        final String query = "SELECT ROWID AS _id, * FROM ( SELECT S.*, SL.*, ifnull(SL.CHECK_SERVICE_TXT_LOC, S.CHECK_SERVICE_TXT_DEF) AS TEXT "
+                + "FROM CHECK_SERVICE S LEFT OUTER JOIN CHECK_SERVICE_LOC SL ON S.CHECK_SERVICE_ID = SL.CHECK_SERVICE_ID "
+                + "AND SL.LANG_ENUM =  ?) "
+                + "WHERE ifnull(BRAND_ID, ?) = ? "
+                + "AND SHOW_SERVICE = 1 AND ? BETWEEN VALID_FROM AND VALID_UNTIL ";
+
+        Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", BRAND_ID:" + checkin.brand_id + ", now :" + now.format("%Y-%m-%d %H:%M:%S") );
+
+        Cursor c = theDBProvider.executeQuery(query,new String[] {Locale.getDefault().getLanguage(), checkin.brand_id, checkin.brand_id, now.format("%Y-%m-%d %H:%M:%S")} );
+        c.moveToFirst();
+        while(!c.isAfterLast()) {
+
+//            Log.v(TAG, String.valueOf(c.getInt(c.getColumnIndex("CAR_EQUIPMENT_ID"))) + " :" + String.valueOf(c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT"))));
+            serviceList.add(new DMService(c, false));
+            c.moveToNext();
+        }
+
+        for(int i=0; i< selectedScenar.service_free_count; i++)
+            serviceList.add(new DMService(this, 10000+i, "Volna Vybava", false, true));
+    }
 
 	public DMVybava getVybava(final int location) {
-		if(vybavaList == null || vybavaList.size() <= location)
-			return null;
-		return vybavaList.get(location);
-	}	
-	
-	public List<DMVybava> getVybavaList() {
-		if(vybavaList == null)
-			vybavaList = new ArrayList<DMVybava>();
-		return vybavaList;
-	}
+        if(vybavaList == null || vybavaList.size() <= location)
+            return null;
+        return vybavaList.get(location);
+    }
 
-	public void setVybavaList(List<DMVybava> vybavaList) {
-		this.vybavaList = vybavaList;
-	}
-	
-	public void addVybava(DMVybava vybava) {
-		if(vybavaList == null)
-			vybavaList = new ArrayList<DMVybava>();
-		vybavaList.add(vybava);
-	}
-	
+    public List<DMVybava> getVybavaList() {
+        if(vybavaList == null)
+            vybavaList = new ArrayList<DMVybava>();
+        return vybavaList;
+    }
+
+    public void setVybavaList(List<DMVybava> vybavaList) {
+        this.vybavaList = vybavaList;
+    }
+
+    public void addVybava(DMVybava vybava) {
+        if(vybavaList == null)
+            vybavaList = new ArrayList<DMVybava>();
+        vybavaList.add(vybava);
+    }
+
+    public DMService getService(final int location) {
+        if(vybavaList == null || vybavaList.size() <= location)
+            return null;
+        return serviceList.get(location);
+    }
+
+    public List<DMService> getServiceList() {
+        if(serviceList == null)
+            serviceList = new ArrayList<DMService>();
+        return serviceList;
+    }
+
+    public void setServiceList(List<DMService>newServiceList) {
+        this.serviceList = newServiceList;
+    }
+
+    public void addVybava(DMService service) {
+        if(serviceList == null)
+            serviceList = new ArrayList<DMService>();
+        serviceList.add(service);
+    }
+
 	public void showProgrssDialog(Context context)
 	{
 		if(pPrograssDialog == null)

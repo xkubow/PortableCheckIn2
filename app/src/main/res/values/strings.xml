@@ -110,4 +110,5 @@
 		<item>@string/CC</item>
 		<item>@string/C</item>
 	</string-array>
+    <string name="service">Service</string>
 </resources>

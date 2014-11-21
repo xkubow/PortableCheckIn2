@@ -10,15 +10,17 @@ public class DMVybava implements Comparable<DMVybava> {
 	public String vybava_txt;
 	public boolean obligatory_equipment;
 	public boolean checked;
+    public boolean editable = false;
 	private Context context;
 	
-	public DMVybava(Context context, long id, String text, final boolean checked) {
+	public DMVybava(Context context, long id, String text, final boolean checked, final boolean editable) {
 		this.vybava_id = id;
 		this.vybava_txt = text;
 		this.checked = checked;
 		this.context = context;
         this.obligatory_equipment = false;
-	}
+        this.editable = editable;
+    }
 	
 	public DMVybava(Cursor c, boolean checked) {
 		this.vybava_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));

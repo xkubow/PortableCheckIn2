@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageButton;
@@ -42,13 +43,8 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 		TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
 		text.setText(vybava.vybava_txt);
 
-        ImageButton iButton = (ImageButton)v.findViewById(R.id.btnCheck);
-        Drawable d;
-        if(vybava.checked)
-            d = context.getResources().getDrawable(R.drawable.celky_povinny_ok);
-        else
-            d = context.getResources().getDrawable(R.drawable.celky_povinny_ok_dis);
-        iButton.setImageDrawable(d);
+        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.btnCheck);
+        vybCheck.setChecked(vybava.checked);
 		return v;
 	}
 	
