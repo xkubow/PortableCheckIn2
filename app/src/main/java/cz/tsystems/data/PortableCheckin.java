@@ -458,7 +458,7 @@ public class PortableCheckin extends Application {
                 + "FROM CHECK_SERVICE S LEFT OUTER JOIN CHECK_SERVICE_LOC SL ON S.CHECK_SERVICE_ID = SL.CHECK_SERVICE_ID "
                 + "AND SL.LANG_ENUM =  ?) "
                 + "WHERE ifnull(BRAND_ID, ?) = ? "
-                + "AND SHOW_SERVICE = 1 AND ? BETWEEN VALID_FROM AND VALID_UNTIL ";
+                + "AND SHOW_SERVICE = 'true' AND ? BETWEEN VALID_FROM AND VALID_UNTIL ";
 
         Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", BRAND_ID:" + checkin.brand_id + ", now :" + now.format("%Y-%m-%d %H:%M:%S") );
 

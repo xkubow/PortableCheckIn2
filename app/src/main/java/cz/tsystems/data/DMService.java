@@ -14,7 +14,7 @@ public class DMService implements Comparable<DMService> {
     private Context context;
 
     public DMService(Cursor c, boolean checked) {
-        this.service_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));
+        this.service_id = c.getLong(c.getColumnIndex("CHECK_SERVICE_ID"));
         this.text = c.getString(c.getColumnIndex("TEXT"));
         this.checked = checked;
     }
