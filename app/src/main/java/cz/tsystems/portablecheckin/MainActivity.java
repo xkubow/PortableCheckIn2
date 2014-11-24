@@ -34,6 +34,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -322,8 +323,12 @@ public class MainActivity extends BaseFragment {
 
 	private void showPlanZakazky() {
 
-		final AlertDialog.Builder b = new Builder(getActivity());
+		final AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom));
+
+        View v = getActivity().getLayoutInflater().inflate(R.layout.activity_title_bar, null);
+        b.setCustomTitle(v);
 	    b.setTitle("Example");
+
 	    final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getActivity().getApplicationContext()).getPlanZakazk();
 		PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter(
 				getActivity(), android.R.layout.simple_list_item_1,
@@ -337,10 +342,11 @@ public class MainActivity extends BaseFragment {
 	    layout.addView(view);
 	    
 		ListView listView = new ListView(getActivity());
+        listView.setBackground(getActivity().getResources().getDrawable(R.drawable.pozadie_ciste));
 		listView.setAdapter(plannedOrderAdapter);
-		layout.addView(listView);		
+		layout.addView(listView);
 	    final AlertDialog d = b.setView(layout).create();
-	    
+
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -361,7 +367,6 @@ public class MainActivity extends BaseFragment {
 				d.dismiss();
 			}
 		});
-
 	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 	    lp.copyFrom(d.getWindow().getAttributes());
 	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -492,7 +497,6 @@ public class MainActivity extends BaseFragment {
 		populateTextsAndRbtn(values2);			
 		DMCheckin checkinData = app.getCheckin();
 
-		//TODO test ci zobrazi spravny popis
 		getActivity().setTitle(checkinData.vehicle_description);
 		
 		if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {

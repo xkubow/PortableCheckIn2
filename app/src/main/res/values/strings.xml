@@ -125,5 +125,6 @@
 
     <string name="service">Service</string>
     <string name="title_activity_item_unit">item_unit</string>
+    <string name="title_activity_title_bar">title_bar</string>
 
 </resources>

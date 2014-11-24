@@ -31,7 +31,11 @@
 	</style>
 	
     <style name="WindowTitleBackground" parent="@android:style/Widget.Holo.Light.ActionBar">
-		<item name="android:background">@drawable/alu_navigation</item>                   
+		<item name="android:background">@drawable/alu_navigation</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light">
+        <item name="android:background">@drawable/alu_navigation</item>
     </style>
 
 </resources>

@@ -64,6 +64,10 @@
             android:name="cz.tsystems.portablecheckin.item_unit"
             android:label="@string/title_activity_item_unit" >
         </activity>
+        <activity
+            android:name="cz.tsystems.portablecheckin.title_bar"
+            android:label="@string/title_activity_title_bar" >
+        </activity>
     </application>
 
 </manifest>
