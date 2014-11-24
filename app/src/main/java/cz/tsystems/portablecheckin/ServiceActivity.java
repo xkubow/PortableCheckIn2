@@ -7,30 +7,26 @@ import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
-import cz.tsystems.data.DMPrehliadky;
+import cz.tsystems.data.DMBaseItem;
 import cz.tsystems.data.DMService;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.DMVybava;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.model.PrehliadkyModel;
-import cz.tsystems.model.UnitsModel;
+
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import static cz.tsystems.portablecheckin.R.*;
-import static cz.tsystems.portablecheckin.R.drawable.celky_povinny_ok;
 
 public class ServiceActivity extends BaseFragment {
 	
@@ -45,6 +41,7 @@ public class ServiceActivity extends BaseFragment {
     ListView listMaster, listDetail;
     private Cursor masterCursor = null;
 	private UnitArrayAdapter unitAdapter;
+    private int selectedPrehliadky;
     private OnItemClickListener onDetialClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +73,7 @@ public class ServiceActivity extends BaseFragment {
 				Cursor c = prehliadkaModel.getPrehliadky();
 				c.moveToPosition(position);
 				Bundle data = new Bundle();
+                ServiceActivity.this.selectedPrehliadky = c.getInt(c.getColumnIndex("_id"));
 //				long unitId = c.getLong(c.getColumnIndex("CHCK_UNIT_ID"));
 //				if(c.getLong(c.getColumnIndex("CHCK_UNIT_ID")) == -1) {
                     data.putLong("PREHLIADKA_ID", c.getLong(c.getColumnIndex("_id")));
@@ -89,11 +87,23 @@ public class ServiceActivity extends BaseFragment {
         listDetail.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
+                DMBaseItem item = null;
 
-                DMVybava vybava = vybavaAdapter.getItem(position);
-                CheckBox b = (CheckBox)view.findViewById(R.id.btnCheck);
-                vybava.checked = !vybava.checked;
-                b.setChecked(vybava.checked);
+                switch(prehlaidkaId) {
+                    case -1:
+                    case -2:
+                        item = vybavaAdapter.getItem(position);
+                        break;
+                    case -3:
+                        item = serviceAdapter.getItem(position);
+                        break;
+                }
+                CheckBox b = (CheckBox)view.findViewById(R.id.checkBox);
+                if(item != null) {
+                    item.checked = !item.checked;
+                    b.setChecked(item.checked);
+                }
 
             }
         });

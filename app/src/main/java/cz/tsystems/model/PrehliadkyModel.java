@@ -17,7 +17,7 @@ import android.util.Log;
 public class PrehliadkyModel extends Model {
 	private final static String TAG = PrehliadkyModel.class.getSimpleName();
     public static enum PREHLAIDKA_ENUM {eVYBAVY, ePOV_VYBAVY, eSERVIS};
-    public static int[] prehliadka_id= {-1, -2, -3};
+    public final static int[] prehliadka_id= {-1, -2, -3};
 	private SQLiteDatabase mDb;
 
 	public PrehliadkyModel(Context mContext) {

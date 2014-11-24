@@ -12,14 +12,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="false"
-        android:layout_toLeftOf="@+id/btnCheck"
+        android:layout_toLeftOf="@+id/checkBox"
         android:descendantFocusability="blocksDescendants"
         android:layout_centerVertical="true">
 
     </TextView>
 
     <CheckBox
-        android:id="@+id/btnCheck"
+        android:id="@+id/checkBox"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="false"
         android:scaleType="fitCenter"

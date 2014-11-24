@@ -4,18 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.data.DMVybava;
-import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Filter;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
@@ -41,9 +37,9 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
         DMVybava vybava = filteredData.get(position);
         
 		TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
-		text.setText(vybava.vybava_txt);
+		text.setText(vybava.text);
 
-        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.btnCheck);
+        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
         vybCheck.setChecked(vybava.checked);
 		return v;
 	}

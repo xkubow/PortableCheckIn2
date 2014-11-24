@@ -4,18 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-public class DMVybava implements Comparable<DMVybava> {
+public class DMVybava extends DMBaseItem {
 	final static String TAG = DMVybava.class.getSimpleName();
-	public long vybava_id;
-	public String vybava_txt;
 	public boolean obligatory_equipment;
-	public boolean checked;
     public boolean editable = false;
 	private Context context;
 	
 	public DMVybava(Context context, long id, String text, final boolean checked, final boolean editable) {
-		this.vybava_id = id;
-		this.vybava_txt = text;
+		this.item_id = id;
+		this.text = text;
 		this.checked = checked;
 		this.context = context;
         this.obligatory_equipment = false;
@@ -23,16 +20,11 @@ public class DMVybava implements Comparable<DMVybava> {
     }
 	
 	public DMVybava(Cursor c, boolean checked) {
-		this.vybava_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));
-		this.vybava_txt = c.getString(c.getColumnIndex("TEXT"));
+		this.item_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));
+		this.text = c.getString(c.getColumnIndex("TEXT"));
 		this.obligatory_equipment = Boolean.valueOf( c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT")));
 		Log.v(TAG, String.valueOf(this.obligatory_equipment ) + " :" + String.valueOf(this.obligatory_equipment));
 		this.checked = checked;
-	}
-	
-	@Override
-	public int compareTo(DMVybava another) {
-		return (this.vybava_id == another.vybava_id)?1:0;
 	}
 
 }

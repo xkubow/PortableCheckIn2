@@ -353,7 +353,7 @@ public class MainActivity extends BaseFragment {
 				if(plannedOrder.planned_order_id != null && plannedOrder.planned_order_id.length() > 0)
 					msgIntent.putExtra("plannedorderid", plannedOrder.planned_order_id);
 				if(plannedOrder.checkin_id > 0)
-					msgIntent.putExtra("checkin_id", plannedOrder.checkin_id);
+					msgIntent.putExtra("checkin_id", String.valueOf(plannedOrder.checkin_id));
 				if(plannedOrder.license_tag != null && plannedOrder.license_tag.length() > 0)
 					msgIntent.putExtra("licenseTag", plannedOrder.license_tag);
 				app.showProgrssDialog(getActivity());				

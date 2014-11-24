@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.TextView;
 
@@ -31,12 +31,27 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         View v = convertView;
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.item_vybava, null);
+            v = vi.inflate(R.layout.item_unit, null);
         }
         DMUnit unit = data.get(position);
 
-        TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
+        TextView text = (TextView) v.findViewById(R.id.lblText);
 		text.setText(unit.chck_part_txt);
+
+        text = (TextView) v.findViewById(R.id.lblPosition);
+        text.setText(unit.chck_position_abbrev_txt);
+
+        text = (TextView) v.findViewById(R.id.lblRequired);
+        text.setText(unit.chck_required_txt);
+
+        text = (TextView) v.findViewById(R.id.lblCena);
+        if(unit.sell_price >= 0.0)
+            text.setText(String.valueOf(unit.sell_price) + "Kč");
+        else
+            text.setText("");
+
+        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
+        vybCheck.setChecked((unit.chck_status_id == 1));
 		return v;
 	}
 

@@ -11,6 +11,9 @@ public class DMUnit implements Comparable<DMUnit> {
 	public int chck_part_id;
 	public int chck_unit_id;
 	public int chck_part_position_id;
+    public int chck_status_id;
+    public int chck_required_id;
+    public String chck_required_txt;
 	public double sell_price;
 	
 	public DMUnit(Cursor cursor) {
@@ -31,8 +34,14 @@ public class DMUnit implements Comparable<DMUnit> {
 			chck_unit_id = cursor.getInt(columnName);
 		if((columnName = cursor.getColumnIndex("CHCK_PART_POSITION_ID")) != -1)
 			chck_part_position_id = cursor.getInt(columnName);
+        if((columnName = cursor.getColumnIndex("CHCK_STATUS_ID")) != -1)
+            chck_status_id = cursor.getInt(columnName);
+        if((columnName = cursor.getColumnIndex("CHCK_REQUIRED_ID")) != -1)
+            chck_required_id = cursor.getInt(columnName);
+        if((columnName = cursor.getColumnIndex("CHCK_REQUIRED_TXT")) != -1)
+            chck_required_txt = cursor.getString(columnName);
 		if((columnName = cursor.getColumnIndex("sell_price")) != -1)
-			sell_price = cursor.getDouble(columnName);
+			sell_price = (cursor.isNull(columnName))?-1.0:cursor.getDouble(columnName);
 	}
 	
 	@Override

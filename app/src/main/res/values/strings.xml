@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">PortableCheckIn</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
@@ -36,79 +37,93 @@
     <string name="Setup">Setup</string>
     <string name="Login">Login</string>
     <string name="serviceNotifier">service notifier</string>
-	<item name="pager" type="id"/>
-	<string name="databaseVersion">1</string>
-	<string name="logoff">Logo off</string>
-	<string name="Zdroj">Zdroj</string>
-	<string name="Status">Status</string>
-	<string name="RZV">RZV</string>
-	<string name="Vozidlo">Vozidlo</string>
-	<string name="PZc">PZ č.</string>
-	<string-array name="PlanZakGrdCaptions">
-		<item>@string/Zdroj</item>
-		<item>@string/Status</item>
-		<item>@string/RZV</item>
-		<item>@string/Vozidlo</item>
-		<item>@string/Zakaznik</item>
-		<item>@string/PZc</item>
-	</string-array>
-	<item name="backgrounImage" type="id"/>
-	<item name="bacgrounMask" type="id"/>
-	<item name="mainValuelayout1" type="id"/>
-	<item name="mainValuelayout2" type="id"/>		
-	<string name="novyCheckin">Nový Check-In</string>
-	<string name="odesliData">Odešli data</string>
-	<string name="strucHistory">Stručná historie</string>
-	<string name="historia">Historie</string>
-	<string name="infVozidla">Informace o vozidle</string>
-	<string name="InfZakaznik">Informace o zákazníkovi</string>
-	<string name="Protokol">Protokol</string>
-	<string name="Palivo">Palivo</string>	
-	<string name="Scenar">Scenar</string>
 
-	<string name="Typ">Typ</string>
-	<string name="Popis">Popis</string>
-	<string name="PPNDc">PP/ND č</string>	
-	<string name="OSc">OS č</string>		
-	<string-array name="VozHistoryGrdCaptions">
-		<item>@string/Typ</item>
-		<item>@string/Popis</item>
-		<item>@string/PPNDc</item>
-		<item>@string/OSc</item>
-	</string-array>
-	<string name="premena">premena</string>
-	<string name="hodnota">hodnota</string>	
-	<string-array name="GrdNameValue">
-		<item>@string/premena</item>
-		<item>@string/hodnota</item>
-	</string-array>
-	<string name="Vybavy">Vybavy</string>
-	<string name="PovinneVybavy">Povinne vybavy</string>
-	<string name="Loading_Data">Načítavam data</string>
-	<string name="Please_wait">Prosím čekejte</string>
-	<string name="Error_title">Chyba</string>	
-	<string name="Pozadovane">Požadováno</string>
-	<string name="prazna">0</string>
-	<string name="stvrtina">&#188;</string>
-	<string name="polovica">&#189;</string>
-	<string name="tristvrtina">&#190;</string>
-	<string name="P">P</string>					
-	<string-array name="Palivo">
-		<item>@string/prazna</item>
-		<item>@string/stvrtina</item>
-		<item>@string/polovica</item>
-		<item>@string/tristvrtina</item>
-		<item>@string/P</item>
-	</string-array>
-	<string name="AA">AA</string>
-	<string name="CC">CC</string>
+    <item name="pager" type="id"/>
+
+    <string name="databaseVersion">1</string>
+    <string name="logoff">Logo off</string>
+    <string name="Zdroj">Zdroj</string>
+    <string name="Status">Status</string>
+    <string name="RZV">RZV</string>
+    <string name="Vozidlo">Vozidlo</string>
+    <string name="PZc">PZ č.</string>
+
+    <string-array name="PlanZakGrdCaptions">
+        <item>@string/Zdroj</item>
+        <item>@string/Status</item>
+        <item>@string/RZV</item>
+        <item>@string/Vozidlo</item>
+        <item>@string/Zakaznik</item>
+        <item>@string/PZc</item>
+    </string-array>
+
+    <item name="backgrounImage" type="id"/>
+    <item name="bacgrounMask" type="id"/>
+    <item name="mainValuelayout1" type="id"/>
+    <item name="mainValuelayout2" type="id"/>
+
+    <string name="novyCheckin">Nový Check-In</string>
+    <string name="odesliData">Odešli data</string>
+    <string name="strucHistory">Stručná historie</string>
+    <string name="historia">Historie</string>
+    <string name="infVozidla">Informace o vozidle</string>
+    <string name="InfZakaznik">Informace o zákazníkovi</string>
+    <string name="Protokol">Protokol</string>
+    <string name="Palivo">Palivo</string>
+    <string name="Scenar">Scenar</string>
+    <string name="Typ">Typ</string>
+    <string name="Popis">Popis</string>
+    <string name="PPNDc">PP/ND č</string>
+    <string name="OSc">OS č</string>
+
+    <string-array name="VozHistoryGrdCaptions">
+        <item>@string/Typ</item>
+        <item>@string/Popis</item>
+        <item>@string/PPNDc</item>
+        <item>@string/OSc</item>
+    </string-array>
+
+    <string name="premena">premena</string>
+    <string name="hodnota">hodnota</string>
+
+    <string-array name="GrdNameValue">
+        <item>@string/premena</item>
+        <item>@string/hodnota</item>
+    </string-array>
+
+    <string name="Vybavy">Vybavy</string>
+    <string name="PovinneVybavy">Povinne vybavy</string>
+    <string name="Loading_Data">Načítavam data</string>
+    <string name="Please_wait">Prosím čekejte</string>
+    <string name="Error_title">Chyba</string>
+    <string name="Pozadovane">Požadováno</string>
+    <string name="prazna">0</string>
+    <string name="stvrtina">¼</string>
+    <string name="polovica">½</string>
+    <string name="tristvrtina">¾</string>
+    <string name="P">P</string>
+
+    <string-array name="Palivo">
+        <item>@string/prazna</item>
+        <item>@string/stvrtina</item>
+        <item>@string/polovica</item>
+        <item>@string/tristvrtina</item>
+        <item>@string/P</item>
+    </string-array>
+
+    <string name="AA">AA</string>
+    <string name="CC">CC</string>
     <string name="checkButton">checkButton</string>
+
     <string-array name="StavInterieru">
-		<item>@string/AA</item>
-		<item>@string/A</item>
-		<item>@string/B</item>
-		<item>@string/CC</item>
-		<item>@string/C</item>
-	</string-array>
+        <item>@string/AA</item>
+        <item>@string/A</item>
+        <item>@string/B</item>
+        <item>@string/CC</item>
+        <item>@string/C</item>
+    </string-array>
+
     <string name="service">Service</string>
+    <string name="title_activity_item_unit">item_unit</string>
+
 </resources>

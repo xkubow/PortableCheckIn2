@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.data.DMService;
@@ -22,7 +21,7 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
     private List<DMService> data;
 
     public ServiceArrayAdapter(Context context, int resource, int textViewResourceId, List<DMService> objects) {
-        super(context, resource, textViewResourceId, new ArrayList<DMService>());
+        super(context, resource, textViewResourceId, objects);
         this.context = context;
         this.data = objects;
     }
@@ -39,7 +38,7 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
         TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
         text.setText(service.text);
 
-        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.btnCheck);
+        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
         vybCheck.setChecked(service.checked);
         return v;
     }
