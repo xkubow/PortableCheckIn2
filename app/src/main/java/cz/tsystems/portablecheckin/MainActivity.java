@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import cz.tsystems.adapters.PlannedOrderAdapter;
 import cz.tsystems.base.BaseFragment;
+import cz.tsystems.base.BaseGrid;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.vinEditText;
 import cz.tsystems.communications.CommunicationService;
@@ -323,11 +324,11 @@ public class MainActivity extends BaseFragment {
 
 	private void showPlanZakazky() {
 
-		final AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom));
+/*        final AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom));
 
         View v = getActivity().getLayoutInflater().inflate(R.layout.activity_title_bar, null);
+        ((TextView)v.findViewById(R.id.lblTitle)).setText(getActivity().getResources().getText(R.string.naplanovane_zakazky));
         b.setCustomTitle(v);
-	    b.setTitle("Example");
 
 	    final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getActivity().getApplicationContext()).getPlanZakazk();
 		PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter(
@@ -336,17 +337,30 @@ public class MainActivity extends BaseFragment {
 		
 		LinearLayout layout = new LinearLayout(getActivity());
 		layout.setGravity(Gravity.LEFT|Gravity.TOP);
-		layout.setOrientation(LinearLayout.VERTICAL);	
+		layout.setOrientation(LinearLayout.VERTICAL);
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            layout.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.content_background));
+        } else {
+            layout.setBackground(getActivity().getResources().getDrawable(R.drawable.content_background));
+        }
 		
 	    ViewGroup view = (ViewGroup) getActivity().getLayoutInflater().inflate( R.layout.item_planned_order, null );
-	    layout.addView(view);
-	    
+        view.setBackgroundColor(getActivity().getResources().getColor(R.color.grid_caption));
+        ((TextView)view.findViewById(R.id.lbldataSource)).setText(getActivity().getResources().getText(R.string.data_source));
+        ((TextView)view.findViewById(R.id.lblPlannedOrderStatus)).setText(getActivity().getResources().getText(R.string.Status));
+        ((TextView)view.findViewById(R.id.lblLicenseTag)).setText(getActivity().getResources().getText(R.string.RZV));
+        ((TextView)view.findViewById(R.id.lblVehicleDescription)).setText(getActivity().getResources().getText(R.string.Vozidlo));
+        ((TextView)view.findViewById(R.id.lblCustomerLabel)).setText(getActivity().getResources().getText(R.string.Zakaznik));
+        ((TextView)view.findViewById(R.id.lblPlannedOrderNo)).setText(getActivity().getResources().getText(R.string.plan_zak_cis));
+        layout.addView(view);
+
 		ListView listView = new ListView(getActivity());
-        listView.setBackground(getActivity().getResources().getDrawable(R.drawable.pozadie_ciste));
 		listView.setAdapter(plannedOrderAdapter);
 		layout.addView(listView);
 	    final AlertDialog d = b.setView(layout).create();
-
+	    */
+/*
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -367,12 +381,15 @@ public class MainActivity extends BaseFragment {
 				d.dismiss();
 			}
 		});
+		*/
+        BaseGrid d = new BaseGrid(getActivity());
 	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 	    lp.copyFrom(d.getWindow().getAttributes());
 	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
 	    lp.height = WindowManager.LayoutParams.MATCH_PARENT;
 	    app.dismisProgressDialog();
-	    d.show();
+
+        d.show();
 	    d.getWindow().setAttributes(lp);
 
 	}

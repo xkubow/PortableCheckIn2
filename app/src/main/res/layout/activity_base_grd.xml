@@ -1,42 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rlTopControls"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    style="@style/AppTheme"
+    android:id="@+id/baseGrdLayaut">
 
-    <LinearLayout
-        android:id="@+id/columnsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/grid_captions"
-        android:gravity="top|left"
-        android:orientation="horizontal"
-        android:weightSum="4" >
-
-    </LinearLayout>
-
- <ScrollView
-     android:id="@+id/scrollGridLayout"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:layout_below="@id/columnsLayout"
-     android:layout_marginBottom="50dp"
-     android:layout_marginLeft="50dp"
-     android:layout_marginRight="50dp"
-     android:background="@drawable/background"
-     android:scrollbars="none" >
-
-    <TableLayout
-        android:id="@+id/gridTable"
-        android:layout_width="match_parent"
+    <ListView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp" >
+        android:id="@+id/grid"
+        android:layout_below="@+id/columnsLayout"
+        android:layout_alignRight="@+id/columnsLayout"
+        android:layout_alignEnd="@+id/columnsLayout" />
+</LinearLayout>
 
-    </TableLayout>
-    </ScrollView>
-
-</RelativeLayout>

@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public final class BaseMenu extends Object {
 //	private PortableCheckin app;
@@ -62,13 +63,27 @@ public final class BaseMenu extends Object {
 				shortVehicleHistory);
 		
 		AlertDialog.Builder b = new Builder(activity);
-	    b.setTitle("Example");
+        View v = activity.getLayoutInflater().inflate(R.layout.activity_title_bar, null);
+        ((TextView)v.findViewById(R.id.lblTitle)).setText(activity.getResources().getText(R.string.historia_vozu));
+        b.setCustomTitle(v);
 	
 		LinearLayout layout = new LinearLayout(activity);
 		layout.setGravity(Gravity.LEFT|Gravity.TOP);
-		layout.setOrientation(LinearLayout.VERTICAL);	
+		layout.setOrientation(LinearLayout.VERTICAL);
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            layout.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.content_background));
+        } else {
+            layout.setBackground(activity.getResources().getDrawable(R.drawable.content_background));
+        }
 		
 	    ViewGroup view = (ViewGroup) activity.getLayoutInflater().inflate( R.layout.item_vehicle_history, null );
+        view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
+        ((TextView)view.findViewById(R.id.personalIdColor)).setText("");
+        ((TextView)view.findViewById(R.id.lblhistory_type_txt)).setText(activity.getResources().getText(R.string.typ));
+        ((TextView)view.findViewById(R.id.lblHistory_description)).setText(activity.getResources().getText(R.string.popis));
+        ((TextView)view.findViewById(R.id.lblItem_no)).setText(activity.getResources().getText(R.string.pp_nd_c));
+        ((TextView)view.findViewById(R.id.lblPersonal_tag)).setText(activity.getResources().getText(R.string.os_c));
 	    layout.addView(view);
 	    
 		ListView listView = new ListView(activity);

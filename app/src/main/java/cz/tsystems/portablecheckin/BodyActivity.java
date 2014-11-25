@@ -208,7 +208,7 @@ public class BodyActivity extends BaseFragment {
 	            photoFile = createImageFile();
 	        } catch (IOException ex) {
 	            // Error occurred while creating the File
-	            app.getDialog(getActivity(), "error", ex.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON);
+	            app.getDialog(getActivity(), "error", ex.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON).show();
 	        }
 	        // Continue only if the File was successfully created
 	        if (photoFile != null) {

@@ -35,7 +35,7 @@
     </style>
 
     <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light">
-        <item name="android:background">@drawable/alu_navigation</item>
+
     </style>
 
 </resources>

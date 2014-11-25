@@ -15,12 +15,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name="cz.tsystems.data.PortableCheckin"
@@ -44,12 +41,6 @@
             android:name="cz.tsystems.portablecheckin.LoginActivity"
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
-        <activity
-            android:name="cz.tsystems.portablecheckin.MainActivity"
-            android:launchMode="singleTop" />
-        <activity
-            android:name="cz.tsystems.portablecheckin.ServiceActivity"
-            android:launchMode="singleTop" />
         <activity
             android:name="cz.tsystems.base.FragmentPagerActivity"
             android:launchMode="singleTop"

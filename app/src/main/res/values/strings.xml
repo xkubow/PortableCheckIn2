@@ -126,5 +126,14 @@
     <string name="service">Service</string>
     <string name="title_activity_item_unit">item_unit</string>
     <string name="title_activity_title_bar">title_bar</string>
+    <string name="naplanovane_zakazky">Naplánované zakázky/Rozpracované Check-Iny</string>
+    <string name="data_source">Zdroj</string>
+    <string name="Satus">Status</string>
+    <string name="plan_zak_cis">PZ.č.</string>
+    <string name="historia_vozu">Historie vozu</string>
+    <string name="typ">Typ</string>
+    <string name="popis">Popis</string>
+    <string name="pp_nd_c">PP/ND č.</string>
+    <string name="os_c">Os. č.</string>
 
 </resources>
