@@ -4,11 +4,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     style="@style/AppTheme"
-    android:id="@+id/baseGrdLayaut">
+    android:id="@+id/baseGrdLayaut"
+    android:background="@drawable/content_background">
 
     <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/grid"
         android:layout_below="@+id/columnsLayout"
         android:layout_alignRight="@+id/columnsLayout"

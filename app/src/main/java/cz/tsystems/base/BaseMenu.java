@@ -53,128 +53,125 @@ public final class BaseMenu extends Object {
 	
 	static public void showStrucHistory(final Activity activity)
 	{
-		List<DMVehicleHistory> shortVehicleHistory = new ArrayList<DMVehicleHistory>();
-		for (DMVehicleHistory vh : PortableCheckin.vehicleHistoryList) {
-			if (vh.brief_history)
-				shortVehicleHistory.add(vh);
-		}
-		VehicleHistoryArrayAdapter vehicleShortHistoryAdapter = new VehicleHistoryArrayAdapter(
-				activity, 0, android.R.layout.simple_list_item_1,
-				shortVehicleHistory);
-		
-		AlertDialog.Builder b = new Builder(activity);
-        View v = activity.getLayoutInflater().inflate(R.layout.activity_title_bar, null);
-        ((TextView)v.findViewById(R.id.lblTitle)).setText(activity.getResources().getText(R.string.historia_vozu));
-        b.setCustomTitle(v);
-	
-		LinearLayout layout = new LinearLayout(activity);
-		layout.setGravity(Gravity.LEFT|Gravity.TOP);
-		layout.setOrientation(LinearLayout.VERTICAL);
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            layout.setBackgroundDrawable(activity.getResources().getDrawable(R.drawable.content_background));
-        } else {
-            layout.setBackground(activity.getResources().getDrawable(R.drawable.content_background));
-        }
-		
-	    ViewGroup view = (ViewGroup) activity.getLayoutInflater().inflate( R.layout.item_vehicle_history, null );
-        view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
-        ((TextView)view.findViewById(R.id.personalIdColor)).setText("");
-        ((TextView)view.findViewById(R.id.lblhistory_type_txt)).setText(activity.getResources().getText(R.string.typ));
-        ((TextView)view.findViewById(R.id.lblHistory_description)).setText(activity.getResources().getText(R.string.popis));
-        ((TextView)view.findViewById(R.id.lblItem_no)).setText(activity.getResources().getText(R.string.pp_nd_c));
-        ((TextView)view.findViewById(R.id.lblPersonal_tag)).setText(activity.getResources().getText(R.string.os_c));
-	    layout.addView(view);
-	    
-		ListView listView = new ListView(activity);
-		listView.setSelector(android.R.color.transparent);
-		listView.setAdapter(vehicleShortHistoryAdapter);
-		layout.addView(listView);
-	    Dialog d = b.setView(layout).create();
 
-	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-	    lp.copyFrom(d.getWindow().getAttributes());
-	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-	    lp.height = WindowManager.LayoutParams.MATCH_PARENT;    
-	    d.show();
-	    d.getWindow().setAttributes(lp);
-	    
-	    	
+        final BaseGrid baseGrid = new BaseGrid(activity) {
+            @Override
+            public View getCaptionView()
+            {
+                View view = activity.getLayoutInflater().inflate(R.layout.item_vehicle_history, null);
+                view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
+                ((TextView)view.findViewById(R.id.personalIdColor)).setText("");
+                ((TextView)view.findViewById(R.id.lblhistory_type_txt)).setText(activity.getResources().getText(R.string.typ));
+                ((TextView)view.findViewById(R.id.lblHistory_description)).setText(activity.getResources().getText(R.string.popis));
+                ((TextView)view.findViewById(R.id.lblItem_no)).setText(activity.getResources().getText(R.string.pp_nd_c));
+                ((TextView)view.findViewById(R.id.lblPersonal_tag)).setText(activity.getResources().getText(R.string.os_c));
+
+                return view;
+            }
+
+            @Override
+            public void setListView(ListView listView) {
+                List<DMVehicleHistory> shortVehicleHistory = new ArrayList<DMVehicleHistory>();
+                for (DMVehicleHistory vh : PortableCheckin.vehicleHistoryList) {
+                    if (vh.brief_history)
+                        shortVehicleHistory.add(vh);
+                }
+                VehicleHistoryArrayAdapter vehicleShortHistoryAdapter = new VehicleHistoryArrayAdapter(
+                        activity, 0, android.R.layout.simple_list_item_1,
+                        shortVehicleHistory);
+                listView.setAdapter(vehicleShortHistoryAdapter);
+            }
+        };
+        baseGrid.setTitle(activity.getResources().getText(R.string.historia_vozu));
+        baseGrid.show();
 	}
 	
 	static public void showHistory(final Activity activity)
 	{
-		AlertDialog.Builder b = new Builder(activity);
-	    b.setTitle("Example");
-	    
-		VehicleHistoryArrayAdapter vehicleHistoryAdapter = new VehicleHistoryArrayAdapter(
-				activity, 0, android.R.layout.simple_list_item_1,
-				PortableCheckin.vehicleHistoryList);
-		
-		LinearLayout layout = new LinearLayout(activity);
-		layout.setGravity(Gravity.LEFT|Gravity.TOP);
-		layout.setOrientation(LinearLayout.VERTICAL);	
-		
-	    ViewGroup view = (ViewGroup) activity.getLayoutInflater().inflate( R.layout.item_vehicle_history, null );
-	    layout.addView(view);
-	    
-		ListView listView = new ListView(activity);
-		listView.setSelector(android.R.color.transparent);
-		listView.setAdapter(vehicleHistoryAdapter);
-		layout.addView(listView);
-	    Dialog d = b.setView(layout).create();
+        final BaseGrid baseGrid = new BaseGrid(activity) {
+            @Override
+            public View getCaptionView()
+            {
+                View view = activity.getLayoutInflater().inflate(R.layout.item_vehicle_history, null);
+                view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
+                ((TextView)view.findViewById(R.id.personalIdColor)).setText("");
+                ((TextView)view.findViewById(R.id.lblhistory_type_txt)).setText(activity.getResources().getText(R.string.typ));
+                ((TextView)view.findViewById(R.id.lblHistory_description)).setText(activity.getResources().getText(R.string.popis));
+                ((TextView)view.findViewById(R.id.lblItem_no)).setText(activity.getResources().getText(R.string.pp_nd_c));
+                ((TextView)view.findViewById(R.id.lblPersonal_tag)).setText(activity.getResources().getText(R.string.os_c));
 
-	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-	    lp.copyFrom(d.getWindow().getAttributes());
-	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-	    lp.height = WindowManager.LayoutParams.MATCH_PARENT;    
-	    d.show();
-	    d.getWindow().setAttributes(lp);
-	}	
+                return view;
+            }
+
+            @Override
+            public void setListView(ListView listView) {
+                VehicleHistoryArrayAdapter vehicleHistoryAdapter = new VehicleHistoryArrayAdapter(
+                        activity, 0, android.R.layout.simple_list_item_1,
+                        PortableCheckin.vehicleHistoryList);
+                listView.setAdapter(vehicleHistoryAdapter);
+            }
+        };
+        baseGrid.setTitle(activity.getResources().getText(R.string.historia_vozu));
+        baseGrid.show();
+	}
 	
 	static public void showVozidloInfo(final Activity activity)
 	{
-		AlertDialog.Builder b = new Builder(activity);
-	    b.setTitle("Example");
-		VehicleInfoAdapter vehicleInfoAdapter = new VehicleInfoAdapter(
-				activity, 0, android.R.layout.simple_list_item_1,
-				PortableCheckin.vehicleInfoList);
-		
-		LinearLayout layout = new LinearLayout(activity);
-		layout.setGravity(Gravity.CENTER);
-		layout.setOrientation(LinearLayout.VERTICAL);		
-	    ViewGroup view = (ViewGroup) activity.getLayoutInflater().inflate( R.layout.item_info_list, null );
-	    layout.addView(view);
-	    
-		ListView listView = new ListView(activity);
-		listView.setSelector(android.R.color.transparent);
-		listView.setAdapter(vehicleInfoAdapter);
-		layout.addView(listView);
-	    b.setView(layout);	    
-	    b.show();
-	}	
+        final BaseGrid baseGrid = new BaseGrid(activity) {
+            @Override
+            public View getCaptionView()
+            {
+                View view = activity.getLayoutInflater().inflate(R.layout.item_info_list, null);
+                view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
+                ((TextView)view.findViewById(R.id.lblValName)).setText(activity.getResources().getText(R.string.typ));
+                ((TextView)view.findViewById(R.id.lblValue)).setText(activity.getResources().getText(R.string.popis));
+                return view;
+            }
+
+            @Override
+            public void setListView(ListView listView) {
+                VehicleInfoAdapter vehicleInfoAdapter = new VehicleInfoAdapter(
+                        activity, 0, android.R.layout.simple_list_item_1,
+                        PortableCheckin.vehicleInfoList);
+                listView.setAdapter(vehicleInfoAdapter);
+            }
+
+            @Override
+            public void setWindowParams() {
+            }
+        };
+        baseGrid.setTitle(activity.getResources().getText(R.string.infVozidla));
+        baseGrid.show();
+    }
 	
 	static public void showZkaznikInfo(final Activity activity)
 	{
-		
-		AlertDialog.Builder b = new Builder(activity);
-	    b.setTitle("Example");
-	    CustomerInfoAdapter customerInfoAdapter = new CustomerInfoAdapter(
-				activity, 0, android.R.layout.simple_list_item_1,
-				PortableCheckin.custumerInfoList);
-	    
-		LinearLayout layout = new LinearLayout(activity);
-		layout.setGravity(Gravity.CENTER);
-		layout.setOrientation(LinearLayout.VERTICAL);		
-	    ViewGroup view = (ViewGroup) activity.getLayoutInflater().inflate( R.layout.item_info_list, null );
-	    layout.addView(view);
-	    
-		ListView listView = new ListView(activity);
-		listView.setSelector(android.R.color.transparent);
-		listView.setAdapter(customerInfoAdapter);
-		layout.addView(listView);
-	    b.setView(layout);	    
-	    b.show();
+
+        final BaseGrid baseGrid = new BaseGrid(activity) {
+            @Override
+            public View getCaptionView()
+            {
+                View view = activity.getLayoutInflater().inflate(R.layout.item_info_list, null);
+                view.setBackgroundColor(activity.getResources().getColor(R.color.grid_caption));
+                ((TextView)view.findViewById(R.id.lblValName)).setText(activity.getResources().getText(R.string.typ));
+                ((TextView)view.findViewById(R.id.lblValue)).setText(activity.getResources().getText(R.string.popis));
+                return view;
+            }
+
+            @Override
+            public void setListView(ListView listView) {
+                CustomerInfoAdapter customerInfoAdapter = new CustomerInfoAdapter(
+                        activity, 0, android.R.layout.simple_list_item_1,
+                        PortableCheckin.custumerInfoList);
+                listView.setAdapter(customerInfoAdapter);
+            }
+
+            @Override
+            public void setWindowParams() {
+            }
+        };
+        baseGrid.setTitle(activity.getResources().getText(R.string.InfZakaznik));
+        baseGrid.show();
 	}	
 
 }

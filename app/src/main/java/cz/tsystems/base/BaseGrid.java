@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,21 +38,30 @@ public class BaseGrid extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_grd);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.activity_title_bar);
-        setTitle(activity.getResources().getText(R.string.historia_vozu));
 
         View v = findViewById(R.id.baseGrdLayaut);//activity.getLayoutInflater().inflate(R.layout.activity_base_grd, null);
-        View v2 = activity.getLayoutInflater().inflate(R.layout.item_planned_order, null);
-        ((LinearLayout) v).addView(v2, 0);
+        ((LinearLayout) v).addView(getCaptionView(), 0);
 
         ListView lv = (ListView)v.findViewById(R.id.grid);
-        final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)activity.getApplicationContext()).getPlanZakazk();
-        PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter( activity, R.layout.item_planned_order, planedOrderList);
-        lv.setAdapter(plannedOrderAdapter);
+        setListView(lv);
 
+        setWindowParams();
     }
 
-    private String getCaption()
+    public void setWindowParams() {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        getWindow().setAttributes(lp);
+    }
+
+    public View getCaptionView()
     {
-        return "";
+        return null;
+    }
+
+    public void setListView(ListView listView) {
+
     }
 }

@@ -324,74 +324,54 @@ public class MainActivity extends BaseFragment {
 
 	private void showPlanZakazky() {
 
-/*        final AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.AlertDialogCustom));
+        final BaseGrid baseGrid = new BaseGrid(getActivity()) {
+            @Override
+            public View getCaptionView()
+            {
+                View view = getActivity().getLayoutInflater().inflate(R.layout.item_planned_order, null);
+                view.setBackgroundColor(getActivity().getResources().getColor(R.color.grid_caption));
+                ((TextView)view.findViewById(R.id.lbldataSource)).setText(getActivity().getResources().getText(R.string.data_source));
+                ((TextView)view.findViewById(R.id.lblPlannedOrderStatus)).setText(getActivity().getResources().getText(R.string.Status));
+                ((TextView)view.findViewById(R.id.lblLicenseTag)).setText(getActivity().getResources().getText(R.string.RZV));
+                ((TextView)view.findViewById(R.id.lblVehicleDescription)).setText(getActivity().getResources().getText(R.string.Vozidlo));
+                ((TextView)view.findViewById(R.id.lblCustomerLabel)).setText(getActivity().getResources().getText(R.string.Zakaznik));
+                ((TextView)view.findViewById(R.id.lblPlannedOrderNo)).setText(getActivity().getResources().getText(R.string.plan_zak_cis));
 
-        View v = getActivity().getLayoutInflater().inflate(R.layout.activity_title_bar, null);
-        ((TextView)v.findViewById(R.id.lblTitle)).setText(getActivity().getResources().getText(R.string.naplanovane_zakazky));
-        b.setCustomTitle(v);
+                return  view;
+            }
 
-	    final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getActivity().getApplicationContext()).getPlanZakazk();
-		PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter(
-				getActivity(), android.R.layout.simple_list_item_1,
-				planedOrderList);
-		
-		LinearLayout layout = new LinearLayout(getActivity());
-		layout.setGravity(Gravity.LEFT|Gravity.TOP);
-		layout.setOrientation(LinearLayout.VERTICAL);
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            layout.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.content_background));
-        } else {
-            layout.setBackground(getActivity().getResources().getDrawable(R.drawable.content_background));
-        }
-		
-	    ViewGroup view = (ViewGroup) getActivity().getLayoutInflater().inflate( R.layout.item_planned_order, null );
-        view.setBackgroundColor(getActivity().getResources().getColor(R.color.grid_caption));
-        ((TextView)view.findViewById(R.id.lbldataSource)).setText(getActivity().getResources().getText(R.string.data_source));
-        ((TextView)view.findViewById(R.id.lblPlannedOrderStatus)).setText(getActivity().getResources().getText(R.string.Status));
-        ((TextView)view.findViewById(R.id.lblLicenseTag)).setText(getActivity().getResources().getText(R.string.RZV));
-        ((TextView)view.findViewById(R.id.lblVehicleDescription)).setText(getActivity().getResources().getText(R.string.Vozidlo));
-        ((TextView)view.findViewById(R.id.lblCustomerLabel)).setText(getActivity().getResources().getText(R.string.Zakaznik));
-        ((TextView)view.findViewById(R.id.lblPlannedOrderNo)).setText(getActivity().getResources().getText(R.string.plan_zak_cis));
-        layout.addView(view);
+            @Override
+            public void setListView(ListView listView) {
+                final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getActivity().getApplicationContext()).getPlanZakazk();
+                PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter( getActivity(), R.layout.item_planned_order, planedOrderList);
+                listView.setAdapter(plannedOrderAdapter);
 
-		ListView listView = new ListView(getActivity());
-		listView.setAdapter(plannedOrderAdapter);
-		layout.addView(listView);
-	    final AlertDialog d = b.setView(layout).create();
-	    */
-/*
-		listView.setOnItemClickListener(new OnItemClickListener() {
+                listView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				final DMPlannedOrder plannedOrder = planedOrderList.get(position);
-				
-				Intent msgIntent = new Intent(getActivity(), CommunicationService.class);
-				msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
-				msgIntent.putExtra("ACTION", "DataForCheckIn");
-				if(plannedOrder.planned_order_id != null && plannedOrder.planned_order_id.length() > 0)
-					msgIntent.putExtra("plannedorderid", plannedOrder.planned_order_id);
-				if(plannedOrder.checkin_id > 0)
-					msgIntent.putExtra("checkin_id", String.valueOf(plannedOrder.checkin_id));
-				if(plannedOrder.license_tag != null && plannedOrder.license_tag.length() > 0)
-					msgIntent.putExtra("licenseTag", plannedOrder.license_tag);
-				app.showProgrssDialog(getActivity());				
-				getActivity().startService(msgIntent);			
-				d.dismiss();
-			}
-		});
-		*/
-        BaseGrid d = new BaseGrid(getActivity());
-	    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-	    lp.copyFrom(d.getWindow().getAttributes());
-	    lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-	    lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        final DMPlannedOrder plannedOrder = planedOrderList.get(position);
+
+                        Intent msgIntent = new Intent(getActivity(), CommunicationService.class);
+                        msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
+                        msgIntent.putExtra("ACTION", "DataForCheckIn");
+                        if(plannedOrder.planned_order_id != null && plannedOrder.planned_order_id.length() > 0)
+                            msgIntent.putExtra("plannedorderid", plannedOrder.planned_order_id);
+                        if(plannedOrder.checkin_id > 0)
+                            msgIntent.putExtra("checkin_id", String.valueOf(plannedOrder.checkin_id));
+                        if(plannedOrder.license_tag != null && plannedOrder.license_tag.length() > 0)
+                            msgIntent.putExtra("licenseTag", plannedOrder.license_tag);
+                        app.showProgrssDialog(getActivity());
+                        getActivity().startService(msgIntent);
+                        dismiss();
+                    }
+                });
+            }
+        };
+        baseGrid.setTitle(getActivity().getResources().getText(R.string.historia_vozu));
 	    app.dismisProgressDialog();
 
-        d.show();
-	    d.getWindow().setAttributes(lp);
-
+        baseGrid.show();
 	}
 	
 	private void showPalivoTypPicker()

@@ -41,7 +41,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		public void onReceive(Context context, Intent intent) {
 		
 			theFragment = (BaseFragment) theFragments.get(getActionBar().getSelectedTab().getPosition());
-			Log.d("FRAGMENT", theFragment.getClass().getSimpleName());			
+//			Log.d("FRAGMENT", theFragment.getClass().getSimpleName());
 			theFragment.showData(intent);
 		}
 	};
@@ -65,10 +65,10 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		theFragments.add(new ServiceActivity());
 		theFragments.add(new OffersActivity());
 		
-		actionBar.addTab(actionBar.newTab().setText("Main").setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setText("Body").setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setText("Service").setTabListener(this));
-		actionBar.addTab(actionBar.newTab().setText("Offers").setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_riadky2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_body2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_sipka2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_nabidka2));
 
 	}
 

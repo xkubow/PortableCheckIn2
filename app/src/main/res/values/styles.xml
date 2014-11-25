@@ -29,13 +29,9 @@
     	<item name="android:windowAnimationStyle">@android:style/Animation</item>
     	<item name="android:windowNoTitle">true</item>
 	</style>
-	
+
     <style name="WindowTitleBackground" parent="@android:style/Widget.Holo.Light.ActionBar">
 		<item name="android:background">@drawable/alu_navigation</item>
-    </style>
-
-    <style name="AlertDialogCustom" parent="@android:style/Theme.Holo.Light">
-
     </style>
 
 </resources>
