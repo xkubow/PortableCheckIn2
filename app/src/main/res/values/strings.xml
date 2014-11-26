@@ -135,5 +135,9 @@
     <string name="popis">Popis</string>
     <string name="pp_nd_c">PP/ND č.</string>
     <string name="os_c">Os. č.</string>
+    <string name="stav_oleje">Stav oleje</string>
+    <string name="min">Min</string>
+    <string name="OK">OK</string>
+    <string name="Max">Max</string>
 
 </resources>

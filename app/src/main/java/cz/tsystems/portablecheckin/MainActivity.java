@@ -406,17 +406,16 @@ public class MainActivity extends BaseFragment {
 	
 	private void showBrandLogos() {
 		
-		//TODO oweride
-		
 		AlertDialog.Builder b = new Builder(getActivity());
 	    b.setTitle("Example");
 	    final Cursor cursor = app.getBrands();
 	    int index = 0;
 	    final int brandIdIndex = cursor.getColumnIndex(DMBrand.columnNames[DMBrand.ColumnsEnum.BRAND_ID.ordinal()]);
 	    cursor.moveToFirst();
-	    while(!cursor.isAfterLast()
-	    		&& !cursor.getString(brandIdIndex).equals(app.getSelectedBrand().brand_id))  
-	    		index++;	    
+	    while(!cursor.isAfterLast() && !cursor.getString(brandIdIndex).equals(app.getSelectedBrand().brand_id)) {
+            index++;
+            cursor.moveToNext();
+        }
 	    cursor.moveToFirst();
 	    b.setSingleChoiceItems(cursor, index, "BRAND_TXT" , new DialogInterface.OnClickListener() {
 			
@@ -475,10 +474,6 @@ public class MainActivity extends BaseFragment {
 	
 	private void updateLblCheckinNr()
 	{
-//		if(data == null)
-//			data = app.getCheckinData();
-//		
-//		int checkinNr = Integer.parseInt(data.get("CHECKIN_NUMBER").toString());
 		if(app.getCheckin().checkin_number > 0)
 			lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
 		else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0)
@@ -497,9 +492,12 @@ public class MainActivity extends BaseFragment {
 		getActivity().setTitle(checkinData.vehicle_description);
 		
 		if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {
+            btnBrand.setEnabled(false);
 			app.setSelectedBrand(checkinData.brand_id);
 			setBrandImage();
-		}
+		} else {
+            btnBrand.setEnabled(true);
+        }
 		
 
 		if(checkinData.check_scenario_id <= 0)

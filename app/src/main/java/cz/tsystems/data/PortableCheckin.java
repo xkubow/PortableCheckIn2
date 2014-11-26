@@ -127,13 +127,22 @@ public class PortableCheckin extends Application {
 		return this.checkin;
 	}
 	public void setVozInfo(JsonNode vozidloInfo) {
-		PortableCheckin.vehicleInfoList = parseJsonArray(vozidloInfo, DMVehicleInfo.class);
-	}
+        if(!vozidloInfo.isMissingNode())
+	    	PortableCheckin.vehicleInfoList = parseJsonArray(vozidloInfo, DMVehicleInfo.class);
+        else
+            PortableCheckin.vehicleInfoList = null;
+    }
 	public void setZakInfo(JsonNode zakInfo) {
-		PortableCheckin.custumerInfoList = parseJsonArray(zakInfo, DMCustomerInfo.class);
-	}
+        if(!zakInfo.isMissingNode())
+		    PortableCheckin.custumerInfoList = parseJsonArray(zakInfo, DMCustomerInfo.class);
+        else
+            PortableCheckin.custumerInfoList = null;
+    }
 	public void setVozHistory(JsonNode vozHistory) {
-		PortableCheckin.vehicleHistoryList = parseJsonArray(vozHistory, DMVehicleHistory.class);
+        if(!vozHistory.isMissingNode())
+		    PortableCheckin.vehicleHistoryList = parseJsonArray(vozHistory, DMVehicleHistory.class);
+        else
+            PortableCheckin.vehicleHistoryList = null;
 	}	
 	
 	public String getLogin() {

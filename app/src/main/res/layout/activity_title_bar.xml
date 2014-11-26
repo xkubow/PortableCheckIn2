@@ -4,15 +4,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="cz.tsystems.portablecheckin.title_bar"
-    android:background="@drawable/alu_navigation">
-
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_centerInParent="true"
-        style="@android:style/TextAppearance.Holo.Large"
-        android:id="@+id/lblTitle"
-        android:textColor="@android:color/white" />
+    tools:context="cz.tsystems.portablecheckin.title_bar">
 
 </RelativeLayout>
