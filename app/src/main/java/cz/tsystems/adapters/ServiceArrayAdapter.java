@@ -1,22 +1,28 @@
 package cz.tsystems.adapters;
 
 import android.content.Context;
+import android.nfc.Tag;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
 
 import cz.tsystems.data.DMService;
+import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 
 /**
  * Created by kubisj on 21.11.2014.
  */
 public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
+    private final static String TAG = ServiceArrayAdapter.class.getSimpleName();
+
     private Context context;
     private List<DMService> data;
 
@@ -33,13 +39,25 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.item_vybava, null);
         }
-        DMService service = data.get(position);
+        final DMService service = data.get(position);
 
         TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
         text.setText(service.text);
 
-        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
-        vybCheck.setChecked(service.checked);
+        CheckBox serCheck = (CheckBox)v.findViewById(R.id.checkBox);
+        serCheck.setTag(position);
+        serCheck.setChecked(service.checked);
+
+        serCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                DMService serice = data.get((Integer)buttonView.getTag());
+                service.checked = isChecked;
+
+            }
+        });
+
         return v;
     }
 }

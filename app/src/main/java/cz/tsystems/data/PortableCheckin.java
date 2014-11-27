@@ -35,6 +35,7 @@ public class PortableCheckin extends Application {
 		
 	final String TAG = PortableCheckin.class.getSimpleName();	
 	private ProgressDialog pPrograssDialog;
+
     public static enum DialogType {
         SINGLE_BUTTON
     }
@@ -42,6 +43,7 @@ public class PortableCheckin extends Application {
 	private DMScenar selectedScenar;
 	private DMBrand selectedBrand;
 	private List<DMOffers> offers;
+    private List<DMPacket> packets;
 	private List<List<DMUnit>> unitList;
 	private List<DMVybava> vybavaList = new ArrayList<DMVybava>();
     private List<DMService> serviceList = new ArrayList<DMService>();
@@ -196,9 +198,10 @@ public class PortableCheckin extends Application {
 		final String brandId = user.brand_id;
 		checkin = new DMCheckin();
 		checkin.brand_id = brandId;
-		selectedBrand = this.getBrand(brandId);
-		selectedScenar = this.getScenarForId(selectedBrand.check_scenario_id_def);
-		checkin.check_scenario_id = selectedScenar.check_scenario_id;
+        selectedBrand = this.getBrand(brandId);
+        selectedScenar = this.getScenarForId(selectedBrand.check_scenario_id_def);
+        checkin.check_scenario_id = selectedScenar.check_scenario_id;
+        setSelectedBrand(brandId);
 		setOffers(this.getOffers(brandId));
 		this.loadSilhouette();
 	}
@@ -439,6 +442,42 @@ public class PortableCheckin extends Application {
 		this.unitList.add(unitList);
 			
 	}
+
+    public void setPackets(JsonNode newPackets) {
+        if(!newPackets.isMissingNode())
+            packets = parseJsonArray(newPackets, DMPacket.class);
+        else
+            packets = null;
+    }
+
+    public void getUnitService(DMUnit unit) {
+        final String query = "SELECT DATA.*, PPS.CHCK_STATUS_ID, PPS.CHCK_REQUIRED_ID, PPS.SELL_PRICE "
+                            + "FROM "
+                            + "(SELECT ifnull(RL.CHCK_REQUIRED_TXT_LOC, R.CHCK_REQUIRED_TXT_DEF) AS CHCK_REQUIRED_TXT, R.CHCK_REQUIRED_ID "
+                            + "FROM CHCK_REQUIRED R LEFT OUTER JOIN CHCK_REQUIRED_LOC RL "
+                            + "ON R.CHCK_REQUIRED_ID = RL.CHCK_REQUIRED_ID AND RL.LANG_ENUM = '?') DATA, "
+                            + "CHCK_PART_POSITION_STATUS PPS, CHCK_PART_POSITION PP "
+                            + "WHERE DATA.CHCK_REQUIRED_ID = PPS.CHCK_REQUIRED_ID "
+                            + "AND PPS.CHCK_PART_POSITION_ID = PP.CHCK_PART_POSITION_ID "
+                            + "AND pp.CHCK_PART_ID = ? "
+                            + "AND pp.CHCK_POSITION_ID = ? "
+                            + "AND DATA.CHCK_REQUIRED_ID != 20 ";
+        Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", part :" +  unit.chck_part_id + ", position:" + unit.chck_position_id);
+
+        Cursor c = theDBProvider.executeQuery(query,new String[] {Locale.getDefault().getLanguage(), String.valueOf(unit.chck_part_id), String.valueOf(unit.chck_position_id)} );
+        c.moveToFirst();
+
+
+//        if([DMSetting sharedDMSetting].pakety != nil)
+//        {
+//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"CHCK_PART_ID.intValue == %d", [[sd objectForKey:@"CHCK_PART_ID"] intValue]];
+//            NSArray *packetArray = [[DMSetting sharedDMSetting].pakety filteredArrayUsingPredicate:predicate];
+//            pozadArray =   [pozadArray arrayByAddingObjectsFromArray:packetArray];
+//        }
+
+
+
+    }
 	
 	public void loadVybavy() {
 		final String query = "SELECT ROWID AS _id, * FROM ( SELECT CE.*, CEL.*, ifnull(CEL.CAR_EQUIPMENT_TXT_LOC, CE.CAR_EQUIPMENT_TXT_DEF) AS TEXT "

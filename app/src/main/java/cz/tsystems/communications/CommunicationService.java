@@ -315,15 +315,18 @@ public class CommunicationService extends IntentService {
 				.equalsIgnoreCase("CheckinOrderList"))
 			app.setPlanZakazk(mapper.readTree(response));
 		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
-			JsonNode root = mapper.readTree(response);
-			app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
-			app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
-			app.setVozHistory(root.path("VEHICLE_HISTORY"));
-			app.setCheckin(root.path("CHECKIN"));
-			// Log.v(TAG, root.path("CHECKIN").textValue());
-			// writeToFile("checkinRespose", root.path("CHECKIN"));
-			// PortableCheckin.checkin =
-			// PortableCheckin.parseJson(root.path("CHECKIN"), DMCheckin.class);
+            JsonNode root = mapper.readTree(response);
+            app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
+            app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
+            app.setVozHistory(root.path("VEHICLE_HISTORY"));
+            app.setCheckin(root.path("CHECKIN"));
+            // Log.v(TAG, root.path("CHECKIN").textValue());
+            // writeToFile("checkinRespose", root.path("CHECKIN"));
+            // PortableCheckin.checkin =
+            // PortableCheckin.parseJson(root.path("CHECKIN"), DMCheckin.class);
+        } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+            JsonNode root = mapper.readTree(response);
+            app.setPackets(root.path("WORKSHOP_PACKET_DMS"));
 		} else if (data.getString("ACTION").equalsIgnoreCase("GetSilhouette")) {
 			loadDataDone |= eDone.eSILUETMIME.getValue();
 			Log.v(TAG, String.format("Silhouette DONE :%d", loadDataDone));

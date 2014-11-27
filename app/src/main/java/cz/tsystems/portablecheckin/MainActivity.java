@@ -309,6 +309,12 @@ public class MainActivity extends BaseFragment {
 	private void loadCheckinData() {
 		try {
 			populateView();
+            Intent msgIntent = new Intent(getActivity(), CommunicationService.class);
+            msgIntent.putExtra("ACTIONURL", "pchi/WorkshopPackets");
+            msgIntent.putExtra("ACTION", "WorkshopPackets");
+            msgIntent.putExtra("vin", app.getCheckin().vin);
+            msgIntent.putExtra("brandId", app.getSelectedBrand().brand_id);
+            getActivity().startService(msgIntent);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

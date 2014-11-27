@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.TextView;
 
@@ -41,6 +42,17 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 
         CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
         vybCheck.setChecked(vybava.checked);
+        vybCheck.setTag(position);
+
+        vybCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                DMVybava vybava = filteredData.get((Integer)buttonView.getTag());
+                vybava.checked = isChecked;
+
+            }
+        });
 		return v;
 	}
 	

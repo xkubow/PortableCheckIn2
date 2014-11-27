@@ -114,7 +114,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="textCapCharacters|textNoSuggestions"
                 android:tag="LICENSE_TAG"
-                android:textAllCaps="true" />
+                android:textAllCaps="true"
+                android:layout_alignParentRight="false" />
 
             <Spinner
                 android:id="@+id/spScenar"

@@ -88,23 +88,31 @@ public class ServiceActivity extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
-                DMBaseItem item = null;
-
-                switch(prehlaidkaId) {
-                    case -1:
-                    case -2:
-                        item = vybavaAdapter.getItem(position);
-                        break;
-                    case -3:
-                        item = serviceAdapter.getItem(position);
-                        break;
-                }
                 CheckBox b = (CheckBox)view.findViewById(R.id.checkBox);
-                if(item != null) {
-                    item.checked = !item.checked;
-                    b.setChecked(item.checked);
-                }
 
+                if(prehlaidkaId < 0) {
+                    DMBaseItem item = null;
+                    switch (prehlaidkaId) {
+                        case -1:
+                        case -2:
+                            item = vybavaAdapter.getItem(position);
+                        break;
+                        case -3:
+                            item = serviceAdapter.getItem(position);
+                            break;
+                    }
+                    if(item != null) {
+                        item.checked = !item.checked;
+                        b.setChecked(item.checked);
+                    }
+                } else {
+                    DMUnit item = unitAdapter.getItem(position);
+
+                    if(item != null) {
+                        item.chck_status_id = (item.chck_status_id == 1)?0:1;
+                        b.setChecked(item.chck_status_id == 1);
+                    }
+                }
             }
         });
 

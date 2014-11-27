@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.TextView;
 
@@ -50,10 +52,39 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         else
             text.setText("");
 
-        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
-        vybCheck.setChecked((unit.chck_status_id == 1));
+        CheckBox chkUnit = (CheckBox)v.findViewById(R.id.checkBox);
+        chkUnit.setChecked((unit.chck_status_id == 1));
+        chkUnit.setTag(position);
+        chkUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                DMUnit unit = filteredData.get((Integer)buttonView.getTag());
+                unit.chck_status_id = isChecked?1:0;
+            }
+        });
+
+        Button b = (Button)v.findViewById(R.id.btnService);
+        b.setTag(position);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showServiceView((Integer)v.getTag());
+            }
+        });
+
+
 		return v;
 	}
+
+    private void showServiceView(int position) {
+        DMUnit u = data.get(position);
+
+
+
+
+
+    }
 
 
     private class UnitFilter extends Filter {
