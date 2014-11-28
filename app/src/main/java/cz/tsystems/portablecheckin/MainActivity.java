@@ -314,6 +314,7 @@ public class MainActivity extends BaseFragment {
             msgIntent.putExtra("ACTION", "WorkshopPackets");
             msgIntent.putExtra("vin", app.getCheckin().vin);
             msgIntent.putExtra("brandId", app.getSelectedBrand().brand_id);
+            msgIntent.putExtra("detail", true);
             getActivity().startService(msgIntent);
 		} catch (ParseException e) {
 			e.printStackTrace();

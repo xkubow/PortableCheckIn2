@@ -238,11 +238,12 @@ public class CommunicationService extends IntentService {
 
 			Set<String> keys = data.keySet();
 			for (String key : keys) {
+                final Object value = data.get(key);
 				if (key.equalsIgnoreCase("ACTION")
 						|| key.equalsIgnoreCase("ACTIONURL"))
 					continue;
 				theUrl += valSeparator + key + "="
-						+ URLEncoder.encode(data.getString(key), "UTF-8");
+						+ URLEncoder.encode(value.toString(), "UTF-8");
 				valSeparator = "&";
 			}
 
