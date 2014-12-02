@@ -443,6 +443,10 @@ public class PortableCheckin extends Application {
 			
 	}
 
+    public List<DMPacket> getPackets(){
+        return packets;
+    }
+
     public void setPackets(JsonNode newPackets) {
         if(!newPackets.isMissingNode())
             packets = parseJsonArray(newPackets, DMPacket.class);

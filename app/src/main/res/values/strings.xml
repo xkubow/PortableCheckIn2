@@ -139,5 +139,7 @@
     <string name="min">Min</string>
     <string name="OK">OK</string>
     <string name="Max">Max</string>
+    <string name="title_activity_unit_service">UnitService</string>
+    <string name="title_activity_item_unit_packet">ItemUnitPacketActivity</string>
 
 </resources>

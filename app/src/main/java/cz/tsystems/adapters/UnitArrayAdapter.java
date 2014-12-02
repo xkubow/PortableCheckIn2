@@ -1,11 +1,22 @@
 package cz.tsystems.adapters;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
+import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
+
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.DataSetObserver;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +25,21 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Filter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 
+    private final static String TAG = UnitArrayAdapter.class.getSimpleName();
 	private Context context;
 	private List<DMUnit> data;
     private List<DMUnit> filteredData;
+    private PortableCheckin app;
 	
 	public UnitArrayAdapter(Context context, int resource, int textViewResourceId, List<DMUnit> objects) {
 		super(context, resource, textViewResourceId, objects);
 		this.context = context;
+        app = (PortableCheckin)context.getApplicationContext();
 		this.data = objects;
 	}
 	
@@ -59,7 +74,8 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-                DMUnit unit = filteredData.get((Integer)buttonView.getTag());
+                int position = (Integer)buttonView.getTag();
+                DMUnit unit = data.get(position);
                 unit.chck_status_id = isChecked?1:0;
             }
         });
@@ -79,10 +95,45 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 
     private void showServiceView(int position) {
         DMUnit u = data.get(position);
+        Iterator<DMPacket> packetIterator =  app.getPackets().iterator();
+        List<DMPacket> packetList = new ArrayList<DMPacket>();
+        DMPacket packet = null;
+
+        while(packetIterator.hasNext()) {
+            try {
+                packet = packetIterator.next();
+                if (packet.chck_unit_id == u.chck_unit_id
+                        && packet.chck_part_id == u.chck_part_id)
+                    packetList.add(packet);
+            }catch (NoSuchElementException e){
+                Log.e(TAG, "chyba");
+            }
+        }
+
+        PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList);
+        AlertDialog.Builder b = new Builder( context);
+        b.setTitle("Example");
+        b.setSingleChoiceItems(packetsArrayAdapter,0,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
 
 
 
+//        final Cursor cursor = app.getPaliva();
+//        b.setSingleChoiceItems(cursor, 0, "TEXT" , new DialogInterface.OnClickListener() {
+//
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                cursor.moveToPosition(which);
+//                app.getCheckin().fuel_id = cursor.getShort(cursor.getColumnIndex("FUEL_ID"));
+//                dialog.dismiss();
+//            }
+//        });
 
+        b.show();
 
     }
 

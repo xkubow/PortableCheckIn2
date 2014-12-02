@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class DMPacket implements Comparable<DMPacket> {
     public int chck_unit_id;
     public String chck_unit_txt;
     @JsonProperty("DETAIL_LIST")
-    private List<DMPacketDetail> detail_list;
+    public List<DMPacketDetail> detail_list;
     public boolean economic;
     public int group_nr;
     public String group_text;

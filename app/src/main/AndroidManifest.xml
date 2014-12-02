@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
@@ -58,6 +58,14 @@
         <activity
             android:name="cz.tsystems.portablecheckin.title_bar"
             android:label="@string/title_activity_title_bar" >
+        </activity>
+        <activity
+            android:name="cz.tsystems.portablecheckin.UnitServiceActivity"
+            android:label="@string/title_activity_unit_service" >
+        </activity>
+        <activity
+            android:name="cz.tsystems.portablecheckin.ItemUnitPacketActivity"
+            android:label="@string/title_activity_item_unit_packet" >
         </activity>
     </application>
 

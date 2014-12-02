@@ -326,6 +326,7 @@ public class CommunicationService extends IntentService {
             // PortableCheckin.checkin =
             // PortableCheckin.parseJson(root.path("CHECKIN"), DMCheckin.class);
         } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+            Log.v(TAG, response);
             JsonNode root = mapper.readTree(response);
             app.setPackets(root.path("WORKSHOP_PACKET_DMS"));
 		} else if (data.getString("ACTION").equalsIgnoreCase("GetSilhouette")) {
