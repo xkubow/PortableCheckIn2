@@ -70,6 +70,8 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_sipka2));
 		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_nabidka2));
 
+        app.setActualActivity(this);
+
 	}
 
 	private void registerRecaiver() {

@@ -295,10 +295,15 @@ public class MainActivity extends BaseFragment {
 	public void showData(Intent intent) {
 		app.dismisProgressDialog();
 		String action = intent.getAction();
+        String serviceAction = null;
 		if (action.equalsIgnoreCase("recivedData")) {
-			Bundle b = intent.getExtras().getBundle("requestData");
-			String serviceAction = b.getString("ACTION");
-			Log.d("SHOWDATA", intent.getExtras().toString());
+            try {
+                Bundle b = intent.getExtras().getBundle("requestData");
+                serviceAction = b.getString("ACTION");
+                Log.d("SHOWDATA", intent.getExtras().toString());
+            } catch (NullPointerException e) {
+                app.getDialog(getActivity(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON).show();
+            }
 			if (serviceAction.equalsIgnoreCase("CheckinOrderList"))
 				showPlanZakazky();
 			else if (serviceAction.equalsIgnoreCase("DataForCheckIn"))

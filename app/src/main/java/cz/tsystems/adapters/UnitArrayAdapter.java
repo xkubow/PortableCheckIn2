@@ -35,6 +35,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 	private List<DMUnit> data;
     private List<DMUnit> filteredData;
     private PortableCheckin app;
+    private Button selectedButton;
 	
 	public UnitArrayAdapter(Context context, int resource, int textViewResourceId, List<DMUnit> objects) {
 		super(context, resource, textViewResourceId, objects);
@@ -93,7 +94,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 		return v;
 	}
 
-    private void showServiceView(int position) {
+    private void showServiceView(final int position) {
         DMUnit u = data.get(position);
         Iterator<DMPacket> packetIterator =  app.getPackets().iterator();
         List<DMPacket> packetList = new ArrayList<DMPacket>();
@@ -106,9 +107,11 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
                         && packet.chck_part_id == u.chck_part_id)
                     packetList.add(packet);
             }catch (NoSuchElementException e){
-                Log.e(TAG, "chyba");
+                app.getDialog(getContext(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON);
             }
         }
+
+        packetList.addAll(app.getUnitService(u));
 
         PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList);
         AlertDialog.Builder b = new Builder( context);
@@ -119,19 +122,6 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 
             }
         });
-
-
-
-//        final Cursor cursor = app.getPaliva();
-//        b.setSingleChoiceItems(cursor, 0, "TEXT" , new DialogInterface.OnClickListener() {
-//
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                cursor.moveToPosition(which);
-//                app.getCheckin().fuel_id = cursor.getShort(cursor.getColumnIndex("FUEL_ID"));
-//                dialog.dismiss();
-//            }
-//        });
 
         b.show();
 

@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class DMPacket implements Comparable<DMPacket> {
     public String brand_id;
+    public int chck_required_id = 19;
     public int chck_part_id;
     public String chck_part_txt;
     public int chck_unit_id;
@@ -30,6 +31,12 @@ public class DMPacket implements Comparable<DMPacket> {
     public String workshop_packet_description;
     public String workshop_packet_number;
 
+    public DMPacket(){}
+
+    public DMPacket(Cursor cursor) {
+        workshop_packet_description = cursor.getString(cursor.getColumnIndex("CHCK_REQUIRED_TXT"));
+        chck_required_id = cursor.getInt(cursor.getColumnIndex("CHCK_REQUIRED_ID"));
+    }
     public void setDetail_list(ArrayList<DMPacketDetail> _detail_list) {
         this.detail_list = _detail_list;
     }

@@ -49,23 +49,9 @@
             android:name="cz.tsystems.communications.NotificationReceiverActivity"
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
-        <activity android:name="cz.tsystems.base.BaseListGridActivity" />
-        <activity android:name="cz.tsystems.base.BaseListActivity" />
-        <activity
-            android:name="cz.tsystems.portablecheckin.item_unit"
-            android:label="@string/title_activity_item_unit" >
-        </activity>
-        <activity
-            android:name="cz.tsystems.portablecheckin.title_bar"
-            android:label="@string/title_activity_title_bar" >
-        </activity>
         <activity
             android:name="cz.tsystems.portablecheckin.UnitServiceActivity"
             android:label="@string/title_activity_unit_service" >
-        </activity>
-        <activity
-            android:name="cz.tsystems.portablecheckin.ItemUnitPacketActivity"
-            android:label="@string/title_activity_item_unit_packet" >
         </activity>
     </application>
 

@@ -2,6 +2,7 @@ package cz.tsystems.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ import cz.tsystems.base.LowerCaseNamingStrategy;
 import cz.tsystems.model.PrehliadkyModel;
 import cz.tsystems.model.UnitsModel;
 import cz.tsystems.portablecheckin.R;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
 import android.app.Dialog;
@@ -24,6 +27,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -35,7 +39,6 @@ public class PortableCheckin extends Application {
 		
 	final String TAG = PortableCheckin.class.getSimpleName();	
 	private ProgressDialog pPrograssDialog;
-
     public static enum DialogType {
         SINGLE_BUTTON
     }
@@ -65,7 +68,8 @@ public class PortableCheckin extends Application {
 	static public TypeReference<List<DMVehicleInfo>> vehicleInfoTypeRef = new TypeReference<List<DMVehicleInfo>>(){};	
 	static public List<DMVehicleInfo> vehicleInfoList;
 	static public TypeReference<List<DMVehicleHistory>> vehicleHistoryTypeRef = new TypeReference<List<DMVehicleHistory>>(){};	
-	static public List<DMVehicleHistory> vehicleHistoryList;	
+	static public List<DMVehicleHistory> vehicleHistoryList;
+    private Activity actualActivity;
 	
 	
 
@@ -454,12 +458,15 @@ public class PortableCheckin extends Application {
             packets = null;
     }
 
-    public void getUnitService(DMUnit unit) {
-        final String query = "SELECT DATA.*, PPS.CHCK_STATUS_ID, PPS.CHCK_REQUIRED_ID, PPS.SELL_PRICE "
+    public List<DMPacket> getUnitService(DMUnit unit) {
+        final String[] columnsNames = {"_id", "CHCK_REQUIRED_TXT", "CHCK_REQUIRED_ID", "PPS.CHCK_STATUS_ID", "PPS.CHCK_REQUIRED_ID", "PPS.SELL_PRICE"};
+
+
+        final String query = "SELECT  DATA.ROWID AS _id, DATA.*, PPS.CHCK_STATUS_ID, PPS.CHCK_REQUIRED_ID, PPS.SELL_PRICE "
                             + "FROM "
                             + "(SELECT ifnull(RL.CHCK_REQUIRED_TXT_LOC, R.CHCK_REQUIRED_TXT_DEF) AS CHCK_REQUIRED_TXT, R.CHCK_REQUIRED_ID "
                             + "FROM CHCK_REQUIRED R LEFT OUTER JOIN CHCK_REQUIRED_LOC RL "
-                            + "ON R.CHCK_REQUIRED_ID = RL.CHCK_REQUIRED_ID AND RL.LANG_ENUM = '?') DATA, "
+                            + "ON R.CHCK_REQUIRED_ID = RL.CHCK_REQUIRED_ID AND RL.LANG_ENUM = ?) DATA, "
                             + "CHCK_PART_POSITION_STATUS PPS, CHCK_PART_POSITION PP "
                             + "WHERE DATA.CHCK_REQUIRED_ID = PPS.CHCK_REQUIRED_ID "
                             + "AND PPS.CHCK_PART_POSITION_ID = PP.CHCK_PART_POSITION_ID "
@@ -468,19 +475,20 @@ public class PortableCheckin extends Application {
                             + "AND DATA.CHCK_REQUIRED_ID != 20 ";
         Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", part :" +  unit.chck_part_id + ", position:" + unit.chck_position_id);
 
-        Cursor c = theDBProvider.executeQuery(query,new String[] {Locale.getDefault().getLanguage(), String.valueOf(unit.chck_part_id), String.valueOf(unit.chck_position_id)} );
-        c.moveToFirst();
+        List<DMPacket> packetList = new ArrayList<DMPacket>();
 
+        try {
+            Cursor c = theDBProvider.executeQuery(query, new String[]{Locale.getDefault().getLanguage(), String.valueOf(unit.chck_part_id), String.valueOf(unit.chck_position_id)});
+            c.moveToFirst();
 
-//        if([DMSetting sharedDMSetting].pakety != nil)
-//        {
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"CHCK_PART_ID.intValue == %d", [[sd objectForKey:@"CHCK_PART_ID"] intValue]];
-//            NSArray *packetArray = [[DMSetting sharedDMSetting].pakety filteredArrayUsingPredicate:predicate];
-//            pozadArray =   [pozadArray arrayByAddingObjectsFromArray:packetArray];
-//        }
-
-
-
+            while (!c.isAfterLast()) {
+                packetList.add(new DMPacket(c));
+                c.moveToNext();
+            }
+        }catch (SQLiteException e) {
+            getDialog(actualActivity, "error", e.getLocalizedMessage(), DialogType.SINGLE_BUTTON ).show();
+        }
+        return packetList;
     }
 	
 	public void loadVybavy() {
@@ -588,7 +596,7 @@ public class PortableCheckin extends Application {
 	public Dialog getDialog(Context context,String title, String message, DialogType typeButtons ) 
 	{
 		dismisProgressDialog();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(actualActivity);
         builder.setTitle(title)
         .setMessage(message)
                .setCancelable(false);
@@ -603,6 +611,14 @@ public class PortableCheckin extends Application {
 
         AlertDialog alert = builder.create();
         return alert;
-    }	
+    }
+
+    public Activity getActualActivity() {
+        return actualActivity;
+    }
+
+    public void setActualActivity(Activity actualActivity) {
+        this.actualActivity = actualActivity;
+    }
 
 }

@@ -44,6 +44,9 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
             tv = (TextView)v.findViewById(R.id.detailText);
             tv.setText(packet.restrictions);
 
+            tv = (TextView)v.findViewById(R.id.lblCena);
+            tv.setText(String.valueOf(packet.sell_price));
+
             ImageView imgView = (ImageView)v.findViewById(R.id.packetImageView);
             Drawable packetIcon = null;
 
@@ -52,6 +55,8 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
             else
                 packetIcon = context.getResources().getDrawable((packet.economic)?R.drawable.packet_orange_e:R.drawable.packet_orange);
             imgView.setImageDrawable(packetIcon);
+
+
         }
 
         return v;
