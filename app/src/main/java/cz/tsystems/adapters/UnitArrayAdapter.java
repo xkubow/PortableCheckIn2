@@ -9,6 +9,7 @@ import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
+import cz.tsystems.portablecheckin.UnitServiceActivity;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -20,12 +21,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
@@ -63,7 +67,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         text.setText(unit.chck_required_txt);
 
         text = (TextView) v.findViewById(R.id.lblCena);
-        if(unit.sell_price >= 0.0)
+        if(unit.sell_price != null)
             text.setText(String.valueOf(unit.sell_price) + "Kč");
         else
             text.setText("");
@@ -86,7 +90,8 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showServiceView((Integer)v.getTag());
+
+                showServiceView((Button)v);
             }
         });
 
@@ -94,35 +99,89 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
 		return v;
 	}
 
-    private void showServiceView(final int position) {
-        DMUnit u = data.get(position);
-        Iterator<DMPacket> packetIterator =  app.getPackets().iterator();
-        List<DMPacket> packetList = new ArrayList<DMPacket>();
-        DMPacket packet = null;
+    private void showServiceView(final Button unitButtonView) {
+        final DMUnit u = data.get((Integer)unitButtonView.getTag());
+        final List<DMPacket> packetList = new ArrayList<DMPacket>();
+        List<DMPacket> packets = app.getPackets();
+        if(packets != null) {
+            Iterator<DMPacket> packetIterator = app.getPackets().iterator();
+            DMPacket packet = null;
 
-        while(packetIterator.hasNext()) {
-            try {
-                packet = packetIterator.next();
-                if (packet.chck_unit_id == u.chck_unit_id
-                        && packet.chck_part_id == u.chck_part_id)
-                    packetList.add(packet);
-            }catch (NoSuchElementException e){
-                app.getDialog(getContext(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON);
+            while (packetIterator.hasNext()) {
+                try {
+                    packet = packetIterator.next();
+                    if (packet.chck_unit_id == u.chck_unit_id
+                            && packet.chck_part_id == u.chck_part_id)
+                        packetList.add(packet);
+                } catch (NoSuchElementException e) {
+                    app.getDialog(getContext(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON);
+                }
             }
         }
 
         packetList.addAll(app.getUnitService(u));
-
+        // get prompts.xml view
+/*        LayoutInflater li = LayoutInflater.from(context);
+        View view = li.inflate(R.layout.activity_unit_service, null);
+        final EditText editText = (EditText)view.findViewById(R.id.txtCena);
+        ListView listView = (ListView) view.findViewById(R.id.serviceList);
         PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList);
-        AlertDialog.Builder b = new Builder( context);
-        b.setTitle("Example");
-        b.setSingleChoiceItems(packetsArrayAdapter,0,new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        listView.setAdapter(packetsArrayAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DMPacket packet = packetList.get(position);
+                editText.setText(packet.sell_price);
+                if(packet.workshop_packet_number != null) {
+                    u.packet = packet;
+                    u.chck_required_id = 19;
+                    u.chck_required_txt = packet.workshop_packet_description;
+                    if(packet.restrictions != null)
+                        u.chck_required_txt += " " + packet.restrictions;
+                }
             }
         });
-
+        AlertDialog.Builder b = new Builder( context);
+        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DMPacket packet = packetList.get((Integer)unitButtonView.getTag());
+                View v = (View)unitButtonView.getParent();
+                TextView tv = (TextView)v.findViewById(R.id.lblRequired);
+                tv.setText(u.chck_required_txt);
+                tv = (TextView)v.findViewById(R.id.lblCena);
+                u.sell_price = editText.getText().toString();
+                tv.setText(u.sell_price);
+                unitButtonView.setBackground(packet.getPacketIcon(getContext()));
+            }
+        });
+        b.setTitle("Example");
+        b.setView(view);
+        */
+        UnitServiceActivity b = new UnitServiceActivity(getContext(), u, packetList){
+            @Override
+            public void OnOkClick(final DMPacket selectedPaked, final String cena){
+                if(selectedPaked.workshop_packet_number != null) {
+                    u.packet = selectedPaked;
+                    u.chck_required_id = 19;
+                    u.chck_required_txt = selectedPaked.workshop_packet_description;
+                    if(selectedPaked.restrictions != null)
+                        u.chck_required_txt += " " + selectedPaked.restrictions;
+                } else {
+                    u.packet = null;
+                    u.chck_required_txt = selectedPaked.workshop_packet_description;
+                    u.chck_required_id = selectedPaked.chck_required_id;
+                }
+                View v = (View)unitButtonView.getParent();
+                TextView tv = (TextView)v.findViewById(R.id.lblRequired);
+                tv.setText(u.chck_required_txt);
+                tv = (TextView)v.findViewById(R.id.lblCena);
+                u.sell_price = cena;
+                tv.setText(u.sell_price);
+                unitButtonView.setBackground(selectedPaked.getPacketIcon(getContext()));
+            }
+        };
         b.show();
 
     }

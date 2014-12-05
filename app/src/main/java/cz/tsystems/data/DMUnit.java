@@ -14,7 +14,8 @@ public class DMUnit implements Comparable<DMUnit> {
     public int chck_status_id;
     public int chck_required_id;
     public String chck_required_txt;
-	public double sell_price;
+	public String sell_price;
+    public DMPacket packet;
 	
 	public DMUnit(Cursor cursor) {
 		int columnName;
@@ -27,7 +28,7 @@ public class DMUnit implements Comparable<DMUnit> {
 		if((columnName = cursor.getColumnIndex("CHCK_PART_TXT")) != -1)
 			chck_part_txt = cursor.getString(columnName);
 		if((columnName = cursor.getColumnIndex("SELL_PRICE")) != -1)
-			sell_price = cursor.getDouble(columnName);
+			sell_price = cursor.getString(columnName);
 		if((columnName = cursor.getColumnIndex("CHCK_PART_ID")) != -1)
 			chck_part_id = cursor.getInt(columnName);
 		if((columnName = cursor.getColumnIndex("CHCK_UNIT_ID")) != -1)
@@ -40,8 +41,8 @@ public class DMUnit implements Comparable<DMUnit> {
             chck_required_id = cursor.getInt(columnName);
         if((columnName = cursor.getColumnIndex("CHCK_REQUIRED_TXT")) != -1)
             chck_required_txt = cursor.getString(columnName);
-		if((columnName = cursor.getColumnIndex("sell_price")) != -1)
-			sell_price = (cursor.isNull(columnName))?-1.0:cursor.getDouble(columnName);
+//		if((columnName = cursor.getColumnIndex("sell_price")) != -1)
+//			sell_price = (cursor.isNull(columnName))?-1.0:cursor.getDouble(columnName);
 	}
 	
 	@Override

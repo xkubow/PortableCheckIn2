@@ -596,7 +596,7 @@ public class PortableCheckin extends Application {
 	public Dialog getDialog(Context context,String title, String message, DialogType typeButtons ) 
 	{
 		dismisProgressDialog();
-        AlertDialog.Builder builder = new AlertDialog.Builder(actualActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
         .setMessage(message)
                .setCancelable(false);
