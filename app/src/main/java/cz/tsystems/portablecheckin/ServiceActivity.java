@@ -2,12 +2,13 @@ package cz.tsystems.portablecheckin;
 
 import java.util.List;
 
-import cz.tsystems.adapters.PrehliadkyCursorAdapter;
+import cz.tsystems.adapters.PrehliadkyArrayAdapter;
 import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.data.DMBaseItem;
+import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.DMVybava;
@@ -15,7 +16,6 @@ import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.model.PrehliadkyModel;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,15 +33,15 @@ public class ServiceActivity extends BaseFragment {
     private final static String TAG = ServiceActivity.class.getSimpleName();	
 //    public static final String ARG_SECTION_NUMBER = "section_number";
 	private PrehliadkyModel prehliadkaModel;
-	private PrehliadkyCursorAdapter prehliadkyAdapter;
+	private PrehliadkyArrayAdapter prehliadkyAdapter;
 	private VybavaArrayAdapter vybavaAdapter;
     private ServiceArrayAdapter serviceAdapter;
 	
     private static View rootView;
     ListView listMaster, listDetail;
-    private Cursor masterCursor = null;
+    private List<DMPrehliadkyMaster> masterList = null;
 	private UnitArrayAdapter unitAdapter;
-    private int selectedPrehliadky;
+    private DMPrehliadkyMaster selectedPrehliadky;
     private OnItemClickListener onDetialClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -70,29 +70,23 @@ public class ServiceActivity extends BaseFragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Cursor c = prehliadkaModel.getPrehliadky();
-				c.moveToPosition(position);
-				Bundle data = new Bundle();
-                ServiceActivity.this.selectedPrehliadky = c.getInt(c.getColumnIndex("_id"));
-//				long unitId = c.getLong(c.getColumnIndex("CHCK_UNIT_ID"));
-//				if(c.getLong(c.getColumnIndex("CHCK_UNIT_ID")) == -1) {
-                    data.putLong("PREHLIADKA_ID", c.getLong(c.getColumnIndex("_id")));
-					data.putLong("CHCK_UNIT_ID", c.getLong(c.getColumnIndex("CHCK_UNIT_ID")));
-					data.putBoolean("OBLIGATORY", c.getInt(c.getColumnIndex("_id")) == -2); //povinne vybavy
-//				}
-				refreshDetail(data);
+                DMPrehliadkyMaster prehliadkyMaster = masterList.get(position);
+                ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
+				refreshDetail(null);
 			}
 		});
 
         listDetail.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
+//                final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
                 CheckBox b = (CheckBox)view.findViewById(R.id.checkBox);
 
-                if(prehlaidkaId < 0) {
+                DMPrehliadkyMaster prehliadkaMaster = ServiceActivity.this.selectedPrehliadky;
+
+                if(prehliadkaMaster.typ == DMPrehliadkyMaster.eSTATIC) {
                     DMBaseItem item = null;
-                    switch (prehlaidkaId) {
+                    switch (prehliadkaMaster.rowId) {
                         case -1:
                         case -2:
                             item = vybavaAdapter.getItem(position);
@@ -105,7 +99,7 @@ public class ServiceActivity extends BaseFragment {
                         item.checked = !item.checked;
                         b.setChecked(item.checked);
                     }
-                } else {
+                } else if(prehliadkaMaster.typ == DMPrehliadkyMaster.eUNIT) {
                     DMUnit item = unitAdapter.getItem(position);
 
                     if(item != null) {
@@ -131,13 +125,15 @@ public class ServiceActivity extends BaseFragment {
     	if(prehliadkaModel == null)
     		prehliadkaModel = new PrehliadkyModel(getActivity());
     	
-    	masterCursor = prehliadkaModel.getPrehliadky();
-    	
+    	masterList = prehliadkaModel.getPrehliadky();
+
 		if (prehliadkyAdapter == null) {
-			prehliadkyAdapter = new PrehliadkyCursorAdapter(getActivity(), layout.item_prehliadky, masterCursor);
+			prehliadkyAdapter = new PrehliadkyArrayAdapter(getActivity(), 0, layout.item_prehliadky, masterList);
 			listMaster.setAdapter(prehliadkyAdapter);
-		} else
-			prehliadkyAdapter.changeCursor(masterCursor);
+		} else {
+            prehliadkyAdapter.clear();
+            prehliadkyAdapter.addAll(masterList);
+        }
     }
     
     public void refreshDetail(Bundle data) {

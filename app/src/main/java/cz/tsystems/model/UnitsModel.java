@@ -1,9 +1,11 @@
 package cz.tsystems.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
@@ -20,16 +22,13 @@ public class UnitsModel extends Model {
 		mDb = ((PortableCheckin)mContext.getApplicationContext()).getTheDBProvider().getReadableDatabase();
 	}
 	
-	public List<List<DMUnit>> loadUnits(Cursor cursor) {
+	public List<List<DMUnit>> loadUnits(List<DMPrehliadkyMaster> prehliadkyMasterList) {
 		
 		List<List<DMUnit>> units = new ArrayList<List<DMUnit>>();
-		final int columnIndex = cursor.getColumnIndex("CHCK_UNIT_ID");
-		cursor.moveToFirst();
-		while(!cursor.isAfterLast()) {
-			final int unitId = cursor.getInt(columnIndex);
+		for (Iterator<DMPrehliadkyMaster> iterator = prehliadkyMasterList.iterator(); iterator.hasNext();) {
+			final int unitId = iterator.next().unitId;
 			if(unitId > 0 )
 				units.add(loadUnit(unitId));
-			cursor.moveToNext();
 		}
 		return units;
 	}

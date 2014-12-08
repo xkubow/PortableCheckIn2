@@ -79,9 +79,12 @@ public class LoginActivity extends Activity {
 				}
 					
 				Log.v(TAG, "Checkin DB after loaded all data from server");
-				if(!isDBUpToDate())
-					//TODO zobrazit hlasku o chybnom updatnuti DB
-					Log.d("UPDATE DB", "nepodarilo sa updatnut DB");
+				if(!isDBUpToDate()) {
+                    //TODO zobrazit hlasku o chybnom updatnuti DB
+                    Log.d("UPDATE DB", "nepodarilo sa updatnut DB");
+                    app.dismisProgressDialog();
+                    app.getDialog(context, "Chyba", "nepodarilo sa updatnut DB", PortableCheckin.DialogType.SINGLE_BUTTON).show();
+                }
 				else
 					startApp();
 			}

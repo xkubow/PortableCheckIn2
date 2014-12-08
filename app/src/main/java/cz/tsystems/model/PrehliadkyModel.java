@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.tsystems.data.DMPacket;
+import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMScenar;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
@@ -30,7 +31,8 @@ public class PrehliadkyModel extends Model {
 		mDb = ((PortableCheckin)mContext.getApplicationContext()).getTheDBProvider().getReadableDatabase();
 	}
 	
-	public Cursor getPrehliadky() {
+	public List<DMPrehliadkyMaster> getPrehliadky() {
+        List<DMPrehliadkyMaster> prehliadkyMasterList = new ArrayList<DMPrehliadkyMaster>();
         final PortableCheckin app = (PortableCheckin)getContext().getApplicationContext();
 		final DMScenar scenar = app.getSelectedScenar();
 		final String query = "SELECT DATA.ROWID AS _id, DATA.TEXT AS TEXT, DATA.CHCK_UNIT_ID AS CHCK_UNIT_ID, SU.MANDATORY AS MANDATORY, -1 AS PACKET_GROUP_NR FROM "
@@ -39,17 +41,16 @@ public class PrehliadkyModel extends Model {
 		       	+ "WHERE DATA.CHCK_UNIT_ID = SU.CHCK_UNIT_ID "
 		       	+ "AND SU.CHECK_SCENARIO_ID = ?";
 		Cursor c = mDb.rawQuery(query,new String[] {Locale.getDefault().getLanguage(), String.valueOf(scenar.check_scenario_id)} );
+        int lastId = 0;
 
-				
-		// Create a MatrixCursor filled with the rows you want to add.
-		MatrixCursor matrixCursor = new MatrixCursor(new String[] { "_id", "TEXT", "CHCK_UNIT_ID", "MANDATORY", "PACKET_GROUP_NR" });
-		matrixCursor.addRow(new Object[] { prehliadka_id[PREHLAIDKA_ENUM.eVYBAVY.ordinal()], getContext().getResources().getString(R.string.Vybavy), (long) -1,  scenar.equipment_mandat?1:0, -1});
-		matrixCursor.addRow(new Object[] { prehliadka_id[PREHLAIDKA_ENUM.ePOV_VYBAVY.ordinal()], getContext().getResources().getString(R.string.PovinneVybavy), (long) -1,  scenar.oblig_equipment_mandat?1:0, -1});
-        matrixCursor.addRow(new Object[] { prehliadka_id[PREHLAIDKA_ENUM.eSERVIS.ordinal()], getContext().getResources().getString(R.string.service), (long) -1,  scenar.services_mandat?1:0, -1});
-
-		// Merge your existing cursor with the matrixCursor you created.
-		MergeCursor mergeCursor = new MergeCursor(new Cursor[] { matrixCursor, c });
-		mergeCursor.moveToNext();
+        c.moveToFirst();
+        while(!c.isAfterLast()&& !c.isBeforeFirst()) {
+            prehliadkyMasterList.add(new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), (c.getInt(c.getColumnIndex("MANDATORY"))==1),DMPrehliadkyMaster.eUNIT));
+            c.moveToNext();
+        }
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(prehliadka_id[PREHLAIDKA_ENUM.eVYBAVY.ordinal()], getContext().getResources().getString(R.string.Vybavy), -1, scenar.equipment_mandat,DMPrehliadkyMaster.eSTATIC));
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(prehliadka_id[PREHLAIDKA_ENUM.ePOV_VYBAVY.ordinal()], getContext().getResources().getString(R.string.PovinneVybavy), -1, scenar.oblig_equipment_mandat,DMPrehliadkyMaster.eSTATIC));
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(prehliadka_id[PREHLAIDKA_ENUM.eSERVIS.ordinal()], getContext().getResources().getString(R.string.service), -1, scenar.services_mandat,DMPrehliadkyMaster.eSTATIC));
 
         if(app.getPackets() != null) {
             List<Integer> groupsNr = new ArrayList<Integer>();
@@ -57,13 +58,13 @@ public class PrehliadkyModel extends Model {
                 final DMPacket packet = i.next();
                 if (!groupsNr.contains(packet.group_nr)) {
                     groupsNr.add(packet.group_nr);
-                    matrixCursor.addRow(new Object[]{(-1 * matrixCursor.getCount()), packet.group_text, -1, 0, packet.group_nr});
+                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, packet.group_text, packet.group_nr, false,DMPrehliadkyMaster.eGROUP));
                 }
             }
             groupsNr = null;
         }
 
-    	return mergeCursor;
+    	return prehliadkyMasterList;
 	}
 
     public int getPrehliadkaId(PREHLAIDKA_ENUM prehlaidka) {
