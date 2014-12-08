@@ -48,7 +48,7 @@ public class DMPacket implements Comparable<DMPacket> {
 
     @Override
     public int compareTo(DMPacket another) {
-        return 0;
+        return this.workshop_packet_number.compareTo(another.workshop_packet_number);
     }
 
 

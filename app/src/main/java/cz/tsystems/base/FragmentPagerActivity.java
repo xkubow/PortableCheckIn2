@@ -39,7 +39,17 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-		
+
+            String action = intent.getAction();
+            if(action.equalsIgnoreCase("recivedData")) {
+                final Bundle b = intent.getExtras().getBundle("recivedData");
+                if(b != null && b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+                    ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(3);
+                    serviceFragment.refreshMaster();
+                }
+            }
+
+
 			theFragment = (BaseFragment) theFragments.get(getActionBar().getSelectedTab().getPosition());
 //			Log.d("FRAGMENT", theFragment.getClass().getSimpleName());
 			theFragment.showData(intent);
