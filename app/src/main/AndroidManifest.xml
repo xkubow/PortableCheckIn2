@@ -50,6 +50,11 @@
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
         <activity
+            android:name="cz.tsystems.portablecheckin.BaseGridActivity"
+            android:label="@string/title_activity_base_grid"
+            android:launchMode="singleTop"
+            android:theme="@style/PopupTheme" />
+        <activity
             android:name="cz.tsystems.portablecheckin.UnitServiceActivity"
             android:label="@string/title_activity_unit_service" >
         </activity>

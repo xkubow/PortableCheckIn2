@@ -44,17 +44,16 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
         TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
         text.setText(service.text);
 
-        CheckBox serCheck = (CheckBox)v.findViewById(R.id.checkBox);
+        final CheckBox serCheck = (CheckBox)v.findViewById(R.id.checkBox);
         serCheck.setTag(position);
         serCheck.setChecked(service.checked);
 
-        serCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                DMService serice = data.get((Integer)buttonView.getTag());
-                service.checked = isChecked;
-
+        serCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox chkBtn = (CheckBox)v;
+                DMService serice = data.get((Integer)chkBtn.getTag());
+                service.checked = chkBtn.isChecked();
             }
         });
 

@@ -22,10 +22,10 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 	private Filter filter;
 
 	public VybavaArrayAdapter(Context context, int resource, int textViewResourceId, List<DMVybava> objects) {
-		super(context, resource, textViewResourceId, new ArrayList<DMVybava>());
+		super(context, resource, textViewResourceId, objects);
 		this.context = context;
 		this.data = objects;
-		this.filteredData  = new ArrayList<DMVybava>();
+		this.filteredData  = objects;//new ArrayList<DMVybava>();
     }
 	
 	@Override
@@ -44,18 +44,17 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
         vybCheck.setChecked(vybava.checked);
         vybCheck.setTag(position);
 
-        vybCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                DMVybava vybava = filteredData.get((Integer)buttonView.getTag());
-                vybava.checked = isChecked;
-
+        vybCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox chckBtn = (CheckBox)v;
+                DMVybava vybava = filteredData.get((Integer)chckBtn.getTag());
+                vybava.checked = chckBtn.isChecked();
             }
         });
-		return v;
+    	return v;
 	}
-	
+
 	@Override
 	public Filter getFilter(){
 

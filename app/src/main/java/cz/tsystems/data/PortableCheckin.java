@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,6 +33,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -458,6 +460,17 @@ public class PortableCheckin extends Application {
             packets = null;
     }
 
+    public List<DMPacket> getPaket(final int groupNr) {
+        List<DMPacket> filtered = new ArrayList<DMPacket>();
+        for(Iterator<DMPacket> iterator = packets.iterator(); iterator.hasNext();) {
+            DMPacket paket = iterator.next();
+            if(paket.group_nr == groupNr)
+                filtered.add(paket);
+        }
+
+        return filtered;
+    }
+
     public List<DMPacket> getUnitService(DMUnit unit) {
         final String[] columnsNames = {"_id", "CHCK_REQUIRED_TXT", "CHCK_REQUIRED_ID", "PPS.CHCK_STATUS_ID", "PPS.CHCK_REQUIRED_ID", "PPS.SELL_PRICE"};
 
@@ -497,11 +510,10 @@ public class PortableCheckin extends Application {
 				+ "AND CEL.LANG_ENUM = ?) "
 				+ "WHERE ifnull(BRAND_ID, ?) = ? ";
 		Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", brand :" + checkin.brand_id );
-		
+        vybavaList.clear();
 		Cursor c = theDBProvider.executeQuery(query,new String[] {Locale.getDefault().getLanguage(), checkin.brand_id, checkin.brand_id} );
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
-			
 			Log.v(TAG, String.valueOf(c.getInt(c.getColumnIndex("CAR_EQUIPMENT_ID"))) + " :" + String.valueOf(c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT"))));
 			vybavaList.add(new DMVybava(c, true));
 			c.moveToNext();
@@ -521,6 +533,7 @@ public class PortableCheckin extends Application {
                 + "AND SHOW_SERVICE = 'true' AND ? BETWEEN VALID_FROM AND VALID_UNTIL ";
 
         Log.v(TAG, query + ", language :" + Locale.getDefault().getLanguage() + ", BRAND_ID:" + checkin.brand_id + ", now :" + now.format("%Y-%m-%d %H:%M:%S") );
+        serviceList.clear();
 
         Cursor c = theDBProvider.executeQuery(query,new String[] {Locale.getDefault().getLanguage(), checkin.brand_id, checkin.brand_id, now.format("%Y-%m-%d %H:%M:%S")} );
         c.moveToFirst();
@@ -541,10 +554,21 @@ public class PortableCheckin extends Application {
         return vybavaList.get(location);
     }
 
-    public List<DMVybava> getVybavaList() {
+    public List<DMVybava> getVybavaList(final boolean obligatory) {
+        List<DMVybava> filtered = new ArrayList<DMVybava>();
+
         if(vybavaList == null)
-            vybavaList = new ArrayList<DMVybava>();
-        return vybavaList;
+            return new ArrayList<DMVybava>();
+
+        for(Iterator<DMVybava> iterator = vybavaList.iterator(); iterator.hasNext();) {
+            final DMVybava vybava = iterator.next();
+            if(vybava.obligatory_equipment == obligatory)
+                filtered.add(vybava);
+        }
+
+        Log.i(TAG, String.valueOf(filtered.size()));
+
+        return filtered;
     }
 
     public void setVybavaList(List<DMVybava> vybavaList) {

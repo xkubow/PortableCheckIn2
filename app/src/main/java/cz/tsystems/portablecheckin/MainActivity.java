@@ -375,7 +375,7 @@ public class MainActivity extends BaseFragment {
                             msgIntent.putExtra("licenseTag", plannedOrder.license_tag);
                         app.showProgrssDialog(getActivity());
                         getActivity().startService(msgIntent);
-                        dismiss();
+//                        dismiss();
                     }
                 });
             }
@@ -383,7 +383,10 @@ public class MainActivity extends BaseFragment {
         baseGrid.setTitle(getActivity().getResources().getText(R.string.historia_vozu));
 	    app.dismisProgressDialog();
 
-        baseGrid.show();
+//        baseGrid.show();
+
+        Intent myIntent = new Intent(getActivity(), baseGrid.getClass());
+        getActivity().startActivity(myIntent);
 	}
 	
 	private void showPalivoTypPicker()

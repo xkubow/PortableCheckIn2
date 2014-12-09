@@ -1,13 +1,16 @@
 package cz.tsystems.portablecheckin;
 
+import java.util.Iterator;
 import java.util.List;
 
+import cz.tsystems.adapters.PacketsArrayAdapter;
 import cz.tsystems.adapters.PrehliadkyArrayAdapter;
 import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.data.DMBaseItem;
+import cz.tsystems.data.DMPrehliadky;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
 import cz.tsystems.data.DMUnit;
@@ -36,6 +39,8 @@ public class ServiceActivity extends BaseFragment {
 	private PrehliadkyArrayAdapter prehliadkyAdapter;
 	private VybavaArrayAdapter vybavaAdapter;
     private ServiceArrayAdapter serviceAdapter;
+    private PacketsArrayAdapter paketArrayAdapter;
+    private PortableCheckin app;
 	
     private static View rootView;
     ListView listMaster, listDetail;
@@ -54,6 +59,7 @@ public class ServiceActivity extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        app = (PortableCheckin) getActivity().getApplicationContext();
         if (rootView != null) {
         	Log.v(TAG, rootView.getParent().getClass().toString());
             ViewGroup parent = (ViewGroup) rootView.getParent();
@@ -137,26 +143,17 @@ public class ServiceActivity extends BaseFragment {
     }
     
     public void refreshDetail(Bundle data) {
-        final long id = data.getLong("PREHLIADKA_ID");
-        final long unit_id = data.getLong("CHCK_UNIT_ID");
-		final boolean mandatory = data.getBoolean("OBLIGATORY");
+        final long id = selectedPrehliadky.rowId;
 
-		if (unit_id == -1) {
-            if(id == PrehliadkyModel.prehliadka_id[PrehliadkyModel.PREHLAIDKA_ENUM.eVYBAVY.ordinal()]
-                || id == PrehliadkyModel.prehliadka_id[PrehliadkyModel.PREHLAIDKA_ENUM.ePOV_VYBAVY.ordinal()])
+		if (selectedPrehliadky.typ == DMPrehliadkyMaster.eSTATIC) {
+            if(id == prehliadkaModel.eVYBAVY
+                || id == prehliadkaModel.ePOV_VYBAVY)
             {
-                List<DMVybava> vybava = ((PortableCheckin) getActivity().getApplicationContext()).getVybavaList();
-
-                if (vybavaAdapter == null) {
-                    vybavaAdapter = new VybavaArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, vybava);
-                    listDetail.setAdapter(vybavaAdapter);
-                } else if (listDetail.getAdapter() != vybavaAdapter)
-                    listDetail.setAdapter(vybavaAdapter);
-                else
-                    vybavaAdapter.notifyDataSetChanged();
-
-                vybavaAdapter.getFilter().filter(String.valueOf(mandatory));
-            } else if(id == PrehliadkyModel.prehliadka_id[PrehliadkyModel.PREHLAIDKA_ENUM.eSERVIS.ordinal()])
+                List<DMVybava> vybava = ((PortableCheckin) getActivity().getApplicationContext()).getVybavaList((id == prehliadkaModel.ePOV_VYBAVY));
+                vybavaAdapter = new VybavaArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, vybava);
+                listDetail.setAdapter(vybavaAdapter);
+                vybavaAdapter.notifyDataSetChanged();
+            } else if(id == prehliadkaModel.eSERVIS)
             {
                 List<DMService> service = ((PortableCheckin) getActivity().getApplicationContext()).getServiceList();
 
@@ -168,18 +165,13 @@ public class ServiceActivity extends BaseFragment {
                 else
                     serviceAdapter.notifyDataSetChanged();
             }
-		} else {
-
-			List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(unit_id); 
-
-//			if (unitAdapter == null) {
-//				unitAdapter = new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit);
-				listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
-//			} else if(listDetail.getAdapter() != unitAdapter)		
-//				listDetail.setAdapter(unitAdapter);
-//			else
-//				unitAdapter.notifyDataSetChanged();		
-		}
+		} else if(selectedPrehliadky.typ == DMPrehliadkyMaster.eUNIT) {
+			List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
+			listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
+		} else if (selectedPrehliadky.typ == DMPrehliadkyMaster.eGROUP) {
+            paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr));
+            listDetail.setAdapter(paketArrayAdapter);
+        }
     }
     
 	@Override

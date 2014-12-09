@@ -75,16 +75,15 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         CheckBox chkUnit = (CheckBox)v.findViewById(R.id.checkBox);
         chkUnit.setChecked((unit.chck_status_id == 1));
         chkUnit.setTag(position);
-        chkUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                int position = (Integer)buttonView.getTag();
+        chkUnit.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox chckBtn = (CheckBox)v;
+                int position = (Integer)chckBtn.getTag();
                 DMUnit unit = data.get(position);
-                unit.chck_status_id = isChecked?1:0;
+                unit.chck_status_id = chckBtn.isChecked()?1:0;
             }
         });
-
         Button b = (Button)v.findViewById(R.id.btnService);
         b.setTag(position);
         b.setOnClickListener(new View.OnClickListener() {
@@ -120,45 +119,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         }
 
         packetList.addAll(app.getUnitService(u));
-        // get prompts.xml view
-/*        LayoutInflater li = LayoutInflater.from(context);
-        View view = li.inflate(R.layout.activity_unit_service, null);
-        final EditText editText = (EditText)view.findViewById(R.id.txtCena);
-        ListView listView = (ListView) view.findViewById(R.id.serviceList);
-        PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList);
-        listView.setAdapter(packetsArrayAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DMPacket packet = packetList.get(position);
-                editText.setText(packet.sell_price);
-                if(packet.workshop_packet_number != null) {
-                    u.packet = packet;
-                    u.chck_required_id = 19;
-                    u.chck_required_txt = packet.workshop_packet_description;
-                    if(packet.restrictions != null)
-                        u.chck_required_txt += " " + packet.restrictions;
-                }
-            }
-        });
-        AlertDialog.Builder b = new Builder( context);
-        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DMPacket packet = packetList.get((Integer)unitButtonView.getTag());
-                View v = (View)unitButtonView.getParent();
-                TextView tv = (TextView)v.findViewById(R.id.lblRequired);
-                tv.setText(u.chck_required_txt);
-                tv = (TextView)v.findViewById(R.id.lblCena);
-                u.sell_price = editText.getText().toString();
-                tv.setText(u.sell_price);
-                unitButtonView.setBackground(packet.getPacketIcon(getContext()));
-            }
-        });
-        b.setTitle("Example");
-        b.setView(view);
-        */
         UnitServiceActivity b = new UnitServiceActivity(getContext(), u, packetList){
             @Override
             public void OnOkClick(final DMPacket selectedPaked, final String cena){
