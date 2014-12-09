@@ -5,19 +5,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import cz.tsystems.adapters.PlannedOrderAdapter;
 import cz.tsystems.base.BaseFragment;
-import cz.tsystems.base.BaseGrid;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.vinEditText;
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.DMBrand;
 import cz.tsystems.data.DMCheckin;
-import cz.tsystems.data.DMPlannedOrder;
 import cz.tsystems.data.PortableCheckin;
+import cz.tsystems.dialogs.PlanedOrdersGrid;
 
 //import android.app.DialogFragment;
 import android.support.v4.app.DialogFragment;
@@ -35,25 +32,19 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -335,7 +326,7 @@ public class MainActivity extends BaseFragment {
 	}
 
 	private void showPlanZakazky() {
-
+/*
         final BaseGrid baseGrid = new BaseGrid(getActivity()) {
             @Override
             public View getCaptionView()
@@ -382,11 +373,11 @@ public class MainActivity extends BaseFragment {
         };
         baseGrid.setTitle(getActivity().getResources().getText(R.string.historia_vozu));
 	    app.dismisProgressDialog();
-
+*/
 //        baseGrid.show();
 
-        Intent myIntent = new Intent(getActivity(), baseGrid.getClass());
-        getActivity().startActivity(myIntent);
+        Intent myIntent = new Intent(getActivity(), PlanedOrdersGrid.class);
+        getActivity().startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}
 	
 	private void showPalivoTypPicker()

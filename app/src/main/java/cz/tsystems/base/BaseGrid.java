@@ -1,26 +1,14 @@
 package cz.tsystems.base;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import java.util.List;
-
-import cz.tsystems.adapters.PlannedOrderAdapter;
-import cz.tsystems.data.DMPlannedOrder;
-import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 
 /**
@@ -30,17 +18,17 @@ public class BaseGrid extends Dialog {
     private Activity activity;
 
     public BaseGrid(Activity activity) {
-        super(activity, R.layout.activity_base_grd);
+        super(activity, R.layout.activity_base_grid);
         this.activity = activity;
     }
 
     @Override
     protected void  onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_grd);
+        setContentView(R.layout.activity_base_grid);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.activity_title_bar);
 
-        View v = findViewById(R.id.baseGrdLayaut);//activity.getLayoutInflater().inflate(R.layout.activity_base_grd, null);
+        View v = findViewById(R.id.baseGrdLayaut);//activity.getLayoutInflater().inflate(R.layout.activity_base_grid, null);
         ((LinearLayout) v).addView(getCaptionView(), 0);
 
         ListView lv = (ListView)v.findViewById(R.id.grid);

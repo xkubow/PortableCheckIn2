@@ -5,6 +5,7 @@ import java.util.List;
 
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.PortableCheckin;
+import cz.tsystems.dialogs.BaseGridActivity;
 import cz.tsystems.portablecheckin.*;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -28,6 +29,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 
 //	ViewPager mViewPager;
 //	SectionsPagerAdapter mSectionsPagerAdapter;
+    public static int eGRID_RESULT = 2;
 	private Time stopTime;
 	private BaseFragment theFragment;
 	FragmentManager fm;
@@ -98,13 +100,13 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		}
 	}
 
-/*	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == 2) {
 			if (resultCode == RESULT_OK) {
 
-				switch ((BaseGridActivity.eGrdTypes) data.getExtras().get("type")) {
-				case eGRDPLANZAK:
+				switch (data.getExtras().getInt("type")) {
+				case BaseGridActivity.eGRDPLANZAK:
 					loadCheckinData(data);					
 					break;				
 				default:
@@ -114,22 +116,16 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		}
 
 	}
-	
+
 	public void loadCheckinData(Intent data)
 	{
-		Intent msgIntent = new Intent(this, CommunicationService.class);
-		msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
-		msgIntent.putExtra("ACTION", "DataForCheckIn");
-		if(data.hasExtra("PLANNED_ORDER_ID"))
-			msgIntent.putExtra("plannedorderid", data.getStringExtra("PLANNED_ORDER_ID"));
-		if(data.hasExtra("CHECKIN_ID"))
-			msgIntent.putExtra("checkin_id", data.getStringExtra("CHECKIN_ID"));
-		if(data.hasExtra("licenseTag"))
-			msgIntent.putExtra("licenseTag", data.getStringExtra("licenseTag"));
-		if(data.hasExtra("VIN"))
-			msgIntent.putExtra("vin", data.getStringExtra("VIN"));			
-		this.startService(msgIntent);
-	}*/
+        Intent msgIntent = new Intent(this, CommunicationService.class);
+        msgIntent.fillIn(data, Intent.FILL_IN_DATA);
+        msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
+        msgIntent.putExtra("ACTION", "DataForCheckIn");
+        app.showProgrssDialog(this);
+        this.startService(msgIntent);
+	}
 
 	@Override
 	protected void onStart() {
