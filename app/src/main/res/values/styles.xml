@@ -22,7 +22,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
-    <style name="TransparentActivity" parent="@android:style/Theme.Black.NoTitleBar">
+    <style name="TransparentActivity" parent="@android:style/Theme.Holo.Light">
     	<item name="android:windowBackground">@android:color/transparent</item>
     	<item name="android:colorBackgroundCacheHint">@null</item>
     	<item name="android:windowIsTranslucent">true</item>

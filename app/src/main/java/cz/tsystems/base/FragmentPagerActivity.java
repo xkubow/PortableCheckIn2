@@ -10,22 +10,25 @@ import cz.tsystems.portablecheckin.*;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.ActionBar;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
+//import android.support.v4.app.Fragment;
+//import android.support.v4.app.FragmentActivity;
+//import android.support.v4.app.FragmentManager;
+//import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class FragmentPagerActivity extends FragmentActivity implements TabListener {
+public class FragmentPagerActivity extends Activity implements TabListener {
 
 //	ViewPager mViewPager;
 //	SectionsPagerAdapter mSectionsPagerAdapter;
@@ -34,7 +37,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 	private BaseFragment theFragment;
 	FragmentManager fm;
 	PortableCheckin app;
-	List<Fragment> theFragments = new ArrayList<Fragment>(4);	
+	List<Fragment> theFragments = new ArrayList<Fragment>(4);
 	
 
 	BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -70,7 +73,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		fm = getSupportFragmentManager();
+		fm = getFragmentManager();
 		
 		theFragments.add(new MainActivity());
 		theFragments.add(new BodyActivity());
@@ -90,7 +93,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 		IntentFilter filterSend = new IntentFilter();
 		filterSend.addAction("recivedData");
 		filterSend.addAction("grdResponse");
-		LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filterSend);
+		registerReceiver(receiver, filterSend);
 	}
 	
 	public void updateData() {
@@ -113,7 +116,9 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 					break;
 				}
 			}
-		}
+		} else if (requestCode == 1) {
+            app.dismisProgressDialog();
+        }
 
 	}
 
@@ -158,7 +163,9 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 
 	@Override
 	protected void onStop() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        try {
+            unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e){}
 		stopTime = new Time();
 		stopTime.setToNow();
 		super.onStop();
@@ -166,7 +173,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 
 	@Override
 	protected void onPause() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+		unregisterReceiver(receiver);
 		super.onPause();
 	}
 
@@ -190,7 +197,7 @@ public class FragmentPagerActivity extends FragmentActivity implements TabListen
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
     	final int pos = tab.getPosition();		
     	Fragment f = theFragments.get(pos);
-    	android.support.v4.app.FragmentTransaction transaction = fm.beginTransaction(); 
+    	FragmentTransaction transaction = fm.beginTransaction();
     	transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);		    	
     	transaction.replace(R.id.TheFragment, f);
 //    	transaction.addToBackStack(null); //nechcem fungujuce Back tlacitko

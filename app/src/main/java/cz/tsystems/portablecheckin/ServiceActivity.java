@@ -42,7 +42,7 @@ public class ServiceActivity extends BaseFragment {
     private PacketsArrayAdapter paketArrayAdapter;
     private PortableCheckin app;
 	
-    private static View rootView;
+//    private static View rootView;
     ListView listMaster, listDetail;
     private List<DMPrehliadkyMaster> masterList = null;
 	private UnitArrayAdapter unitAdapter;
@@ -59,20 +59,20 @@ public class ServiceActivity extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(layout.activity_service, container, false);
         app = (PortableCheckin) getActivity().getApplicationContext();
-        if (rootView != null) {
+/*        if (rootView != null && rootView.getParent() != null) {
         	Log.v(TAG, rootView.getParent().getClass().toString());
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null)
                 parent.removeView(rootView);
-        	return rootView;            
-        }    	
-        rootView = inflater.inflate(layout.activity_service, container, false);
+        	return rootView;
+        }*/
         listMaster = (ListView) rootView.findViewById(id.listMaster);
 //        listMaster.setAdapter(prehliadkyAdapter);
         listDetail = (ListView) rootView.findViewById(id.listDetail);
 
-        listMaster.setOnItemClickListener(new OnItemClickListener() {
+/*        listMaster.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -114,16 +114,21 @@ public class ServiceActivity extends BaseFragment {
                     }
                 }
             }
-        });
+        });*/
 
 
 
         return rootView;
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
     
     @Override
     public void onResume() {
-    	refreshMaster();
+//    	refreshMaster();
     	super.onResume();
     }
     

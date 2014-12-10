@@ -143,5 +143,6 @@
     <string name="title_activity_item_unit_packet">ItemUnitPacketActivity</string>
     <string name="title_activity_item_paket">item_paket</string>
     <string name="title_activity_base_grid">BaseGridActivity</string>
+    <string name="title_activity_item_packet">Item_packet</string>
 
 </resources>

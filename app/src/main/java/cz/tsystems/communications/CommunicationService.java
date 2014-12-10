@@ -296,7 +296,8 @@ public class CommunicationService extends IntentService {
 	{
 		Intent i = new Intent("recivedData");
 		i.putExtra("ErrorMsg", msg );
-		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        sendBroadcast(i);
+//		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 
 	private void decodeError(HttpResponse response) {
@@ -339,7 +340,8 @@ public class CommunicationService extends IntentService {
 
 		i.putExtra("requestData", data);
 		i.putExtra("loadDataDone", loadDataDone);
-		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
+        sendBroadcast(i);
+//		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 
 	private void decodeStaticData(String response)

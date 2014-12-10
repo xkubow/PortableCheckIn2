@@ -123,7 +123,7 @@ public class LoginActivity extends Activity {
     	// TODO Auto-generated method stub
         IntentFilter filterSend = new IntentFilter();
         filterSend.addAction("recivedData");
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filterSend);
+        registerReceiver(receiver, filterSend);
     	super.onStart();        
     }
     
@@ -241,14 +241,16 @@ public class LoginActivity extends Activity {
     @Override
     protected void onDestroy() {
       // Unregister since the activity is about to be closed.
-    	LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        try {
+            unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e){}
     	super.onDestroy();
     }
     
     @Override
     protected void onStop() {
     	// TODO Auto-generated method stub
-    	LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);    	
+    	unregisterReceiver(receiver);
     	super.onStop();
     }
     

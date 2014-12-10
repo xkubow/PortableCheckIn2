@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
@@ -14,20 +14,21 @@ android {
 
     defaultConfig {
         applicationId "cz.tsystems.portablecheckin"
-        minSdkVersion 14
-        targetSdkVersion 18
+        minSdkVersion 18
+        targetSdkVersion 21
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:support-v4:21+'
+    compile "com.android.support:appcompat-v7:21+"
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')
     compile files('libs/httpmime-4.2.5.jar')

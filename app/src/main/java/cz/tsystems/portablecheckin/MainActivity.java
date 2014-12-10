@@ -195,7 +195,7 @@ public class MainActivity extends BaseFragment {
 		theDatePicker = new DatePicker(getActivity());		
 		txtRZV = (EditText) values1.findViewById(R.id.txtSPZ);
 		txtRZV.setOnEditorActionListener(rzvOnEditorActionListener);		
-		txtVIN = (vinEditText) values2.findViewById(R.id.txtVIN);		
+		txtVIN = (vinEditText) values2.findViewById(R.id.txtVIN);
 		txtVIN.setOnEditorActionListener(vinEditorActionListener);
 		
 		lblLoggetUser = (TextView) rootView.findViewById(R.id.lblLoggetUser);
