@@ -72,7 +72,7 @@ public class ServiceActivity extends BaseFragment {
 //        listMaster.setAdapter(prehliadkyAdapter);
         listDetail = (ListView) rootView.findViewById(id.listDetail);
 
-/*        listMaster.setOnItemClickListener(new OnItemClickListener() {
+        listMaster.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -114,7 +114,7 @@ public class ServiceActivity extends BaseFragment {
                     }
                 }
             }
-        });*/
+        });
 
 
 
@@ -128,7 +128,7 @@ public class ServiceActivity extends BaseFragment {
     
     @Override
     public void onResume() {
-//    	refreshMaster();
+    	refreshMaster();
     	super.onResume();
     }
     
@@ -144,6 +144,8 @@ public class ServiceActivity extends BaseFragment {
 		} else {
             prehliadkyAdapter.clear();
             prehliadkyAdapter.addAll(masterList);
+            prehliadkyAdapter.notifyDataSetChanged();
+            listMaster.setAdapter(prehliadkyAdapter);
         }
     }
     
@@ -174,7 +176,7 @@ public class ServiceActivity extends BaseFragment {
 			List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
 			listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
 		} else if (selectedPrehliadky.typ == DMPrehliadkyMaster.eGROUP) {
-            paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr));
+            paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr), false);
             listDetail.setAdapter(paketArrayAdapter);
         }
     }

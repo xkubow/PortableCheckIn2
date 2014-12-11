@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,9 +20,11 @@ import cz.tsystems.portablecheckin.R;
  */
 public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
     Context context;
-    public PacketsArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPacket> objects) {
+    boolean isUnitPaket;
+    public PacketsArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPacket> objects, final boolean isUnitPaket) {
         super(context, resource, textViewResourceId, objects);
         this.context = context;
+        this.isUnitPaket = isUnitPaket;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
         View v = convertView;
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.item_unit_packet, null);
+            v = vi.inflate(R.layout.item_packet, null);
         }
 
 
@@ -46,6 +49,11 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
 
             tv = (TextView)v.findViewById(R.id.lblCena);
             tv.setText(String.valueOf(packet.sell_price));
+
+            if(!isUnitPaket) {
+                CheckBox chkPaket = (CheckBox) v.findViewById(R.id.chkPaket);
+                chkPaket.setVisibility(View.VISIBLE);
+            }
 
             ImageView imgView = (ImageView)v.findViewById(R.id.packetImageView);
             imgView.setImageDrawable(packet.getPacketIcon(context));

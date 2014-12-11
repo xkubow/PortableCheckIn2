@@ -61,7 +61,7 @@ public class UnitServiceActivity extends Dialog {
             }
         });
         ListView listView = (ListView) view.findViewById(R.id.serviceList);
-        PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList);
+        PacketsArrayAdapter packetsArrayAdapter = new PacketsArrayAdapter( context, android.R.layout.simple_spinner_dropdown_item, 0, packetList, true);
         listView.setAdapter(packetsArrayAdapter);
         listView.setOnItemClickListener(onItemClick);
         setContentView(view);
