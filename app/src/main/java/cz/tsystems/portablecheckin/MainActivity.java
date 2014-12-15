@@ -186,16 +186,17 @@ public class MainActivity extends BaseFragment {
 		View rootView = inflater.inflate(R.layout.activity_main, container, false);
 		
 //		View baseContainer = rootView.findViewById(R.id.baseContainer);
-		View layout = rootView.findViewById(R.id.dataContainer);
+//		View layout = rootView.findViewById(R.id.dataContainer);
 //		View topContainer = rootView.findViewById(R.id.TopContainer);
 		
-		values1 = (RelativeLayout) layout.findViewById(R.id.mainValuelayout1);
-		values2 = (RelativeLayout) layout.findViewById(R.id.mainValuelayout2);
+		values1 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout1);
+		values2 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout2);
 		
 		theDatePicker = new DatePicker(getActivity());		
 		txtRZV = (EditText) values1.findViewById(R.id.txtSPZ);
-		txtRZV.setOnEditorActionListener(rzvOnEditorActionListener);		
-		txtVIN = (vinEditText) values2.findViewById(R.id.txtVIN);
+		txtRZV.setOnEditorActionListener(rzvOnEditorActionListener);
+        EditText edtTmp = (EditText) values2.findViewById(R.id.txtVIN);
+		txtVIN = (vinEditText) edtTmp;
 		txtVIN.setOnEditorActionListener(vinEditorActionListener);
 		
 		lblLoggetUser = (TextView) rootView.findViewById(R.id.lblLoggetUser);

@@ -1,12 +1,13 @@
 package cz.tsystems.base;
 
 import android.content.Context;
-import android.support.v7.internal.widget.TintEditText;
+//import android.support.v7.internal.widget.TintEditText;
 import android.util.AttributeSet;
+import android.widget.EditText;
 
 import java.util.Locale;
 
-public class vinEditText extends TintEditText {
+public class vinEditText extends EditText {
 	private boolean offTextChange;
 
     public vinEditText(Context context) {
