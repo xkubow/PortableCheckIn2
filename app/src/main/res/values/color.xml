@@ -20,4 +20,5 @@
  	<color name="black">#000000</color>
  	<color name="pchi_base">#789CA3</color>
     <color name="grid_caption">#FFFFC4</color>
+    <color name="lightGray">#E4E4E4</color>
 </resources>

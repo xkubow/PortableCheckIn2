@@ -207,6 +207,7 @@ public class PortableCheckin extends Application {
         selectedBrand = this.getBrand(brandId);
         selectedScenar = this.getScenarForId(selectedBrand.check_scenario_id_def);
         checkin.check_scenario_id = selectedScenar.check_scenario_id;
+        checkin.fuel_id = 1;
         setSelectedBrand(brandId);
 		setOffers(this.getOffers(brandId));
 		this.loadSilhouette();

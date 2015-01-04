@@ -54,6 +54,7 @@ public class DMCheckin {
 	 public String vehicle_caption;
 	 public String brnad_txt;
 	 public String fuel_txt;
+     public short oilState;
 
 	 public DMCheckin() {
 		 

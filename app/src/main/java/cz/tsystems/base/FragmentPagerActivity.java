@@ -4,29 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.communications.CommunicationService;
+import cz.tsystems.data.DMBrand;
+import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.dialogs.BaseGridActivity;
 import cz.tsystems.portablecheckin.*;
+
+import android.annotation.TargetApi;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentActivity;
 //import android.support.v4.app.FragmentManager;
 //import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class FragmentPagerActivity extends Activity implements TabListener {
 
@@ -38,6 +49,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	FragmentManager fm;
 	PortableCheckin app;
 	List<Fragment> theFragments = new ArrayList<Fragment>(4);
+    Button btnBrand;
+	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
 	
 
 	BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -70,6 +83,18 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		if(savedInstanceState == null)
 			app.loadDefaultCheckin();
 
+        lblLoggetUser = (TextView) findViewById(R.id.lblLoggetUser);
+        lblCheckinNR = (TextView) findViewById(R.id.lblCheckIn_nr);
+        lblVehicleCaption = (TextView)findViewById(R.id.lblCarCaption);
+        btnBrand = (Button)findViewById(R.id.btnBrand);
+
+        btnBrand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    showBrandLogos();
+            }
+        });
+
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -89,6 +114,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	}
 
+
+
 	private void registerRecaiver() {
 		IntentFilter filterSend = new IntentFilter();
 		filterSend.addAction("recivedData");
@@ -101,6 +128,11 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		if(theFragment != null) {
 			theFragment.updateData(null);
 		}
+
+        lblVehicleCaption.setText(app.getCheckin().vehicle_description);
+        setBrand(app.getCheckin());
+        setCheckinNr(app.getCheckin());
+        updateLblCheckinNr();
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,6 +166,16 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	protected void onStart() {
+
+        final String poradce = getResources().getString(R.string.Poradce);
+
+        if(PortableCheckin.user != null)
+            lblLoggetUser.setText(poradce + ": " + PortableCheckin.user.name + " " + PortableCheckin.user.surname);
+        else
+            lblLoggetUser.setText(poradce + ": ");
+
+        if(app.getCheckin().checkin_number <= 0)
+            lblCheckinNR.setText("");
 		
 		if(app.isTakeImage) {
 			app.isTakeImage = false;
@@ -208,4 +250,80 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 	}
+
+
+
+    //Main Top Bar
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    protected void setBrandImage()
+    {
+        Drawable d = app.getSelectedBrand().getBrandImage(app);
+//        int sdk = android.os.Build.VERSION.SDK_INT;
+//        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            btnBrand.setBackgroundDrawable(d);
+//        }
+//        else {
+//            btnBrand.setBackground(d);
+//        }
+    }
+
+    private void showBrandLogos() {
+
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle("Example");
+        final Cursor cursor = app.getBrands();
+        int index = 0;
+        final int brandIdIndex = cursor.getColumnIndex(DMBrand.columnNames[DMBrand.ColumnsEnum.BRAND_ID.ordinal()]);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast() && !cursor.getString(brandIdIndex).equals(app.getSelectedBrand().brand_id)) {
+            index++;
+            cursor.moveToNext();
+        }
+        cursor.moveToFirst();
+        b.setSingleChoiceItems(cursor, index, "BRAND_TXT" , new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                cursor.moveToPosition(which);
+                app.setSelectedBrand(cursor.getString(cursor.getColumnIndex("BRAND_ID")));
+                setBrandImage();
+                dialog.dismiss();
+            }
+        });
+
+        b.show();
+    }
+
+    public void setBrand(DMCheckin checkinData) {
+        if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {
+            btnBrand.setEnabled(false);
+            app.setSelectedBrand(checkinData.brand_id);
+            setBrandImage();
+        } else {
+            btnBrand.setEnabled(true);
+        }
+    }
+
+    private void updateLblCheckinNr()
+    {
+        if(app.getCheckin().checkin_number > 0)
+            lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
+        else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
+            final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);
+            lblCheckinNR.setText(planZakPrefix + ": " + String.valueOf(app.getCheckin().planned_order_no));
+        }
+        else
+            lblCheckinNR.setText("");
+    }
+
+    public void setCheckinNr(DMCheckin checkinData) {
+        if(checkinData.planned_order_id != null && checkinData.checkin_id <= 0) {
+//            lblCheckinNR.setTextColor(getResources().getColor(R.color.blue));
+            lblCheckinNR.setText(checkinData.planned_order_no);
+        }
+
+        this.updateLblCheckinNr();
+    }
+
+
 }

@@ -50,6 +50,8 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.Slider;
+
 public class MainActivity extends BaseFragment {
 
 	/**
@@ -61,14 +63,15 @@ public class MainActivity extends BaseFragment {
 	private DatePicker theDatePicker;
 	private final SimpleDateFormat sdfrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private final SimpleDateFormat sdto = new SimpleDateFormat("MM.yyyy");
-	TextView lblLoggetUser, lblCheckinNR;
 	EditText txtSTKDate, txtEmiseDate, txtScenar, txtRZV;
-	Spinner spScenare;
+	Spinner spScenare, spTypPaliva;
 	vinEditText txtVIN;
-	Button btnSPZ, btnSTK, btnEmise, btnPalivo, btnBrand;// btnScenare;	
+	Button btnSPZ, btnSTK, btnEmise;// btnPalivo;// btnScenare;
+    com.gc.materialdesign.views.Switch chkPoistPrip, chkOtp, chkServisKniz;
+    Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
 	
-	
+
 	OnItemSelectedListener scenarSelectedListener =  new OnItemSelectedListener() {
 
 		@Override
@@ -107,8 +110,8 @@ public class MainActivity extends BaseFragment {
 			app.getCheckin().ec_valid_until = c.getTime();
 			
 		}
-	};	
-	
+	};
+
 	private OnClickListener theButtonClickLisener = new OnClickListener() {
 
 		@Override
@@ -121,10 +124,6 @@ public class MainActivity extends BaseFragment {
 				getSTKDatePicker();	
 			else if(theButton.equals(btnEmise))
 				getEmiseDatePicker();
-			else if(theButton.equals(btnPalivo))
-				showPalivoTypPicker();
-			else if(theButton.equals(btnBrand))
-				showBrandLogos();			
 		}
 	};
 	
@@ -198,21 +197,26 @@ public class MainActivity extends BaseFragment {
         EditText edtTmp = (EditText) values2.findViewById(R.id.txtVIN);
 		txtVIN = (vinEditText) edtTmp;
 		txtVIN.setOnEditorActionListener(vinEditorActionListener);
-		
-		lblLoggetUser = (TextView) rootView.findViewById(R.id.lblLoggetUser);
-		lblCheckinNR = (TextView) rootView.findViewById(R.id.lblCheckIn_nr);		
+
 		txtSTKDate = (EditText)values1.findViewById(R.id.txtSTK);
 		txtEmiseDate = (EditText)values2.findViewById(R.id.txtEmise);
 		spScenare = (Spinner)values1.findViewById(R.id.spScenar);
+        spTypPaliva = (Spinner)values1.findViewById(R.id.spTypPaliva);
 		
 		spScenare.setOnItemSelectedListener(scenarSelectedListener);
 				
 		btnSPZ = (Button) values1.findViewById(R.id.btnSPZ);
 		btnSTK = (Button) values1.findViewById(R.id.btnSTK);
 		btnEmise = (Button) values2.findViewById(R.id.btnEmise);
-		btnPalivo = (Button) values1.findViewById(R.id.btnPalivo);
-		btnBrand = (Button)  rootView.findViewById(R.id.btnBrand);
-		
+
+        chkPoistPrip = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkPoist_prp);
+        chkOtp  = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkOTP);
+        chkServisKniz  = (com.gc.materialdesign.views.Switch) values2.findViewById(R.id.chkServisKnizka);
+
+        stavPaliva = (Slider) values1.findViewById(R.id.slaiderStavPaliva);
+        stavInterieru = (Slider) values2.findViewById(R.id.slaiderInterier);
+        stavOleja = (Slider) values2.findViewById(R.id.slaiderStavOleje);
+
 		return rootView;
 	}
 
@@ -223,7 +227,8 @@ public class MainActivity extends BaseFragment {
 			setClickLiseners();
 			if (spScenare.getAdapter() == null)
 				setScenareSpinner();
-			setBrandImage();
+            setPalivoSpinner();
+//			setBrandImage();
 		}
 		else {
 			Intent i = new Intent(getActivity(), LoginActivity.class);
@@ -250,6 +255,23 @@ public class MainActivity extends BaseFragment {
 		spScenare.setSelection(pos, true);
 	}
 
+    private void setPalivoSpinner() {
+        Cursor cursor = app.getPaliva();
+        final int columnIndex = cursor.getColumnIndex("FUEL_ID");
+        final int fuelId = app.getCheckin().fuel_id;
+        int pos = -1;
+        while(!cursor.isAfterLast()) {
+            pos++;
+            if(cursor.getInt(columnIndex) == fuelId)
+                break;
+            cursor.moveToNext();
+        }
+
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, cursor, new String[] { "TEXT" }, new int[] { android.R.id.text1 }, 0);
+        spTypPaliva.setAdapter(adapter);
+        spTypPaliva.setSelection(pos, true);
+    }
+
 	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
@@ -264,14 +286,6 @@ public class MainActivity extends BaseFragment {
 
 	@Override
 	public void onStart() {
-		if(PortableCheckin.user != null)
-			lblLoggetUser.setText(PortableCheckin.user.name + " " + PortableCheckin.user.surname);
-		else
-			lblLoggetUser.setText("");
-		
-		if(app.getCheckin().checkin_number <= 0)
-			lblCheckinNR.setText("");
-		
 		super.onStart();
 	}
 	
@@ -279,9 +293,52 @@ public class MainActivity extends BaseFragment {
 		btnSPZ.setOnClickListener(theButtonClickLisener);
 		btnSTK.setOnClickListener(theButtonClickLisener);
 		btnEmise.setOnClickListener(theButtonClickLisener);	
-		btnPalivo.setOnClickListener(theButtonClickLisener);
-		btnBrand.setOnClickListener(theButtonClickLisener);		
-//		btnScenare.setOnClickListener(theButtonClickLisener);		
+
+        chkPoistPrip.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+            @Override
+            public void onCheck(boolean isChecked) {
+                app.getCheckin().insurance_case = isChecked;
+            }
+        });
+        chkServisKniz.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+            @Override
+            public void onCheck(boolean isChecked) {
+                app.getCheckin().servbook_exists = isChecked;
+            }
+        });
+        chkOtp.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+            @Override
+            public void onCheck(boolean isChecked) {
+                app.getCheckin().crw_exists = isChecked;
+            }
+        });
+        chkPoistPrip.setChecked(app.getCheckin().insurance_case);
+        chkOtp.setChecked(app.getCheckin().crw_exists);
+        chkServisKniz.setChecked(app.getCheckin().servbook_exists);
+
+        stavPaliva.setValue(app.getCheckin().fuel_level);
+        stavPaliva.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                app.getCheckin().fuel_level = (short) value;
+            }
+        });
+        stavInterieru.setValue(app.getCheckin().interior_state);
+        stavInterieru.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                app.getCheckin().interior_state = (short) value;
+            }
+        });
+        stavOleja.setValue(app.getCheckin().oilState);
+        stavOleja.setOnValueChangedListener(new Slider.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int value) {
+                app.getCheckin().oilState = (short) value;
+            }
+        });
+
+//		btnScenare.setOnClickListener(theButtonClickLisener);
 	}
 
 	public void showData(Intent intent) {
@@ -327,118 +384,10 @@ public class MainActivity extends BaseFragment {
 	}
 
 	private void showPlanZakazky() {
-/*
-        final BaseGrid baseGrid = new BaseGrid(getActivity()) {
-            @Override
-            public View getCaptionView()
-            {
-                View view = getActivity().getLayoutInflater().inflate(R.layout.item_planned_order, null);
-                view.setBackgroundColor(getActivity().getResources().getColor(R.color.grid_caption));
-                ((TextView)view.findViewById(R.id.lbldataSource)).setText(getActivity().getResources().getText(R.string.data_source));
-                ((TextView)view.findViewById(R.id.lblPlannedOrderStatus)).setText(getActivity().getResources().getText(R.string.Status));
-                ((TextView)view.findViewById(R.id.lblLicenseTag)).setText(getActivity().getResources().getText(R.string.RZV));
-                ((TextView)view.findViewById(R.id.lblVehicleDescription)).setText(getActivity().getResources().getText(R.string.Vozidlo));
-                ((TextView)view.findViewById(R.id.lblCustomerLabel)).setText(getActivity().getResources().getText(R.string.Zakaznik));
-                ((TextView)view.findViewById(R.id.lblPlannedOrderNo)).setText(getActivity().getResources().getText(R.string.plan_zak_cis));
-
-                return  view;
-            }
-
-            @Override
-            public void setListView(ListView listView) {
-                final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getActivity().getApplicationContext()).getPlanZakazk();
-                PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter( getActivity(), R.layout.item_planned_order, planedOrderList);
-                listView.setAdapter(plannedOrderAdapter);
-
-                listView.setOnItemClickListener(new OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        final DMPlannedOrder plannedOrder = planedOrderList.get(position);
-
-                        Intent msgIntent = new Intent(getActivity(), CommunicationService.class);
-                        msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
-                        msgIntent.putExtra("ACTION", "DataForCheckIn");
-                        if(plannedOrder.planned_order_id != null && plannedOrder.planned_order_id.length() > 0)
-                            msgIntent.putExtra("plannedorderid", plannedOrder.planned_order_id);
-                        if(plannedOrder.checkin_id > 0)
-                            msgIntent.putExtra("checkin_id", String.valueOf(plannedOrder.checkin_id));
-                        if(plannedOrder.license_tag != null && plannedOrder.license_tag.length() > 0)
-                            msgIntent.putExtra("licenseTag", plannedOrder.license_tag);
-                        app.showProgrssDialog(getActivity());
-                        getActivity().startService(msgIntent);
-//                        dismiss();
-                    }
-                });
-            }
-        };
-        baseGrid.setTitle(getActivity().getResources().getText(R.string.historia_vozu));
-	    app.dismisProgressDialog();
-*/
-//        baseGrid.show();
-
         Intent myIntent = new Intent(getActivity(), PlanedOrdersGrid.class);
         getActivity().startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}
 	
-	private void showPalivoTypPicker()
-	{
-		AlertDialog.Builder b = new Builder(getActivity());
-	    b.setTitle("Example");
-	    final Cursor cursor = app.getPaliva();
-	    b.setSingleChoiceItems(cursor, 0, "TEXT" , new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				cursor.moveToPosition(which);
-				app.getCheckin().fuel_id = cursor.getShort(cursor.getColumnIndex("FUEL_ID"));
-				dialog.dismiss();
-			}
-		});
-
-	    b.show();
-	}
-	
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	private void setBrandImage()
-	{
-		Drawable d = app.getSelectedBrand().getBrandImage(app);
-		int sdk = android.os.Build.VERSION.SDK_INT;
-		if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-				btnBrand.setBackgroundDrawable(d);
-		} else {
-				btnBrand.setBackground(d);
-		}
-	}
-	
-	private void showBrandLogos() {
-		
-		AlertDialog.Builder b = new Builder(getActivity());
-	    b.setTitle("Example");
-	    final Cursor cursor = app.getBrands();
-	    int index = 0;
-	    final int brandIdIndex = cursor.getColumnIndex(DMBrand.columnNames[DMBrand.ColumnsEnum.BRAND_ID.ordinal()]);
-	    cursor.moveToFirst();
-	    while(!cursor.isAfterLast() && !cursor.getString(brandIdIndex).equals(app.getSelectedBrand().brand_id)) {
-            index++;
-            cursor.moveToNext();
-        }
-	    cursor.moveToFirst();
-	    b.setSingleChoiceItems(cursor, index, "BRAND_TXT" , new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				cursor.moveToPosition(which);
-				app.setSelectedBrand(cursor.getString(cursor.getColumnIndex("BRAND_ID")));				
-				setBrandImage();
-				dialog.dismiss();
-			}
-		});
-
-	    b.show();		
-	}
-	
-
 	private void getSTKDatePicker()
 	{
         Calendar c = Calendar.getInstance();
@@ -446,9 +395,11 @@ public class MainActivity extends BaseFragment {
 		if(strDate.length() > 0)
 		{
 			String parts[] = strDate.split("[.]");
-			c.set(Calendar.DAY_OF_MONTH, 1);			
-			c.set(Calendar.MONTH, Integer.parseInt(parts[0]));
-			c.set(Calendar.YEAR, Integer.parseInt(parts[1]));			
+            if(parts.length >= 2) {
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                c.set(Calendar.MONTH, Integer.parseInt(parts[0]));
+                c.set(Calendar.YEAR, Integer.parseInt(parts[1]));
+            }
 		}
 		
         int year = c.get(Calendar.YEAR);
@@ -465,10 +416,12 @@ public class MainActivity extends BaseFragment {
         String strDate = txtEmiseDate.getText().toString(); 
 		if(strDate.length() > 0)
 		{
-			String parts[] = strDate.split("[.]");
-			c.set(Calendar.DAY_OF_MONTH, 1);			
-			c.set(Calendar.MONTH, Integer.parseInt(parts[0]));
-			c.set(Calendar.YEAR, Integer.parseInt(parts[1]));			
+            String parts[] = strDate.split("[.]");
+            if(parts.length >= 2) {
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                c.set(Calendar.MONTH, Integer.parseInt(parts[0]));
+                c.set(Calendar.YEAR, Integer.parseInt(parts[1]));
+            }
 		}
 		
         int year = c.get(Calendar.YEAR);
@@ -479,15 +432,7 @@ public class MainActivity extends BaseFragment {
         dialog.show();		
 	}
 	
-	private void updateLblCheckinNr()
-	{
-		if(app.getCheckin().checkin_number > 0)
-			lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
-		else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0)
-			lblCheckinNR.setText(String.valueOf(app.getCheckin().planned_order_no));
-		else
-			lblCheckinNR.setText("");
-	}
+
 	
 	private void populateView() throws ParseException {
 
@@ -498,15 +443,6 @@ public class MainActivity extends BaseFragment {
 
 		getActivity().setTitle(checkinData.vehicle_description);
 		
-		if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {
-            btnBrand.setEnabled(false);
-			app.setSelectedBrand(checkinData.brand_id);
-			setBrandImage();
-		} else {
-            btnBrand.setEnabled(true);
-        }
-		
-
 		if(checkinData.check_scenario_id <= 0)
 			checkinData.check_scenario_id = app.getSelectedBrand().check_scenario_id_def;
 		
@@ -527,61 +463,15 @@ public class MainActivity extends BaseFragment {
 		}
 		spScenare.setSelection(pos, true);
 		
-		if(checkinData.planned_order_id != null && checkinData.checkin_id <= 0) {
-			lblCheckinNR.setTextColor(getActivity().getResources().getColor(R.color.blue));
-			lblCheckinNR.setText(checkinData.planned_order_no);
-		}
-				
-			
-		this.updateLblCheckinNr();
-		
+
 		app.loadSilhouette();
 		((FragmentPagerActivity)getActivity()).updateData();
-		
-		RadioGroup rg = (RadioGroup)values1.findViewById(R.id.rdbStavPaliva);
-		switch (checkinData.fuel_id) {
-		case 0:
-			rg.check(R.id.rbtnStavPal0);
-			break;
-		case 1:
-			rg.check(R.id.rbtnStavPal1);
-			break;
-		case 2:
-			rg.check(R.id.rbtnStavPal2);
-			break;
-		case 3:
-			rg.check(R.id.rbtnStavPal3);
-			break;
-		case 4:
-			rg.check(R.id.rbtnStavPal4);
-			break;					
-		default:
-			rg.check(R.id.rbtnStavPal2);
-			break;
-		}	
-		
-		
-		rg = (RadioGroup)values2.findViewById(R.id.rdbInterier);
-		switch (checkinData.interior_state) {
-		case 0:
-			rg.check(R.id.rbtnInter0);
-			break;
-		case 1:
-			rg.check(R.id.rbtnInter1);
-			break;
-		case 2:
-			rg.check(R.id.rbtnSil_1);
-			break;
-		case 3:
-			rg.check(R.id.rbtnSil_2);
-			break;
-		case 4:
-			rg.check(R.id.rbtnSil_3);
-			break;					
-		default:
-			rg.check(R.id.rbtnSil_1);
-			break;
-		}		
+
+        com.gc.materialdesign.views.Slider rg = (com.gc.materialdesign.views.Slider)values1.findViewById(R.id.slaiderStavPaliva);
+        rg.setValue(checkinData.fuel_level);
+
+		rg = (com.gc.materialdesign.views.Slider)values2.findViewById(R.id.slaiderInterier);
+        rg.setValue(checkinData.interior_state);
 	}
 	
 	private void populateTextsAndRbtn(ViewGroup theView) {

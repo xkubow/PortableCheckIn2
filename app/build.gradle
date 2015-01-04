@@ -28,7 +28,7 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:21+'
-    compile "com.android.support:appcompat-v7:21+"
+    compile 'com.android.support:appcompat-v7:21+'
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')
     compile files('libs/httpmime-4.2.5.jar')
@@ -36,4 +36,5 @@ dependencies {
     compile files('libs/jackson-core-2.2.2.jar')
     compile files('libs/jackson-databind-2.2.2.jar')
     compile files('libs/mail.jar')
+    compile project(':materialDesign')
 }
