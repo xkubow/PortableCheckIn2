@@ -22,6 +22,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
@@ -41,9 +43,10 @@ import android.widget.TextView.OnEditorActionListener;
 public class LoginActivity extends Activity {
 	final String TAG = "LoginActivity";
 	private EditText login, password;
-	private Button btnLogin;
-	private Button btnSettup;	
+	private com.gc.materialdesign.views.ButtonFlat btnLogin;
+	private com.gc.materialdesign.views.ButtonFlat btnSettup;
 	private PortableCheckin app;
+    private TextView lblVerze;
 	
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
@@ -100,8 +103,9 @@ public class LoginActivity extends Activity {
         
         login = (EditText) this.findViewById(R.id.txtLogin);
         password = (EditText) this.findViewById(R.id.txtPassword);
-        btnLogin = (Button) this.findViewById(R.id.btnLogin);
-        btnSettup = (Button) this.findViewById(R.id.btnSetup);
+        btnLogin = (com.gc.materialdesign.views.ButtonFlat) this.findViewById(R.id.btnLogin);
+        btnSettup = (com.gc.materialdesign.views.ButtonFlat) this.findViewById(R.id.btnSetup);
+        lblVerze = (TextView) this.findViewById(R.id.lblVerze);
         
         password.setOnEditorActionListener(new DoneOnEditorActionListener());    
         
@@ -115,6 +119,9 @@ public class LoginActivity extends Activity {
 		spe.putInt("MAJOR_VER", 0);
 		spe.putInt("COMMUNICATION_VER", 0);
 		spe.commit();
+
+
+        lblVerze.setText(String.format("v." + BuildConfig.VERSION_NAME+"."+BuildConfig.VERSION_CODE));
         	
     }
     

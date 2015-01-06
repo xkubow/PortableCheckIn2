@@ -21,4 +21,5 @@
  	<color name="pchi_base">#789CA3</color>
     <color name="grid_caption">#FFFFC4</color>
     <color name="lightGray">#E4E4E4</color>
+    <color name="actionBar">#006384</color>
 </resources>

@@ -9,60 +9,111 @@
     android:orientation="vertical"
     tools:context=".LoginActivity" >
 
-    <LinearLayout
-        android:id="@+id/CaptionContainer"
-        android:layout_width="450dp"
+    <RelativeLayout
+        android:layout_width="650dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:background="@drawable/background"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="20dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:paddingTop="20dp" >
+        android:layout_centerInParent="true"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Uzivatel"
+            android:id="@+id/lblUzivatel"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lblPrihlasenie"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" />
 
         <EditText
             android:id="@+id/txtLogin"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/UserName"
             android:imeOptions="actionNext"
             android:inputType="text|textNoSuggestions"
             android:nextFocusDown="@+id/txtPassword"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:layout_below="@+id/lblUzivatel"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" />
 
         <EditText
             android:id="@+id/txtPassword"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/lblHeslo"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:weightSum="3" >
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Prihlasenie"
+            android:id="@+id/lblPrihlasenie"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/gray" />
 
-            <Button
-                android:id="@+id/btnSetup"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onSettupClicked"
-                android:text="@string/Setup" />
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/btnLogin"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:onClick="onLoginClicked"
+            android:text="@string/Login"
+            android:layout_below="@+id/txtPassword"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp" />
 
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:onClick="onLoginClicked"
-                android:text="@string/Login" />
-        </LinearLayout>
-    </LinearLayout>
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/btnSetup"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onSettupClicked"
+            android:text="@string/Setup"
+            android:layout_below="@+id/txtPassword"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toStartOf="@id/btnLogin" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Heslo"
+            android:id="@+id/lblHeslo"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:layout_below="@+id/lblPrihlasenie"
+            android:layout_alignParentRight="false"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignStart="@id/txtPassword" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="verze"
+            android:id="@+id/lblVerze"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:layout_alignBottom="@+id/lblPrihlasenie"
+            android:textColor="@color/gray" />
+    </RelativeLayout>
+
 </RelativeLayout>

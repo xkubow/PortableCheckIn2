@@ -25,6 +25,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +34,13 @@ import android.os.Bundle;
 //import android.support.v4.app.FragmentActivity;
 //import android.support.v4.app.FragmentManager;
 //import android.support.v4.content.LocalBroadcastManager;
+import android.os.Handler;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.format.Time;
+import android.util.AttributeSet;
+import android.view.InflateException;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,6 +94,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         lblLoggetUser = (TextView) findViewById(R.id.lblLoggetUser);
         lblCheckinNR = (TextView) findViewById(R.id.lblCheckIn_nr);
         lblVehicleCaption = (TextView)findViewById(R.id.lblCarCaption);
+        lblVehicleCaption.setText("");
         btnBrand = (Button)findViewById(R.id.btnBrand);
 
         btnBrand.setOnClickListener(new View.OnClickListener() {
@@ -105,16 +114,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		theFragments.add(new ServiceActivity());
 		theFragments.add(new OffersActivity());
 		
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_riadky2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_body2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_sipka2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setIcon(R.drawable.car_icon_nabidka2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.VOZIDLO));//setIcon(R.drawable.car_icon_riadky2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.POSKODENI));//setIcon(R.drawable.car_icon_body2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.PROHLIDKA));//setIcon(R.drawable.car_icon_sipka2));
+		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.NABIDKA));//setIcon(R.drawable.car_icon_nabidka2));
 
         app.setActualActivity(this);
 
 	}
-
-
 
 	private void registerRecaiver() {
 		IntentFilter filterSend = new IntentFilter();
@@ -228,7 +235,35 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.themenu, menu);
-		return true;
+        getLayoutInflater().setFactory(new LayoutInflater.Factory() {
+            @Override
+            public View onCreateView(String name, Context context,
+                                     AttributeSet attrs) {
+
+                if (name.equalsIgnoreCase("com.android.internal.view.menu.IconMenuItemView")) {
+                    try {
+                        LayoutInflater f = getLayoutInflater();
+                        final View view = f.createView(name, null, attrs);
+
+                        new Handler().post(new Runnable() {
+                            public void run() {
+
+                                // set the background drawable
+                                view.setBackgroundResource(R.drawable.alutexture_bg);
+
+                                // set the text color
+                                ((TextView) view).setTextColor(Color.WHITE);
+                            }
+                        });
+                        return view;
+                    } catch (InflateException e) {
+                    } catch (ClassNotFoundException e) {
+                    }
+                }
+                return null;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -251,9 +286,6 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 	}
 
-
-
-    //Main Top Bar
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     protected void setBrandImage()
     {
@@ -310,7 +342,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
         else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
             final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);
-            lblCheckinNR.setText(planZakPrefix + ": " + String.valueOf(app.getCheckin().planned_order_no));
+            final Spanned theNR = Html.fromHtml(planZakPrefix + ": <b>"+String.valueOf(app.getCheckin().planned_order_no)+"</b>");
+            lblCheckinNR.setText(theNR );
         }
         else
             lblCheckinNR.setText("");

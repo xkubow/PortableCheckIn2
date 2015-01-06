@@ -322,6 +322,13 @@ public class CommunicationService extends IntentService {
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
             app.setCheckin(root.path("CHECKIN"));
+            int readedLength = 0;
+            while(readedLength < response.length()) {
+                final int lengthToRead = (response.length()-readedLength > 3500)?3500:response.length()-readedLength;
+                final String substring = response.substring(readedLength, readedLength+lengthToRead);
+                Log.i(TAG, String.format("CheckinData: %s", substring));
+                readedLength += substring.length();
+            }
             // Log.v(TAG, root.path("CHECKIN").textValue());
             // writeToFile("checkinRespose", root.path("CHECKIN"));
             // PortableCheckin.checkin =

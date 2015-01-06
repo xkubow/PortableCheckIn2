@@ -99,7 +99,7 @@
             android:layout_marginRight="30dp"
             android:ems="10"
             android:inputType="text"
-            android:tag="LICENSE_DATE"
+            android:tag="MY"
             android:layout_alignLeft="@+id/spScenar"
             android:layout_alignStart="@+id/spScenar"
             android:layout_alignParentEnd="true"

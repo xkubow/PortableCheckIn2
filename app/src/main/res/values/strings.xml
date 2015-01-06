@@ -37,8 +37,8 @@
     <string name="Oderky">Oderky</string>
     <string name="UserName">User name</string>
     <string name="Password">Password</string>
-    <string name="Setup">Setup</string>
-    <string name="Login">Login</string>
+    <string name="Setup">Nastavení</string>
+    <string name="Login">Přihlásit</string>
     <string name="serviceNotifier">service notifier</string>
 
     <item name="pager" type="id"/>
@@ -149,4 +149,12 @@
     <string name="title_activity_item_packet">Item_packet</string>
     <string name="Poradce">Poradce</string>
     <string name="CisloPlanZakazky">Číslo plánované zakázky</string>
+    <string name="VOZIDLO">VOZIDLO</string>
+    <string name="POSKODENI">POŠKODENÍ</string>
+    <string name="PROHLIDKA">PROHLÍDKA</string>
+    <string name="NABIDKA">NABÍDKA</string>
+    <string name="Informace_o_vozidle">Informace o vozidle</string>
+    <string name="heslo">Heslo</string>
+    <string name="Uzivatel">Užívatel</string>
+    <string name="Prihlaseni">Přihlášení</string>
 </resources>

@@ -1,5 +1,6 @@
 package cz.tsystems.portablecheckin;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.KeyEvent;
@@ -38,6 +39,11 @@ public class UnitServiceActivity extends Dialog {
 //            }
         }
     };
+
+
+    public UnitServiceActivity() {
+        super(null);
+    }
 
     public UnitServiceActivity(Context context, DMUnit theUnit, List<DMPacket> packetList) {
         super(context);

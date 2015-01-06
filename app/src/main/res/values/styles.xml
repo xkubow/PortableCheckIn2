@@ -5,6 +5,8 @@
     -->
     <style name="AppBaseTheme" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/WindowTitleBackground</item>
+        <!--item name="android:actionBarTabStyle">@style/MyActionBarTabs</item-->
+        <item name="android:actionBarTabTextStyle">@style/MyActionBarTabText</item>
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -31,7 +33,23 @@
 	</style>
 
     <style name="WindowTitleBackground" parent="@android:style/Widget.Holo.Light.ActionBar">
-		<item name="android:background">@drawable/alu_navigation</item>
+		<!--item name="android:background">@drawable/alu_navigation</item-->
+        <item name="android:background">@color/actionBar</item>
+        <item name="android:titleTextStyle">@style/ActionBarTextStyle</item>
+    </style>
+
+    <style name="ActionBarTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="MyActionBarTabs" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/actionbar_tab_indicator</item>
+    </style>
+
+    <!-- ActionBar tabs text -->
+    <style name="MyActionBarTabText"
+        parent="@android:style/Widget.Holo.Light.ActionBar.TabText">
+        <item name="android:textColor">@drawable/tab_text_color</item>
     </style>
 
     <style name="PopupTheme" parent="android:Theme.Holo.Light.Dialog">

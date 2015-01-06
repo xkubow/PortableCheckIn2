@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- STATES WHEN BUTTON IS NOT PRESSED -->
+
+    <!-- Non focused states -->
+    <item android:state_focused="false" android:state_selected="false"
+        android:state_pressed="false"
+        android:drawable="@drawable/packet_green" />
+    <item android:state_focused="false" android:state_selected="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/packet_green_e"
+        />
+
+    <!-- Focused states (such as when focused with a d-pad or mouse hover) -->
+    <item android:state_focused="true" android:state_selected="false"
+        android:state_pressed="false"
+        android:drawable="@drawable/packet_orange" />
+    <item android:state_focused="true" android:state_selected="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/packet_orange_e" />
+
+
+    <!-- STATES WHEN BUTTON IS PRESSED -->
+
+    <!-- Non focused states -->
+    <item android:state_focused="false" android:state_selected="false"
+        android:state_pressed="true"
+        android:drawable="@drawable/celky_servis_dis" />
+    <item android:state_focused="false" android:state_selected="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/celky_servis" />
+
+    <!-- Focused states (such as when focused with a d-pad or mouse hover) -->
+    <item android:state_focused="true" android:state_selected="false"
+        android:state_pressed="true"
+        android:drawable="@drawable/celky_povinny" />
+    <item android:state_focused="true" android:state_selected="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/celky_povinny_ok" />
+</selector>

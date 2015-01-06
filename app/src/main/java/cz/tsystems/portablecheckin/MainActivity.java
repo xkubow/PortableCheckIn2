@@ -287,6 +287,7 @@ public class MainActivity extends BaseFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
+        getActivity().getActionBar().setTitle(R.string.Informace_o_vozidle);
 	}
 	
 	private void setClickLiseners() {
@@ -441,25 +442,41 @@ public class MainActivity extends BaseFragment {
 		populateTextsAndRbtn(values2);			
 		DMCheckin checkinData = app.getCheckin();
 
-		getActivity().setTitle(checkinData.vehicle_description);
+//		getActivity().setTitle(checkinData.vehicle_description);
 		
 		if(checkinData.check_scenario_id <= 0)
 			checkinData.check_scenario_id = app.getSelectedBrand().check_scenario_id_def;
 		
 		app.setSelectedScenar(checkinData.check_scenario_id);
-		
-		Cursor scenareCursor = app.getScenare(checkinData.brand_id);
-		final int checkScenarioIdIndex = scenareCursor.getColumnIndex("CHECK_SCENARIO_ID");
-		final int checkScenarioDefTextIndex = scenareCursor.getColumnIndex("TEXT"); 
+
+        if(checkinData.fuel_id <= 0)
+            checkinData.fuel_id = 0;
+
+        Cursor cursor = app.getPaliva();
+        cursor.moveToFirst();
+        final int searchedId = cursor.getColumnIndex("FUEL_ID");
+        int pos = -1;
+        while (!cursor.isAfterLast()) {
+            pos++;
+            if(cursor.getInt(searchedId) == checkinData.fuel_id)
+                break;
+            cursor.moveToNext();
+        }
+        spTypPaliva.setSelection(pos, true);
+
+        cursor = null;
+		cursor = app.getScenare(checkinData.brand_id);
+		final int checkScenarioIdIndex = cursor.getColumnIndex("CHECK_SCENARIO_ID");
+		final int checkScenarioDefTextIndex = cursor.getColumnIndex("TEXT");
 		final int scenarId = app.getSelectedScenar().check_scenario_id;
-		int pos = -1;
-		scenareCursor.moveToFirst();
-		while(!scenareCursor.isAfterLast()){
+		pos = -1;
+        cursor.moveToFirst();
+		while(!cursor.isAfterLast()){
 			pos++;
-			Log.v(TAG, String.valueOf(scenarId) + " == " + scenareCursor.getString(checkScenarioIdIndex) + ", " + scenareCursor.getString(checkScenarioDefTextIndex));
-			if(scenareCursor.getInt(checkScenarioIdIndex) == scenarId)
+			Log.v(TAG, String.valueOf(scenarId) + " == " + cursor.getString(checkScenarioIdIndex) + ", " + cursor.getString(checkScenarioDefTextIndex));
+			if(cursor.getInt(checkScenarioIdIndex) == scenarId)
 				break;
-			scenareCursor.moveToNext();
+            cursor.moveToNext();
 		}
 		spScenare.setSelection(pos, true);
 		
