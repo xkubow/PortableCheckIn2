@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.hb.views.PinnedSectionListView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> {
+public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> implements PinnedSectionListView.PinnedSectionListAdapter{
     private Context context;
 
 	public PrehliadkyArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPrehliadkyMaster> objects) {
@@ -39,6 +41,10 @@ public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> {
 
         return v;
 	}
-	
-	
+
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
+    }
 }

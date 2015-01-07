@@ -36,14 +36,9 @@ public class BaseGridActivity extends Activity {
 
         View v = findViewById(R.id.baseGrdLayaut);//activity.getLayoutInflater().inflate(R.layout.activity_base_grid, null);
         ((LinearLayout) v).addView(getCaptionView(), 0);
-        ((LinearLayout) v).addView(getTopSectionCaption(), 1);
 
         setListView();
         setWindowParams();
-    }
-
-    public View getTopSectionCaption() {
-        return null;
     }
 
     public void setWindowParams() {

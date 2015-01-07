@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.hb.views.PinnedSectionListView;
+
 import java.util.List;
 
 import cz.tsystems.data.DMService;
@@ -20,7 +22,7 @@ import cz.tsystems.portablecheckin.R;
 /**
  * Created by kubisj on 21.11.2014.
  */
-public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
+public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements PinnedSectionListView.PinnedSectionListAdapter{
     private final static String TAG = ServiceArrayAdapter.class.getSimpleName();
 
     private Context context;
@@ -58,5 +60,10 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> {
         });
 
         return v;
+    }
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
     }
 }

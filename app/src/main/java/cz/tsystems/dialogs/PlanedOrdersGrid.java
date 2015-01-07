@@ -23,15 +23,6 @@ public class PlanedOrdersGrid extends BaseGridActivity {
 
 
     @Override
-    public View getTopSectionCaption() {
-        View view = this.getLayoutInflater().inflate(R.layout.activity_grid_section_caption, null);
-        view.setBackgroundColor(getResources().getColor(R.color.grid_caption));
-        ((TextView)view.findViewById(R.id.lblbCaption)).setText(this.getResources().getText(R.string.data_source));
-
-        return view;
-    }
-    
-    @Override
     public View getCaptionView()
     {
         View view = this.getLayoutInflater().inflate(R.layout.item_planned_order, null);
@@ -50,7 +41,6 @@ public class PlanedOrdersGrid extends BaseGridActivity {
     public void setListView() {
         final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getApplicationContext()).getPlanZakazk();
         PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter( this, R.layout.item_planned_order, planedOrderList);
-        plannedOrderAdapter.sectionCaptionPositions.add( new PlannedOrderAdapter.Captions("Test 5", 5));
 
         listView.setAdapter(plannedOrderAdapter);
 

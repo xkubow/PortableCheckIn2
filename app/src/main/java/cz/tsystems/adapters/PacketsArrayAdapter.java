@@ -10,6 +10,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hb.views.PinnedSectionListView;
+
 import java.util.List;
 
 import cz.tsystems.data.DMPacket;
@@ -18,7 +20,7 @@ import cz.tsystems.portablecheckin.R;
 /**
  * Created by kubisj on 2.12.2014.
  */
-public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
+public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements PinnedSectionListView.PinnedSectionListAdapter {
     Context context;
     boolean isUnitPaket;
     public PacketsArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPacket> objects, final boolean isUnitPaket) {
@@ -62,5 +64,10 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> {
         }
 
         return v;
+    }
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
     }
 }

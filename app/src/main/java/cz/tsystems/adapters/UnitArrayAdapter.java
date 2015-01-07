@@ -32,7 +32,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
+import com.hb.views.PinnedSectionListView;
+
+public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSectionListView.PinnedSectionListAdapter{
 
     private final static String TAG = UnitArrayAdapter.class.getSimpleName();
 	private Context context;
@@ -145,6 +147,11 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> {
         };
         b.show();
 
+    }
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
     }
 
 

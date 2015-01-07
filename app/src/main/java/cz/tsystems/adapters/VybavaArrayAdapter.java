@@ -15,7 +15,9 @@ import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.TextView;
 
-public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
+import com.hb.views.PinnedSectionListView;
+
+public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> implements PinnedSectionListView.PinnedSectionListAdapter{
 	private Context context;
 	private List<DMVybava> data;
 	private List<DMVybava> filteredData;
@@ -63,9 +65,14 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> {
 	    }
 	    return filter;
 	}
-	
-	
-	private class VybavaFilter extends Filter {
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
+    }
+
+
+    private class VybavaFilter extends Filter {
 
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {

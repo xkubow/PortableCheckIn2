@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class VehicleInfoAdapter extends ArrayAdapter<DMVehicleInfo> {
+import com.hb.views.PinnedSectionListView;
+
+public class VehicleInfoAdapter extends ArrayAdapter<DMVehicleInfo> implements PinnedSectionListView.PinnedSectionListAdapter {
 	private Context context;
 	
 	public VehicleInfoAdapter(Context context, int resource, int textViewResourceId, List<DMVehicleInfo> objects) {
@@ -41,4 +43,9 @@ public class VehicleInfoAdapter extends ArrayAdapter<DMVehicleInfo> {
         
         return v;
 	}
+
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
+    }
 }

@@ -19,7 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class VehicleHistoryArrayAdapter extends ArrayAdapter<DMVehicleHistory> {
+import com.hb.views.PinnedSectionListView;
+
+public class VehicleHistoryArrayAdapter extends ArrayAdapter<DMVehicleHistory> implements PinnedSectionListView.PinnedSectionListAdapter{
 	final String TAG = VehicleHistoryArrayAdapter.class.getSimpleName();
 	private Context context;
 	private final String checkinCustomerId;
@@ -86,4 +88,8 @@ public class VehicleHistoryArrayAdapter extends ArrayAdapter<DMVehicleHistory> {
         return v;
 }
 
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
+    }
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -197,7 +198,8 @@ public class PortableCheckin extends Application {
 	}
 	public void setPlanZakazk(JsonNode planZakazk) {
 		this.plannedOrderList = parseJsonArray(planZakazk.get("CHECKIN_ORDER_LIST"), DMPlannedOrder.class);
-	}
+        Collections.sort(this.plannedOrderList, new DMPlannedOrder());
+    }
 	public void loadDefaultCheckin() {
 		if(user == null)
 			return;

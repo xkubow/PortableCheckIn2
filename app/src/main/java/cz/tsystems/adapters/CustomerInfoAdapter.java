@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class CustomerInfoAdapter extends ArrayAdapter<DMCustomerInfo> {
+import com.hb.views.PinnedSectionListView;
+
+public class CustomerInfoAdapter extends ArrayAdapter<DMCustomerInfo> implements PinnedSectionListView.PinnedSectionListAdapter {
 	private Context context;
 	
 	public CustomerInfoAdapter(Context context, int resource, int textViewResourceId, List<DMCustomerInfo> objects) {
@@ -42,4 +44,8 @@ public class CustomerInfoAdapter extends ArrayAdapter<DMCustomerInfo> {
         return v;
 	}
 
+    @Override
+    public boolean isItemViewTypePinned(int viewType) {
+        return false;
+    }
 }

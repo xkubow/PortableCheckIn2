@@ -157,4 +157,6 @@
     <string name="heslo">Heslo</string>
     <string name="Uzivatel">Užívatel</string>
     <string name="Prihlaseni">Přihlášení</string>
+    <string name="My">Mé</string>
+    <string name="Others">Ostatní</string>
 </resources>
