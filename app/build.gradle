@@ -37,4 +37,5 @@ dependencies {
     compile files('libs/jackson-databind-2.2.2.jar')
     compile files('libs/mail.jar')
     compile project(':materialDesign')
+    compile project(':section_listview')
 }

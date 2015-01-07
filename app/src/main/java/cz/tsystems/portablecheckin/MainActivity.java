@@ -385,6 +385,7 @@ public class MainActivity extends BaseFragment {
 	}
 
 	private void showPlanZakazky() {
+        ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
         Intent myIntent = new Intent(getActivity(), PlanedOrdersGrid.class);
         getActivity().startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}

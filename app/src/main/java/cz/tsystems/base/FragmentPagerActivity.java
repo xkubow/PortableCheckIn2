@@ -54,12 +54,16 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     public static int eGRID_RESULT = 2;
 	private Time stopTime;
 	private BaseFragment theFragment;
+    private Boolean checkLogin = true;
 	FragmentManager fm;
 	PortableCheckin app;
 	List<Fragment> theFragments = new ArrayList<Fragment>(4);
     Button btnBrand;
 	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
-	
+
+    public void setCheckLogin(Boolean checkLogin) {
+        this.checkLogin = checkLogin;
+    }
 
 	BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -183,24 +187,28 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
         if(app.getCheckin().checkin_number <= 0)
             lblCheckinNR.setText("");
-		
-		if(app.isTakeImage) {
-			app.isTakeImage = false;
-		} else if(PortableCheckin.user == null) {
-			Intent it = new Intent(this, LoginActivity.class);
-			it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivityForResult(it, 1);			
-		}else if (stopTime != null) {
-			Time now = new Time();
-			now.setToNow();
-			long backgroundTime = now.toMillis(true) - stopTime.toMillis(true);
-			if (backgroundTime > 30) {
-				Intent it = new Intent(this, LoginActivity.class);
-				it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivityForResult(it, 1);
-			}
-			stopTime = null;
-		}
+
+        if(checkLogin) {
+            if (app.isTakeImage) {
+                app.isTakeImage = false;
+            } else if (PortableCheckin.user == null) {
+                Intent it = new Intent(this, LoginActivity.class);
+                it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(it, 1);
+            } else if (stopTime != null) {
+                Time now = new Time();
+                now.setToNow();
+                long backgroundTime = now.toMillis(true) - stopTime.toMillis(true);
+                if (backgroundTime > 30000) {
+                    Intent it = new Intent(this, LoginActivity.class);
+                    it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivityForResult(it, 1);
+                }
+                stopTime = null;
+            }
+        } else
+            checkLogin = true;
+
 		super.onStart();
 	}
 

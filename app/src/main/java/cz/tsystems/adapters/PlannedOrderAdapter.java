@@ -1,5 +1,6 @@
 package cz.tsystems.adapters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -14,6 +15,32 @@ import cz.tsystems.portablecheckin.R;
 
 public class PlannedOrderAdapter extends ArrayAdapter<DMPlannedOrder> {
 	private Context context;
+    public static class Captions {
+        public static String caption;
+        public static int position;
+
+        public Captions(final String newCaption, final int newPosition) {
+            caption = newCaption;
+            position = newPosition;
+        }
+        public Captions(final int newPosition) {
+            position = newPosition;
+        }
+
+        @Override
+        public boolean equals(Object v) {
+            boolean retVal = false;
+
+            if (v instanceof Captions){
+                Captions ptr = (Captions) v;
+                retVal = ptr.position == this.position;
+            }
+
+            return retVal;
+        }
+    }
+
+    public List<Captions> sectionCaptionPositions = new ArrayList<Captions>();
 	
 	public PlannedOrderAdapter(Context context, int textViewResourceId, List<DMPlannedOrder> objects) {
 		super(context, textViewResourceId, objects);
