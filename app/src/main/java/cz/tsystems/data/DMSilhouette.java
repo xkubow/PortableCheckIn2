@@ -12,7 +12,7 @@ public class DMSilhouette extends Object {
 	private class SilhouetteImage {
 		public Bitmap image;// = new ArrayList<Bitmap>(5);
 		public List<int[]> points = new ArrayList<int[]>();		
-		public List<String> photoPhats = new ArrayList<String>();		
+		public List<String> photoFileName = new ArrayList<String>();
 	}
 
 	private int silhuetteId;
@@ -56,19 +56,19 @@ public class DMSilhouette extends Object {
 	}
 	
 	public String getPhotoPath(final short location, final int index) {
-		return silImageData[location].photoPhats.get(index);
+		return silImageData[location].photoFileName.get(index);
 	}
 	
-	public List<String> getPhotoPath(final short location) {
-		return silImageData[location].photoPhats;
+	public List<String> getPhotoNames(final short location) {
+		return silImageData[location].photoFileName;
 	}	
 	
-	public void AddPhotoPath(final short location, final String photoPath) {
-		silImageData[location].photoPhats.add(photoPath);
+	public void AddPhotoName(final short location, final String photoName) {
+		silImageData[location].photoFileName.add(photoName);
 	}
 	
 	public void DeletePhoto(final short location, final int index) {
-		silImageData[location].photoPhats.remove(index);
+		silImageData[location].photoFileName.remove(index);
 	}
 
 }

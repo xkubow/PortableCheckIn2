@@ -12,6 +12,7 @@ import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.PortableCheckin;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,15 +32,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Switch;
+
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 
 public class BodyActivity extends BaseFragment {
 	final String TAG = "BodyActivity";
@@ -194,7 +196,7 @@ public class BodyActivity extends BaseFragment {
 			addPoint(point[0], point[1], i++, (point[2] == 2));
 		
 		i = 1;
-		for(String photoPath : app.getSilhouette().getPhotoPath(getRbtnSilueteIndex()))
+		for(String photoPath : app.getSilhouette().getPhotoNames(getRbtnSilueteIndex()))
 			addImageView(photoPath);
 
 	}
@@ -239,10 +241,12 @@ public class BodyActivity extends BaseFragment {
 	    String imageFileName = "JPEG_" + timeStamp + "_";
 	    File storageDir = Environment.getExternalStoragePublicDirectory(
 	            Environment.DIRECTORY_PICTURES);
+        File checkinPhotoDir = new File(storageDir, "CheckInPhotos");
+        checkinPhotoDir.mkdir();
 	    File image = File.createTempFile(
 	        imageFileName,  /* prefix */
 	        ".jpg",         /* suffix */
-	        storageDir      /* directory */
+            checkinPhotoDir      /* directory */
 	    );
 
 	    // Save a file: path for use with ACTION_VIEW intents
@@ -250,18 +254,39 @@ public class BodyActivity extends BaseFragment {
 	    return image;
 	}
 	
-	private void addImageView(final String thefilepath)
+	private void addImageView(final String thefileName)
 	{
-/*    	final String filepath = thefilepath.replaceFirst("file:", "");
-    	File file = new File(filepath);
-    	if(!file.exists())   
-    		Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
-        Bitmap imageBitmap = decodeFile(file);
-        View imgView = new View(getActivity());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.setMargins(0, 5, 0, 0);
-        imgView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
-        imageLayout.addView(imgView, params);*/
+
+        try {
+            File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
+            File file = new File(myDir + File.separator + thefileName);
+            if(!file.exists())
+                Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
+
+            Bitmap imageBitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+
+            ProgressBar progressView = (ProgressBar) imageLayout.findViewWithTag(thefileName);
+            int index = -1;
+            if(progressView != null) {
+                ViewGroup parent = (ViewGroup) progressView.getParent();
+                index = parent.indexOfChild(progressView);
+                parent.removeView(progressView);
+            }
+
+            View imgView = new View(getActivity());
+            imgView.setTag(thefileName);
+            imgView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
+            if (index != -1) {
+                imageLayout.addView(imgView, index, params);
+            } else
+                imageLayout.addView(imgView, params);
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 	}
 
     private String decodeFile(File f){
@@ -276,16 +301,20 @@ public class BodyActivity extends BaseFragment {
 
             Bitmap imageBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(new FileInputStream(f)), width_tmp, height_tmp, true);
             final String datatDirectory = Environment.getDataDirectory().toString();
-            File myDir = new File(datatDirectory + "/thumbnails");
-            myDir.mkdirs();
-            File file = new File (myDir, f.getName());
-            if (file.exists ()) file.delete ();
+//            File myDir = new File(datatDirectory + "/thumbnails");
+            File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
+//            myDir.mkdirs();
+            File file = new File (myDir.getAbsolutePath() + File.separator + f.getName());
+            if (file.exists ())
+                file.delete ();
 
             FileOutputStream out = new FileOutputStream(file);
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 
             return file.getPath();
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+            Log.i("ExifInteface .........", "FileNotFoundException =" + e.getLocalizedMessage());
+        }
 
         return null;
     }
@@ -321,10 +350,21 @@ public class BodyActivity extends BaseFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (requestCode == PortableCheckin.REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
-	    	app.getSilhouette().AddPhotoPath(getRbtnSilueteIndex(), mCurrentPhotoPath);
+            File file = new File(mCurrentPhotoPath.replaceFirst("file:", ""));
+            if(!file.exists()) {
+                Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
+            }
+	    	app.getSilhouette().AddPhotoName(getRbtnSilueteIndex(), file.getName());
             ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
 	    	isTakeImage = true;
-	    	addImageView(mCurrentPhotoPath);
+
+            ProgressBar progressBar = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
+            progressBar.setTag(file.getName());
+//            ProgressBarCircularIndeterminate progressBar = new ProgressBarCircularIndeterminate(getActivity(), getActivity().getResources().get com.gc.materialdesign.R.attr.indeterminateProgressStyle);
+            imageLayout.addView(progressBar);
+
+
+            new ImageOperations().execute(mCurrentPhotoPath.replaceFirst("file:", ""));
 
 	    }
 	}
@@ -337,11 +377,35 @@ public class BodyActivity extends BaseFragment {
             final String imgFilePath = params[0];
             File file = new File(imgFilePath);
             if(!file.exists()) {
-                Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
+                Log.e(TAG, "File not exists : " + imgFilePath);
                 return "";
             }
             rotateImage(imgFilePath);
-            return decodeFile(file);
+            file = new File(imgFilePath);
+            if(!file.exists()) {
+                Log.e(TAG, "File not exists : " + imgFilePath);
+                return "";
+            }
+            final String thumbNailpath = decodeFile(file);
+            file = new File(thumbNailpath);
+            if(!file.exists()) {
+                Log.e(TAG, "File not exists : " + thumbNailpath);
+                return "";
+            }
+            return file.getName();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            addImageView(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
         }
     }
 }
