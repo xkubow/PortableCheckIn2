@@ -60,7 +60,6 @@ public class PortableCheckin extends Application {
 	private SQLiteDBProvider theDBProvider;
 	
 	public static final int REQUEST_TAKE_PHOTO = 1;
-	public boolean isTakeImage;
 	public List<DMPlannedOrder> plannedOrderList;
 	public DMCheckin checkin;	
 	static public DMUser user;

@@ -3,6 +3,7 @@ package cz.tsystems.base;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,6 +21,9 @@ public class BaseGrid extends Dialog {
     public BaseGrid(Activity activity) {
         super(activity, R.layout.activity_base_grid);
         this.activity = activity;
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setIcon(R.color.transparent);
+        getActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
     }
 
     @Override
@@ -53,4 +57,18 @@ public class BaseGrid extends Dialog {
     public void setListView(ListView listView) {
 
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.hide();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 }

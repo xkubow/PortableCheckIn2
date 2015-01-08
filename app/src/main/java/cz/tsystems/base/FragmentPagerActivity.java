@@ -177,7 +177,6 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	protected void onStart() {
-
         final String poradce = getResources().getString(R.string.Poradce);
 
         if(PortableCheckin.user != null)
@@ -189,9 +188,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             lblCheckinNR.setText("");
 
         if(checkLogin) {
-            if (app.isTakeImage) {
-                app.isTakeImage = false;
-            } else if (PortableCheckin.user == null) {
+            if (PortableCheckin.user == null) {
                 Intent it = new Intent(this, LoginActivity.class);
                 it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(it, 1);
@@ -208,8 +205,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
         } else
             checkLogin = true;
-
-		super.onStart();
+        super.onStart();
 	}
 
 	@Override

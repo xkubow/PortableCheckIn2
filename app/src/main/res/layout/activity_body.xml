@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     android:id="@+id/llRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,19 +12,30 @@
         android:layout_height="wrap_content"
         android:background="@drawable/silueta_button"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="10dp" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp" />
 
-    <TextView
-        android:id="@+id/lblLogetUser01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="@string/LogetUser"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginTop="10dp" />
+    <ScrollView
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:id="@+id/photoScroll"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_toStartOf="@id/photoScroll"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@+id/lblPhotos">
+
+        <LinearLayout
+            android:id="@+id/llPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
 
     <ImageView
         android:id="@+id/imgViewSilueta"
@@ -34,7 +46,9 @@
         android:src="@drawable/lavy_bok"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/btnPhoto" />
+        android:layout_below="@+id/btnSiulety"
+        android:layout_toStartOf="@id/photoScroll"
+        android:layout_marginLeft="16dp" />
 
     <RelativeLayout
         android:id="@+id/rlPoints"
@@ -49,32 +63,15 @@
 
     </RelativeLayout>
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/horizontalScrollView">
-
-        <LinearLayout
-            android:id="@+id/llPhotos"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="horizontal" >
-        </LinearLayout>
-    </HorizontalScrollView>
-
     <RadioGroup
         android:id="@+id/rdbPohledy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignBottom="@+id/btnPhoto"
-        android:layout_alignLeft="@+id/lblLogetUser01"
-        android:layout_alignStart="@+id/lblLogetUser01">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="20dp">
 
         <RadioButton
             android:id="@+id/rbtnSil_1"
@@ -163,12 +160,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/black" />
 
-    <Switch
+    <com.gc.materialdesign.views.Switch
         android:id="@+id/chkOderky"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblOderky"
         android:layout_marginLeft="50dp"
+        android:background="#006384"
+        materialdesign:checked="true"
         android:layout_toRightOf="@+id/rdbExterier" />
 
     <TextView
@@ -181,17 +180,47 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/black" />
 
-    <Button
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="1dp"
+        android:layout_height="fill_parent"
+        android:background="@color/pchi_base"
+        android:id="@+id/linearLayout"
+        android:layout_alignParentTop="false"
+        android:layout_toEndOf="@id/imgViewSilueta"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@+id/lblPhotos"
+        android:layout_marginBottom="16dp" />
+
+    <com.gc.materialdesign.views.ButtonFloat
         android:id="@+id/btnPhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/camera"
-        android:layout_marginRight="50dp"
+        android:background="#006384"
+        materialdesign:iconDrawable="@drawable/ic_camera_white_18dp"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/horizontalScrollView"
+        android:layout_alignParentEnd="false"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="180dp"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/lblPhotos" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Photos"
+        android:id="@+id/lblPhotos"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@id/photoScroll"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:maxLines="1"
+        android:lines="1" />
 
 </RelativeLayout>

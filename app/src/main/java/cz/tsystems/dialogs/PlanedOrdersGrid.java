@@ -47,7 +47,10 @@ public class PlanedOrdersGrid extends BaseGridActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final DMPlannedOrder plannedOrder = planedOrderList.get(position);
+                final DMPlannedOrder plannedOrder = (DMPlannedOrder) listView.getAdapter().getItem(position);
+
+                if(plannedOrder.type == DMPlannedOrder.SECTION)
+                    return;
 
                 Intent msgIntent = new Intent(PlanedOrdersGrid.this, CommunicationService.class);
 //                msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");

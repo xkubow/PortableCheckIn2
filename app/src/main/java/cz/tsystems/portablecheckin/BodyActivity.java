@@ -1,18 +1,26 @@
 package cz.tsystems.portablecheckin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cz.tsystems.base.BaseFragment;
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.PortableCheckin;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -40,10 +48,12 @@ public class BodyActivity extends BaseFragment {
 	RadioGroup rbtnSilouettes;
 	LinearLayout imageLayout;
 	ImageView imgView;
-	Button selectedPoint, btnPhoto;
-	Switch chkPointType;
+	Button selectedPoint;
+    com.gc.materialdesign.views.ButtonFloat btnPhoto;
+    com.gc.materialdesign.views.Switch chkPointType;
 	PointF startPoint;
 	Boolean move = true;
+    boolean isTakeImage;
 	float oldXvalue, oldYvalue;
 	
 	private OnClickListener btnPhotoClickLisener = new OnClickListener() {
@@ -135,8 +145,8 @@ public class BodyActivity extends BaseFragment {
 		pointsLayout = (RelativeLayout) rootView.findViewById(R.id.rlPoints);
 		imgView =  (ImageView) rootView.findViewById(R.id.imgViewSilueta);
 		imgView.setOnTouchListener(imageOnTouchListener);
-		chkPointType = (Switch) rootView.findViewById(R.id.chkOderky);
-		btnPhoto = (Button) rootView.findViewById(R.id.btnPhoto);
+		chkPointType = (com.gc.materialdesign.views.Switch) rootView.findViewById(R.id.chkOderky);
+		btnPhoto = (com.gc.materialdesign.views.ButtonFloat) rootView.findViewById(R.id.btnPhoto);
 		btnPhoto.setOnClickListener(btnPhotoClickLisener);
 		imageLayout = (LinearLayout) rootView.findViewById(R.id.llPhotos);
 		
@@ -156,7 +166,9 @@ public class BodyActivity extends BaseFragment {
 	@Override
 	public void onStart() {
 		// TODO Auto-generated method stub
-		changeSiluet();
+        if(!isTakeImage)
+            changeSiluet();
+        isTakeImage = false;
 		super.onStart();
 	}
 	
@@ -240,28 +252,96 @@ public class BodyActivity extends BaseFragment {
 	
 	private void addImageView(final String thefilepath)
 	{
-    	final String filepath = thefilepath.replaceFirst("file:", "");
+/*    	final String filepath = thefilepath.replaceFirst("file:", "");
     	File file = new File(filepath);
     	if(!file.exists())   
     		Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
-        Bitmap imageBitmap = BitmapFactory.decodeFile(filepath);	        
-        ImageView mImageView = new ImageView(getActivity());
-//        mImageView.setLayoutParams(new LinearLayout.LayoutParams(imageLayout.getHeight()-5, imageLayout.getHeight() - 5));
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(imageLayout.getHeight()-5, imageLayout.getHeight() - 5);
-        params.setMargins(5, 0, 0, 0);
-        imageLayout.addView(mImageView, params);
-        mImageView.setImageBitmap(imageBitmap);		
+        Bitmap imageBitmap = decodeFile(file);
+        View imgView = new View(getActivity());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        params.setMargins(0, 5, 0, 0);
+        imgView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
+        imageLayout.addView(imgView, params);*/
 	}
+
+    private String decodeFile(File f){
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f),null,o);
+
+            double bitmapRatio = 190.0 /  ((o.outWidth > o.outHeight)?o.outWidth:o.outHeight);
+            final int height_tmp = (int) (o.outHeight * bitmapRatio);
+            final int width_tmp = (int) (o.outWidth * bitmapRatio);
+
+            Bitmap imageBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(new FileInputStream(f)), width_tmp, height_tmp, true);
+            final String datatDirectory = Environment.getDataDirectory().toString();
+            File myDir = new File(datatDirectory + "/thumbnails");
+            myDir.mkdirs();
+            File file = new File (myDir, f.getName());
+            if (file.exists ()) file.delete ();
+
+            FileOutputStream out = new FileOutputStream(file);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+            return file.getPath();
+        } catch (FileNotFoundException e) {}
+
+        return null;
+    }
+
+    private void rotateImage(final String path) {
+        try {
+            ExifInterface exif = new ExifInterface(path);
+            Bitmap imageBitmap = BitmapFactory.decodeFile(path);
+
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Log.i("ExifInteface .........", "rotation =" + orientation);
+            Matrix m = new Matrix();
+
+            if ((orientation == ExifInterface.ORIENTATION_ROTATE_180)) {
+                m.postRotate(180);
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+                m.postRotate(90);
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                m.postRotate(270);
+            }
+
+            imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), m, true);
+            FileOutputStream out = new FileOutputStream(path);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            exif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
+            exif.saveAttributes();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (requestCode == PortableCheckin.REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
 	    	app.getSilhouette().AddPhotoPath(getRbtnSilueteIndex(), mCurrentPhotoPath);
-	    	app.isTakeImage = true;
+            ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
+	    	isTakeImage = true;
 	    	addImageView(mCurrentPhotoPath);
 
 	    }
 	}
-	
-	
+
+
+    private class ImageOperations extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            final String imgFilePath = params[0];
+            File file = new File(imgFilePath);
+            if(!file.exists()) {
+                Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
+                return "";
+            }
+            rotateImage(imgFilePath);
+            return decodeFile(file);
+        }
+    }
 }

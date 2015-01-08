@@ -27,6 +27,10 @@ public class BaseGridActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_grid);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setIcon(R.color.transparent);
+        getActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
+        getActionBar().setTitle(getResources().getString(R.string.naplanovane_zakazky));
 
         app = (PortableCheckin)getApplicationContext();
         listView = (ListView)findViewById(R.id.grid);
@@ -66,41 +70,13 @@ public class BaseGridActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
-
-/*    AbsListView.OnScrollListener myOnScrollListener = new AbsListView.OnScrollListener() {
-        int lastTopVisiblePosition = -1;
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            PlannedOrderAdapter adapter = (PlannedOrderAdapter)listView.getAdapter();
-            if(adapter == null)
-                return;
-            final boolean contains = adapter.sectionCaptionPositions.contains(new PlannedOrderAdapter.Captions(lastTopVisiblePosition));
-
-            if(contains && lastTopVisiblePosition < listView.getFirstVisiblePosition())
-            {
-                View lastVieibleView = listView.getChildAt(lastTopVisiblePosition);
-                final String lastCaptionStr = ((TextView) lastVieibleView.findViewById(R.id.lblbCaption)).getText().toString();
-                ((TextView)findViewById(R.id.lblbCaption)).setText(lastCaptionStr);
-            }
-            lastTopVisiblePosition = listView.getFirstVisiblePosition();
-        }
-    };*/
 }

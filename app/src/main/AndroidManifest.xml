@@ -27,7 +27,7 @@
 
         <activity
             android:name="cz.tsystems.portablecheckin.WelcomeActivity"
-            android:background="@drawable/welcome"
+            android:background="@drawable/welcome_bg"
             android:launchMode="singleTop"
             android:theme="@style/NoActionBarTheme" >
             <intent-filter>
