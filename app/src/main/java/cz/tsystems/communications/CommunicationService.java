@@ -321,6 +321,8 @@ public class CommunicationService extends IntentService {
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
+            final String tmp = root.path("PLANNED_ORDER").path("ACTIVITIES").asText();
+            app.setPlannedActivitiesList(root.path("PLANNED_ORDER").path("ACTIVITIES"));
             app.setCheckin(root.path("CHECKIN"));
             int readedLength = 0;
             while(readedLength < response.length()) {

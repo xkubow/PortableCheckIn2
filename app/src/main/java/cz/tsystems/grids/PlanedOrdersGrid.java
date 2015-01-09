@@ -1,12 +1,12 @@
-package cz.tsystems.dialogs;
+package cz.tsystems.grids;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.AbsListView;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,6 +20,15 @@ import cz.tsystems.portablecheckin.R;
  * Created by KUBO on 9. 12. 2014.
  */
 public class PlanedOrdersGrid extends BaseGridActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().setTitle(getResources().getString(R.string.Naplanovane_zakazky));
+        View include = findViewById(R.id.captionInclude);
+        ViewGroup viewGroup = (ViewGroup) include.getParent();
+        viewGroup.removeView(include);
+    }
 
 
     @Override
@@ -41,6 +50,11 @@ public class PlanedOrdersGrid extends BaseGridActivity {
     public void setListView() {
         final List<DMPlannedOrder> planedOrderList = ((PortableCheckin)getApplicationContext()).getPlanZakazk();
         PlannedOrderAdapter plannedOrderAdapter = new PlannedOrderAdapter( this, R.layout.item_planned_order, planedOrderList);
+
+        if(plannedOrderAdapter == null) {
+            Toast.makeText(this, getResources().getString(R.string.PrazdnyZoznam), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         listView.setAdapter(plannedOrderAdapter);
 

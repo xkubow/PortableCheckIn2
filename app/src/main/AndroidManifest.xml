@@ -32,7 +32,6 @@
             android:theme="@style/NoActionBarTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -49,24 +48,37 @@
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
         <activity
-            android:name="cz.tsystems.dialogs.BaseGridActivity"
+            android:name="cz.tsystems.grids.BaseGridActivity"
             android:label="@string/title_activity_base_grid"
             android:launchMode="singleTop"
             android:theme="@style/PopupTheme" />
         <activity
-            android:name="cz.tsystems.dialogs.PlanedOrdersGrid"
+            android:name="cz.tsystems.grids.PlanedOrdersGrid"
             android:label="@string/title_activity_base_grid"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
-<!--            android:theme="@style/PopupTheme" -->
-        <!--activity
-            android:name="cz.tsystems.portablecheckin.UnitServiceActivity"
-            android:label="@string/title_activity_unit_service" >
-        </activity-->
-        <!--activity
-            android:name="cz.tsystems.portablecheckin.Item_packet"
-            android:label="@string/title_activity_item_packet" >
-        </activity-->
+        <activity
+            android:name="cz.tsystems.grids.ZakaznikInfo"
+            android:label="Zaakznik info"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.VozidloInfo"
+            android:label="Zaakznik info"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.History"
+            android:label="Zaakznik info"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.PlanActivities"
+            android:label="Zaakznik info"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.portablecheckin.Poznamka"
+            android:label="Zaakznik info"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+
     </application>
 
 </manifest>

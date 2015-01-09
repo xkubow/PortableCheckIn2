@@ -1,17 +1,20 @@
-package cz.tsystems.dialogs;
+package cz.tsystems.grids;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import cz.tsystems.adapters.PlannedOrderAdapter;
+import com.gc.materialdesign.views.Button;
+
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 
@@ -27,19 +30,39 @@ public class BaseGridActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_grid);
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setIcon(R.color.transparent);
         getActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
-        getActionBar().setTitle(getResources().getString(R.string.naplanovane_zakazky));
 
         app = (PortableCheckin)getApplicationContext();
         listView = (ListView)findViewById(R.id.grid);
-//        listView.setOnScrollListener(myOnScrollListener);
 
-//        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.activity_title_bar);
+        ((TextView)findViewById(R.id.lblCarCaption)).setText(app.getCheckin().vehicle_description);
+        TextView lblLoggetUser = (TextView)findViewById(R.id.lblLoggetUser);
+        TextView lblCheckinNR = (TextView)findViewById(R.id.lblCheckIn_nr);
 
-        View v = findViewById(R.id.baseGrdLayaut);//activity.getLayoutInflater().inflate(R.layout.activity_base_grid, null);
-        ((LinearLayout) v).addView(getCaptionView(), 0);
+        final String poradce = getResources().getString(R.string.Poradce);
+        if(PortableCheckin.user != null)
+            lblLoggetUser.setText(poradce + ": " + PortableCheckin.user.name + " " + PortableCheckin.user.surname);
+        else
+            lblLoggetUser.setText(poradce + ": ");
+
+        if(app.getCheckin().checkin_number > 0)
+            lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
+        else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
+            final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);
+            final Spanned theNR = Html.fromHtml(planZakPrefix + ": <b>" + String.valueOf(app.getCheckin().planned_order_no) + "</b>");
+            lblCheckinNR.setText(theNR );
+        }
+        else
+            lblCheckinNR.setText("");
+
+        Drawable d = app.getSelectedBrand().getBrandImage(app);
+        ((android.widget.Button)findViewById(R.id.btnBrand)).setBackgroundDrawable(d);
+
+        View v = findViewById(R.id.baseGrdLayaut);
+        ((LinearLayout) v).addView(getCaptionView(), 1);
 
         setListView();
         setWindowParams();

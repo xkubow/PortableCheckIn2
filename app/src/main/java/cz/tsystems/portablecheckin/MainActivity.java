@@ -11,25 +11,19 @@ import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.vinEditText;
 import cz.tsystems.communications.CommunicationService;
-import cz.tsystems.data.DMBrand;
 import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
-import cz.tsystems.dialogs.PlanedOrdersGrid;
+import cz.tsystems.grids.PlanActivities;
+import cz.tsystems.grids.PlanedOrdersGrid;
 
 //import android.app.DialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,11 +39,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonFloat;
 import com.gc.materialdesign.views.Slider;
 
 public class MainActivity extends BaseFragment {
@@ -68,6 +62,7 @@ public class MainActivity extends BaseFragment {
 	vinEditText txtVIN;
 	Button btnSPZ, btnSTK, btnEmise;// btnPalivo;// btnScenare;
     com.gc.materialdesign.views.Switch chkPoistPrip, chkOtp, chkServisKniz;
+    ButtonFloat fbtPZ, fbtMajak, fbtMegafon;
     Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
 	
@@ -112,7 +107,24 @@ public class MainActivity extends BaseFragment {
 		}
 	};
 
-	private OnClickListener theButtonClickLisener = new OnClickListener() {
+    private OnClickListener theFloatButtonClickLisener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ButtonFloat theButton = (ButtonFloat) v;
+            if(theButton.equals(fbtPZ)) {
+                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
+                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+            } else if (theButton.equals(fbtMajak)) {
+//                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
+//                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+            } else if (theButton.equals(fbtMegafon)) {
+//                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
+//                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+            }
+        }
+    };
+
+    private OnClickListener theButtonClickLisener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
@@ -176,7 +188,7 @@ public class MainActivity extends BaseFragment {
 		}
 	};
 
-	public MainActivity() {
+    public MainActivity() {
 		setRetainInstance(true);				
 	}
 
@@ -216,6 +228,13 @@ public class MainActivity extends BaseFragment {
         stavPaliva = (Slider) values1.findViewById(R.id.slaiderStavPaliva);
         stavInterieru = (Slider) values2.findViewById(R.id.slaiderInterier);
         stavOleja = (Slider) values2.findViewById(R.id.slaiderStavOleje);
+
+        fbtPZ = (ButtonFloat) rootView.findViewById(R.id.fbtnPZ);
+        fbtPZ.setOnClickListener(theFloatButtonClickLisener);
+        fbtMajak = (ButtonFloat) rootView.findViewById(R.id.fbtnMajak);
+        fbtMajak.setOnClickListener(theFloatButtonClickLisener);
+        fbtMegafon = (ButtonFloat) rootView.findViewById(R.id.fbtnMegafon);
+        fbtMegafon.setOnClickListener(theFloatButtonClickLisener);
 
 		return rootView;
 	}
@@ -287,7 +306,7 @@ public class MainActivity extends BaseFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-        getActivity().getActionBar().setTitle(R.string.Informace_o_vozidle);
+        getActivity().getActionBar().setTitle(R.string.Informace_o_Vozidle);
 	}
 	
 	private void setClickLiseners() {

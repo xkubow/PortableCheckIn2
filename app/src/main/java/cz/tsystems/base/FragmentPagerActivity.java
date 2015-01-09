@@ -7,7 +7,8 @@ import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.DMBrand;
 import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
-import cz.tsystems.dialogs.BaseGridActivity;
+import cz.tsystems.grids.BaseGridActivity;
+import cz.tsystems.grids.History;
 import cz.tsystems.portablecheckin.*;
 
 import android.annotation.TargetApi;
@@ -26,7 +27,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -239,7 +239,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.themenu, menu);
-        getLayoutInflater().setFactory(new LayoutInflater.Factory() {
+  /*      getLayoutInflater().setFactory(new LayoutInflater.Factory() {
             @Override
             public View onCreateView(String name, Context context,
                                      AttributeSet attrs) {
@@ -265,6 +265,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                     }
                 }
                 return null;
+            }
+        });*/
+        menu.findItem(R.id.action_note_add).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent myIntent = new Intent(FragmentPagerActivity.this, Poznamka.class);
+                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+                return false;
             }
         });
         return super.onCreateOptionsMenu(menu);

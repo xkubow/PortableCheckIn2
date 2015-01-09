@@ -17,7 +17,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -41,7 +40,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.gc.materialdesign.views.ButtonFloat;
 
 public class BodyActivity extends BaseFragment {
 	final String TAG = "BodyActivity";
@@ -53,11 +52,8 @@ public class BodyActivity extends BaseFragment {
 	Button selectedPoint;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
     com.gc.materialdesign.views.Switch chkPointType;
-	PointF startPoint;
-	Boolean move = true;
     boolean isTakeImage;
-	float oldXvalue, oldYvalue;
-	
+
 	private OnClickListener btnPhotoClickLisener = new OnClickListener() {
 
 		@Override
@@ -68,26 +64,44 @@ public class BodyActivity extends BaseFragment {
 	
 	OnTouchListener btnPointTouchListener = new OnTouchListener() {
 		int[] location = new int[2];
+        boolean moved = false;
 		
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-//			if (event.getAction() == MotionEvent.ACTION_DOWN){
-//                oldXvalue = event.getX();
-//                oldYvalue = event.getY();
-//                Log.i(myTag, "Action Down " + oldXvalue + "," + oldYvalue);
-//            }else 
-			if (event.getAction() == MotionEvent.ACTION_MOVE  ){
+            Button button = (Button) v;
+            if (event.getAction() == MotionEvent.ACTION_UP ) {
+                if(moved) {
+                    moved = false;
+                    return true;
+                }
+                final int index = Integer.valueOf( ((Button)v).getText().toString() ) -1 ;
+                app.getSilhouette().deletePoint(getRbtnSilueteIndex(), (short) index);
+                pointsLayout.removeView(v);
+                reloadPoits();
+            }
+			else if (event.getAction() == MotionEvent.ACTION_MOVE  ){
+                moved = true;
                 pointsLayout.getLocationInWindow(location);
-				Button b = (Button)v;				
-//				Log.i(TAG, "****  B U T T O N :" + b.toString());
-//               LayoutParams params = new LayoutParams(v.getWidth(), v.getHeight(),(int)(me.getRawX() - (v.getWidth() / 2)), (int)(event.getRawY() - (v.getHeight())));
+                float X = event.getRawX() - location[0] - 20;
+                float Y = event.getRawY() - location[1] - 20;
+                final float XBoudary = pointsLayout.getWidth()-v.getWidth();
+                final float YBoudary = pointsLayout.getHeight()-v.getHeight();
+                if(X < 0)
+                    X = 0;
+                if(X > XBoudary)
+                    X = XBoudary;
+                if(Y < 0)
+                    Y = 0;
+                if(Y > YBoudary)
+                    Y = YBoudary;
+
 				RelativeLayout.LayoutParams params = (LayoutParams) v.getLayoutParams();
-				params.setMargins((int)(event.getRawX() - location[0] - 20),  (int)(event.getRawY() - location[1]-20), 0, 0);
-//				int[] point = app.getSilhouette().getPoints(getRbtnSilueteIndex()).get(0);
-//				point[0] = (int)(event.getRawX() - location[0] - 20);
-//				point[1] = (int)(event.getRawY() - location[1]-20);
-				b.setLayoutParams(params);
+				params.setMargins((int)X,  (int)Y, 0, 0);
+				button.setLayoutParams(params);
+                int[] point = app.getSilhouette().getpoint(getRbtnSilueteIndex(),Integer.valueOf(button.getText().toString())-1);
+                point[0] = (int)X;
+                point[1] = (int)Y;
             }
             return true;
 		}
@@ -122,17 +136,12 @@ public class BodyActivity extends BaseFragment {
 			selectedPoint.setBackgroundResource(R.drawable.stop);			
 		else
 			selectedPoint.setBackgroundResource(R.drawable.point);
-		// selectedPoint.setImageResource(R.drawable.point);
 		RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(40, 40);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		lay.setMargins(x, y, 0, 0);
-//		final int imgIndex = getRbtnSilueteIndex();
-		// app.addPoint(new PointF(X, Y), imgIndex);
-//		final int index = selectedSilhouette.getPoints().size();// app.getPoints(imgIndex).size();
 		selectedPoint.setText(String.valueOf(index));
-//		Log.i(TAG, "##### THE  B U T T O N :" + selectedPoint.toString());
-		pointsLayout.addView(selectedPoint, lay);	   
+		pointsLayout.addView(selectedPoint, lay);
    }
 
 	@Override
@@ -180,22 +189,23 @@ public class BodyActivity extends BaseFragment {
 		RadioButton rb = (RadioButton) rbtnSilouettes.findViewById(checkedRadioButton);
 		return Short.parseShort(rb.getTag().toString());		
 	}
+
+    private void reloadPoits() {
+        pointsLayout.removeAllViews();
+        int i = 1;
+        for(int[] point : app.getSilhouette().getPoints(getRbtnSilueteIndex()))
+            addPoint(point[0], point[1], i++, (point[2] == 2));
+    }
 	
 	public void changeSiluet() {
 		final short checkedRadioButton = (short) getRbtnSilueteIndex();
-//		selectedSilhouette = app.getSilhouette(checkedRadioButton);
-		
-		pointsLayout.removeAllViews();
+
 		imageLayout.removeAllViews();
 		imgView.setImageBitmap(app.getSilhouette().getImage(checkedRadioButton));
-		 
-		
+
 		chkPointType.setChecked(false);
-		int i = 1;
-		for(int[] point : app.getSilhouette().getPoints(getRbtnSilueteIndex()))
-			addPoint(point[0], point[1], i++, (point[2] == 2));
+        reloadPoits();
 		
-		i = 1;
 		for(String photoPath : app.getSilhouette().getPhotoNames(getRbtnSilueteIndex()))
 			addImageView(photoPath);
 
@@ -231,7 +241,7 @@ public class BodyActivity extends BaseFragment {
 	            startActivityForResult(takePictureIntent, PortableCheckin.REQUEST_TAKE_PHOTO);
 	        }
 	    }
-	}	
+	}
 	
 	String mCurrentPhotoPath;
 
@@ -256,6 +266,9 @@ public class BodyActivity extends BaseFragment {
 	
 	private void addImageView(final String thefileName)
 	{
+        if(getActivity() == null)
+            return;
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.setMargins(0, 5, 0, 0);
 
@@ -289,7 +302,7 @@ public class BodyActivity extends BaseFragment {
         }
 	}
 
-    private String decodeFile(File f){
+    private String decodeFile(File f, final String thumbNailDir){
         try {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
@@ -300,11 +313,8 @@ public class BodyActivity extends BaseFragment {
             final int width_tmp = (int) (o.outWidth * bitmapRatio);
 
             Bitmap imageBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(new FileInputStream(f)), width_tmp, height_tmp, true);
-            final String datatDirectory = Environment.getDataDirectory().toString();
-//            File myDir = new File(datatDirectory + "/thumbnails");
-            File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
-//            myDir.mkdirs();
-            File file = new File (myDir.getAbsolutePath() + File.separator + f.getName());
+//            File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
+            File file = new File (thumbNailDir + File.separator + f.getName());
             if (file.exists ())
                 file.delete ();
 
@@ -354,7 +364,7 @@ public class BodyActivity extends BaseFragment {
             if(!file.exists()) {
                 Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
             }
-	    	app.getSilhouette().AddPhotoName(getRbtnSilueteIndex(), file.getName());
+	    	app.getSilhouette().addPhotoName(getRbtnSilueteIndex(), file.getName());
             ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
 	    	isTakeImage = true;
 
@@ -363,8 +373,8 @@ public class BodyActivity extends BaseFragment {
 //            ProgressBarCircularIndeterminate progressBar = new ProgressBarCircularIndeterminate(getActivity(), getActivity().getResources().get com.gc.materialdesign.R.attr.indeterminateProgressStyle);
             imageLayout.addView(progressBar);
 
-
-            new ImageOperations().execute(mCurrentPhotoPath.replaceFirst("file:", ""));
+            File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
+            new ImageOperations().execute(mCurrentPhotoPath.replaceFirst("file:", ""), myDir.getAbsolutePath());
 
 	    }
 	}
@@ -386,7 +396,7 @@ public class BodyActivity extends BaseFragment {
                 Log.e(TAG, "File not exists : " + imgFilePath);
                 return "";
             }
-            final String thumbNailpath = decodeFile(file);
+            final String thumbNailpath = decodeFile(file, params[1]);
             file = new File(thumbNailpath);
             if(!file.exists()) {
                 Log.e(TAG, "File not exists : " + thumbNailpath);

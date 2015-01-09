@@ -2,8 +2,6 @@ package cz.tsystems.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -61,7 +59,8 @@ public class PortableCheckin extends Application {
 	
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public List<DMPlannedOrder> plannedOrderList;
-	public DMCheckin checkin;	
+    static public List<DMPlannedActivities>plannedActivitiesList;
+	public DMCheckin checkin;
 	static public DMUser user;
 	static public DMSetting setting;
 	
@@ -151,7 +150,14 @@ public class PortableCheckin extends Application {
 		    PortableCheckin.vehicleHistoryList = parseJsonArray(vozHistory, DMVehicleHistory.class);
         else
             PortableCheckin.vehicleHistoryList = null;
-	}	
+	}
+
+    public void setPlannedActivitiesList(JsonNode plannedActivities) {
+        if(!plannedActivities.isMissingNode())
+            PortableCheckin.plannedActivitiesList = parseJsonArray(plannedActivities, DMPlannedActivities.class);
+        else
+            PortableCheckin.plannedActivitiesList = null;
+    }
 	
 	public String getLogin() {
 		return login;

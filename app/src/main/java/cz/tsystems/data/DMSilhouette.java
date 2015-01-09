@@ -41,7 +41,11 @@ public class DMSilhouette extends Object {
 	
 	public void addPoint(final short location, final int X, final int Y, final int typ) {
 		this.silImageData[location].points.add(new int[] {X, Y, typ});
-	}	
+	}
+
+    public void deletePoint(final short location, final short index) {
+        this.silImageData[location].points.remove(index);
+    }
 	
 	public int[] getpoint(final short location, final int index) {
 		return this.silImageData[location].points.get(index);
@@ -63,11 +67,11 @@ public class DMSilhouette extends Object {
 		return silImageData[location].photoFileName;
 	}	
 	
-	public void AddPhotoName(final short location, final String photoName) {
+	public void addPhotoName(final short location, final String photoName) {
 		silImageData[location].photoFileName.add(photoName);
 	}
 	
-	public void DeletePhoto(final short location, final int index) {
+	public void deletePhoto(final short location, final int index) {
 		silImageData[location].photoFileName.remove(index);
 	}
 

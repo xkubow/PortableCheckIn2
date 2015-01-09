@@ -29,13 +29,13 @@
         android:id="@+id/action_InfVozidla"
         android:orderInCategory="4"
         android:showAsAction="never"
-        android:title="@string/infVozidla"
+        android:title="@string/Informace_o_Vozidle"
         />
     <item
         android:id="@+id/action_InfZakznik"
         android:orderInCategory="5"
         android:showAsAction="never"
-        android:title="@string/InfZakaznik"
+        android:title="@string/Informace_o_zakaznikovi"
         />
     <item
         android:id="@+id/action_Protokol"

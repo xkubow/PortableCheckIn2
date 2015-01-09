@@ -6,7 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="LogetUser">Loget user</string>
     <string name="CheckInNR">CheckIn NR</string>
-    <string name="InformaceOVozidle">Informace o vozidle</string>
+    <string name="Informace_o_Vozidle">Informace o vozidle</string>
     <string name="SPZ">SPZ</string>
     <string name="PredajDat">Predaj dat</string>
     <string name="PoistPripad">Poist pripad</string>
@@ -69,8 +69,7 @@
     <string name="odesliData">Odešli data</string>
     <string name="strucHistory">Stručná historie</string>
     <string name="historia">Historie</string>
-    <string name="infVozidla">Informace o vozidle</string>
-    <string name="InfZakaznik">Informace o zákazníkovi</string>
+    <string name="Informace_o_zakaznikovi">Informace o zákazníkovi</string>
     <string name="Protokol">Protokol</string>
     <string name="Palivo">Palivo</string>
     <string name="Scenar">Scenar</string>
@@ -128,7 +127,6 @@
     <string name="service">Service</string>
     <string name="title_activity_item_unit">item_unit</string>
     <string name="title_activity_title_bar">title_bar</string>
-    <string name="naplanovane_zakazky">Naplánované zakázky/Rozpracované Check-Iny</string>
     <string name="data_source">Zdroj</string>
     <string name="Satus">Status</string>
     <string name="plan_zak_cis">PZ.č.</string>
@@ -153,11 +151,16 @@
     <string name="POSKODENI">POŠKODENÍ</string>
     <string name="PROHLIDKA">PROHLÍDKA</string>
     <string name="NABIDKA">NABÍDKA</string>
-    <string name="Informace_o_vozidle">Informace o vozidle</string>
     <string name="heslo">Heslo</string>
     <string name="Uzivatel">Užívatel</string>
     <string name="Prihlaseni">Přihlášení</string>
     <string name="My">Mé</string>
     <string name="Others">Ostatní</string>
     <string name="Naplanovane_zakazky">Naplánované zakázky / Rozpracované Check-Iny</string>
+    <string name="PrazdnyZoznam">Prázdny seznam</string>
+    <string name="provozovna">Provozovna</string>
+    <string name="tym">Tým</string>
+    <string name="cinnost">Činnost</string>
+    <string name="Planovane_cinnosti">Plánované činnosti</string>
+    <string name="Zakazkovi_list">Zakázkový list</string>
 </resources>

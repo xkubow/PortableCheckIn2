@@ -33,8 +33,8 @@ public class VehicleHistoryArrayAdapter extends ArrayAdapter<DMVehicleHistory> i
 		super(context, resource, textViewResourceId, objects);
 		this.context = context;
 		PortableCheckin app = (PortableCheckin) context.getApplicationContext();
-		
-    	if(app.getCheckin().customer_id.length() > 0)
+
+    	if(app.getCheckin().customer_id != null && app.getCheckin().customer_id.length() > 0)
     		checkinCustomerId = app.getCheckin().customer_id;
     	else
     		checkinCustomerId = "";

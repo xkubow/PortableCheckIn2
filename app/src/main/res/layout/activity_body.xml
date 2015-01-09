@@ -79,35 +79,40 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:tag="0"
-            android:text="@string/LevyBok" />
+            android:text="@string/LevyBok"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnSil_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tag="1"
-            android:text="@string/ZadnaCast" />
+            android:text="@string/ZadnaCast"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnSil_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tag="2"
-            android:text="@string/PravyBok" />
+            android:text="@string/PravyBok"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnStavPal4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tag="3"
-            android:text="@string/PrednaCast" />
+            android:text="@string/PrednaCast"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnStavPal3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tag="4"
-            android:text="@string/Strecha" />
+            android:text="@string/Strecha"
+            android:layout_margin="10dp" />
     </RadioGroup>
 
     <TextView
@@ -135,19 +140,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/A" />
+            android:text="@string/A"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/B" />
+            android:text="@string/B"
+            android:layout_margin="10dp" />
 
         <RadioButton
             android:id="@+id/rbtnStavPal1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/C" />
+            android:text="@string/C"
+            android:layout_margin="10dp" />
     </RadioGroup>
 
     <TextView
@@ -203,7 +211,7 @@
         android:layout_alignParentEnd="false"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="180dp"
+        android:layout_marginRight="185dp"
         android:layout_alignParentTop="false"
         android:layout_below="@+id/lblPhotos" />
 
