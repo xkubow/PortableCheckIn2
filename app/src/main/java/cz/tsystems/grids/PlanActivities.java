@@ -19,6 +19,7 @@ public class PlanActivities extends BaseGridActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        type = ePLANACTIVITIES;
         getActionBar().setTitle(getResources().getString(R.string.Planovane_cinnosti));
     }
 

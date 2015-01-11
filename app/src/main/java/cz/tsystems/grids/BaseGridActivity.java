@@ -1,6 +1,7 @@
 package cz.tsystems.grids;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -13,8 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
-
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 
@@ -23,8 +22,8 @@ public class BaseGridActivity extends Activity {
 
     protected ListView listView;
     protected PortableCheckin app;
-    public static final int eGRDPLANZAK = 1;
-    public int grdTypes;
+    public static final int eBASEGRID = 0, eGRDPLANZAK = 1, eHISTORY = 2, ePLANACTIVITIES = 3, eVOZIDLOINFO = 4, eZAKAZNIKINFO = 5;
+    public int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,10 @@ public class BaseGridActivity extends Activity {
         ((android.widget.Button)findViewById(R.id.btnBrand)).setBackgroundDrawable(d);
 
         View v = findViewById(R.id.baseGrdLayaut);
-        ((LinearLayout) v).addView(getCaptionView(), 1);
+        View v2 = getCaptionView();
+        if(v2 != null) {
+            ((LinearLayout) v).addView(v2, 1);
+        }
 
         setListView();
         setWindowParams();
@@ -96,6 +98,9 @@ public class BaseGridActivity extends Activity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
+                Intent intent = new Intent();
+                intent.putExtra("type", type);
+                this.setResult(RESULT_OK, intent);
                 this.finish();
                 return true;
             default:

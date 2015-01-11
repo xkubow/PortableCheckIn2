@@ -28,6 +28,7 @@ public class PlanedOrdersGrid extends BaseGridActivity {
         View include = findViewById(R.id.captionInclude);
         ViewGroup viewGroup = (ViewGroup) include.getParent();
         viewGroup.removeView(include);
+        type = eGRDPLANZAK;
     }
 
 
@@ -69,7 +70,7 @@ public class PlanedOrdersGrid extends BaseGridActivity {
                 Intent msgIntent = new Intent(PlanedOrdersGrid.this, CommunicationService.class);
 //                msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
 //                msgIntent.putExtra("ACTION", "DataForCheckIn");type
-                msgIntent.putExtra("type", eGRDPLANZAK);
+                msgIntent.putExtra("type", type);
                 if(plannedOrder.planned_order_id != null && plannedOrder.planned_order_id.length() > 0)
                     msgIntent.putExtra("plannedorderid", plannedOrder.planned_order_id);
                 if(plannedOrder.checkin_id > 0)

@@ -17,6 +17,7 @@ public class ZakaznikInfo extends BaseGridActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        type = eZAKAZNIKINFO;
         getActionBar().setTitle(getResources().getString(R.string.Informace_o_zakaznikovi));
     }
 

@@ -17,6 +17,7 @@ public class VozidloInfo extends BaseGridActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        type = eVOZIDLOINFO;
         getActionBar().setTitle(getResources().getString(R.string.Informace_o_Vozidle));
     }
 

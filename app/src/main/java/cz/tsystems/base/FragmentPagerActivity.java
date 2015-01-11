@@ -153,7 +153,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 				switch (data.getExtras().getInt("type")) {
 				case BaseGridActivity.eGRDPLANZAK:
-					loadCheckinData(data);					
+					loadCheckinData(data);
 					break;				
 				default:
 					break;

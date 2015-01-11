@@ -112,12 +112,15 @@ public class MainActivity extends BaseFragment {
         public void onClick(View v) {
             ButtonFloat theButton = (ButtonFloat) v;
             if(theButton.equals(fbtPZ)) {
+                ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
                 Intent myIntent = new Intent(getActivity(), PlanActivities.class);
                 startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             } else if (theButton.equals(fbtMajak)) {
+                ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
 //                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
 //                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             } else if (theButton.equals(fbtMegafon)) {
+                ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
 //                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
 //                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             }

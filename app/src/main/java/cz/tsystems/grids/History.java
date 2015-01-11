@@ -22,6 +22,7 @@ public class History extends BaseGridActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        type = eHISTORY;
         if(getIntent().getBooleanExtra("shortVersion", false))
             getActionBar().setTitle(getResources().getString(R.string.historia));
         else
