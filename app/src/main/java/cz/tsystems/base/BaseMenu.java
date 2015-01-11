@@ -33,6 +33,7 @@ public final class BaseMenu extends Object {
 	
 	static public void showStrucHistory(final Activity activity)
 	{
+        ((FragmentPagerActivity)activity).setCheckLogin(false);
         Intent myIntent = new Intent(activity.getApplicationContext(), History.class);
         myIntent.putExtra("shortVersion", true);
         activity.startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
@@ -40,18 +41,21 @@ public final class BaseMenu extends Object {
 	
 	static public void showHistory(final Activity activity)
 	{
+        ((FragmentPagerActivity)activity).setCheckLogin(false);
         Intent myIntent = new Intent(activity.getApplicationContext(), History.class);
         activity.startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}
 	
 	static public void showVozidloInfo(final Activity activity)
 	{
+        ((FragmentPagerActivity)activity).setCheckLogin(false);
         Intent myIntent = new Intent(activity.getApplicationContext(), VozidloInfo.class);
         activity.startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
     }
 
 	static public void showZkaznikInfo(final Activity activity)
 	{
+        ((FragmentPagerActivity)activity).setCheckLogin(false);
         Intent myIntent = new Intent(activity.getApplicationContext(), ZakaznikInfo.class);
         activity.startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}

@@ -321,10 +321,31 @@ public class PortableCheckin extends Application {
 			return null;
 		
 		final String brand_id = checkin.brand_id;
-		final String query = "SELECT ROWID AS _id, SILHOUETTE_ID FROM BRAND_SILHOUETTE WHERE BRAND_ID LIKE ?";
+        final String query = "SELECT S.ROWID AS _id, SI.SILHOUETTE_ID, S.TEXT AS STEXT, SI.SILHOUETTE_TYPE_ID, ST.TEXT AS STTEXT, SI.IMAGE "
+                + "FROM SILHOUETTE_IMAGE SI, SILHOUETTE S, SILHOUETTE_TYPE ST "
+                + "WHERE S.ID=SI.SILHOUETTE_ID "
+                + "AND ST.ID=SI.SILHOUETTE_TYPE_ID "
+                + " AND SI.SILHOUETTE_ID IN ("
+                + " SELECT SILHOUETTE_ID FROM BRAND_SILHOUETTE WHERE BRAND_ID LIKE ?)";
 		
 		return theDBProvider.executeQuery(query, new String[] {brand_id});
 	}*/
+
+    public Cursor getSilhouetteImagesForBrand() {
+        if(checkin.brand_id == null || checkin.brand_id.length() == 0)
+            return null;
+
+        final String brand_id = checkin.brand_id;
+        final String query = "SELECT ID, \n" +
+                "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI1 WHERE SI1.SILHOUETTE_ID = ID AND SI1.SILHOUETTE_TYPE_ID = 1) AS img1,\n" +
+                "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI2 WHERE SI2.SILHOUETTE_ID = ID AND SI2.SILHOUETTE_TYPE_ID = 2) AS img2,\n" +
+                "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI3 WHERE SI3.SILHOUETTE_ID = ID AND SI3.SILHOUETTE_TYPE_ID = 3) AS img3,\n" +
+                "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI4 WHERE SI4.SILHOUETTE_ID = ID AND SI4.SILHOUETTE_TYPE_ID = 4) AS img4\n" +
+                "FROM SILHOUETTE\n" +
+                "WHERE SILHOUETTE.ID IN ( SELECT SILHOUETTE_ID FROM BRAND_SILHOUETTE WHERE BRAND_ID LIKE ?)";
+
+        return theDBProvider.executeQuery(query, new String[] {brand_id});
+    }
 	
 	private Cursor getSilhouetteFromDB(final long silId) {
 		final String query = "SELECT S.ROWID AS _id, SI.SILHOUETTE_ID, S.TEXT AS STEXT, SI.SILHOUETTE_TYPE_ID, ST.TEXT AS STTEXT, SI.IMAGE "

@@ -78,6 +78,11 @@
             android:label="Zaakznik info"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.Siluets"
+            android:label="Zaakznik info"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
 
     </application>
 

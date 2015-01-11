@@ -11,6 +11,8 @@ import java.util.Date;
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.PortableCheckin;
+import cz.tsystems.grids.Siluets;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -49,7 +51,7 @@ public class BodyActivity extends BaseFragment {
 	RadioGroup rbtnSilouettes;
 	LinearLayout imageLayout;
 	ImageView imgView;
-	Button selectedPoint;
+	Button selectedPoint, btnSiluets;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
     com.gc.materialdesign.views.Switch chkPointType;
     boolean isTakeImage;
@@ -171,6 +173,16 @@ public class BodyActivity extends BaseFragment {
 				changeSiluet();
 			}
 		});
+
+        btnSiluets = (Button)rootView.findViewById(R.id.btnSiulety);
+        btnSiluets.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
+                Intent myIntent = new Intent(getActivity(), Siluets.class);
+                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+            }
+        });
 		return rootView;
 	}
 	
