@@ -298,8 +298,8 @@ public class CommunicationService extends IntentService {
         if (entity == null)
             return;
 
-        InputStream instream = entity.getContent();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        InputStream instream = entity.getContent();
+/*        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
         int len = 0;
@@ -310,25 +310,28 @@ public class CommunicationService extends IntentService {
         }
         baos.close();
 
-        byte[] b = baos.toByteArray();
+        byte[] b = baos.toByteArray();*/
 
         Intent i = new Intent("recivedData");
+        File tempFile = null;
         if (data.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
-            BitmapFactory.Options options=new BitmapFactory.Options();// Create object of bitmapfactory's option method for further option use
-            options.inPurgeable = true; // inPurgeable is used to free up memory while required
-            Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length, options);
-            i.putExtra("ReportImg", bmp);
-            Log.v(TAG, String.format("Banners DONE :%d", loadDataDone));
+            tempFile = File.createTempFile("protokol", "png");
+//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
         } else if (data.getString("ACTION").equalsIgnoreCase("ChiReport")) {
-            File tempFile = File.createTempFile("protokol", "pdf");
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
-            bos.write(b);
-            bos.flush();
-            bos.close();
-            i.putExtra("pdfFileName", tempFile.getName());
+            tempFile = File.createTempFile("protokol", "pdf");
+//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
+//            bos.write(b);
+//            bos.flush();
+//            bos.close();
+//            i.putExtra("pdfFileName", tempFile.getAbsoluteFile());
             Log.v(TAG, String.format("ChiReport DONE :%d", loadDataDone));
         }
+        FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+        entity.writeTo(fileOutputStream);
+        fileOutputStream.flush();
+        fileOutputStream.close();
 
+        i.putExtra("pdfFileName", tempFile.getAbsoluteFile().toString());
         i.putExtra("requestData", data);
         i.putExtra("loadDataDone", loadDataDone);
         sendBroadcast(i);

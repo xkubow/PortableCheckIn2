@@ -14,6 +14,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.PortableCheckin;
 
@@ -32,12 +36,11 @@ public class Protocol extends Activity {
             if(action.equalsIgnoreCase("recivedData")) {
                 final Bundle b = intent.getBundleExtra("requestData");
                 if(b != null && b.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
-                    Protocol.this.progressBar.setVisibility(View.GONE);
+                    Protocol.this.setProtocolImg(intent.getStringExtra("pdfFileName"));
                 } else if(b != null && b.getString("ACTION").equalsIgnoreCase("ChiReport")) {
                     requestReportPDF();
-                    byte[] bmpArray = b.getByteArray("ReportImg");
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bmpArray, 0 , bmpArray.length);
-                    Protocol.this.imgProtocol.setImageBitmap(bmp);
+                    Protocol.this.progressBar.setVisibility(View.GONE);
+                    final String tmpFileName = intent.getStringExtra("pdfFileName");
                 }
             }
         }
@@ -108,5 +111,18 @@ public class Protocol extends Activity {
     protected void onResume() {
         registerRecaiver();
         super.onResume();
+    }
+
+    public void setProtocolImg(final String filename) {
+        Protocol.this.progressBar.setVisibility(View.GONE);
+        FileInputStream fileInputStream = null;
+
+        try {
+            fileInputStream = new FileInputStream(new File(filename));
+            Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream);
+            imgProtocol.setImageBitmap(bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
