@@ -239,40 +239,22 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.themenu, menu);
-  /*      getLayoutInflater().setFactory(new LayoutInflater.Factory() {
-            @Override
-            public View onCreateView(String name, Context context,
-                                     AttributeSet attrs) {
-
-                if (name.equalsIgnoreCase("com.android.internal.view.menu.IconMenuItemView")) {
-                    try {
-                        LayoutInflater f = getLayoutInflater();
-                        final View view = f.createView(name, null, attrs);
-
-                        new Handler().post(new Runnable() {
-                            public void run() {
-
-                                // set the background drawable
-                                view.setBackgroundResource(R.drawable.alutexture_bg);
-
-                                // set the text color
-                                ((TextView) view).setTextColor(Color.WHITE);
-                            }
-                        });
-                        return view;
-                    } catch (InflateException e) {
-                    } catch (ClassNotFoundException e) {
-                    }
-                }
-                return null;
-            }
-        });*/
         menu.findItem(R.id.action_note_add).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                checkLogin = false;
                 Intent myIntent = new Intent(FragmentPagerActivity.this, Poznamka.class);
                 startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
                 return false;
+            }
+        });
+        menu.findItem(R.id.action_Protokol).setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                checkLogin = false;
+                Intent myIntent = new Intent(FragmentPagerActivity.this, Protocol.class);
+                startActivity(myIntent);
+                return  false;
             }
         });
         return super.onCreateOptionsMenu(menu);

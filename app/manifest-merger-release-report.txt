@@ -184,3 +184,33 @@ ADDED from AndroidManifest.xml:76:9
 		ADDED from AndroidManifest.xml:77:13
 	android:launchMode
 		ADDED from AndroidManifest.xml:79:13
+activity#cz.tsystems.grids.Siluets
+ADDED from AndroidManifest.xml:81:9
+	android:label
+		ADDED from AndroidManifest.xml:83:13
+	android:theme
+		ADDED from AndroidManifest.xml:85:13
+	android:name
+		ADDED from AndroidManifest.xml:82:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:84:13
+activity#cz.tsystems.grids.OdlozenePolozky
+ADDED from AndroidManifest.xml:86:9
+	android:label
+		ADDED from AndroidManifest.xml:88:13
+	android:theme
+		ADDED from AndroidManifest.xml:90:13
+	android:name
+		ADDED from AndroidManifest.xml:87:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:89:13
+activity#cz.tsystems.grids.SDA
+ADDED from AndroidManifest.xml:91:9
+	android:label
+		ADDED from AndroidManifest.xml:93:13
+	android:theme
+		ADDED from AndroidManifest.xml:95:13
+	android:name
+		ADDED from AndroidManifest.xml:92:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:94:13

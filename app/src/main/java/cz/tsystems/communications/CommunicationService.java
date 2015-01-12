@@ -1,39 +1,28 @@
 package cz.tsystems.communications;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.mail.BodyPart;
-import javax.mail.Header;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
@@ -43,11 +32,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
 import cz.tsystems.portablecheckin.R;
-import android.app.Dialog;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -59,10 +47,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.webkit.WebResourceResponse;
-import android.widget.Toast;
 
 public class CommunicationService extends IntentService {
 	final String TAG = CommunicationService.class.getSimpleName();
@@ -228,8 +213,6 @@ public class CommunicationService extends IntentService {
 		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 		HttpResponse response;
 		String valSeparator = "?";
-//		InputStream in;
-//		BufferedReader r;
 		StringBuilder total;
 		String line;
 		
@@ -267,22 +250,28 @@ public class CommunicationService extends IntentService {
 					return;
 				}
 
-				InputStream in = response.getEntity().getContent();
-				InputStreamReader is =new InputStreamReader(in, "UTF-8"); 
-				BufferedReader r = new BufferedReader(is);
-				total = new StringBuilder();
-				while ((line = r.readLine()) != null)
-                    total.append(line);
+                if(data.getString("ACTION").equalsIgnoreCase("GetProtokolImg")
+                   || data.getString("ACTION").equalsIgnoreCase("ChiReport")) {
+                    decodeByteResponse(data, response);
+                }
+                else {
+                    InputStream in = response.getEntity().getContent();
+                    InputStreamReader is = new InputStreamReader(in, "UTF-8");
+                    BufferedReader r = new BufferedReader(is);
+                    total = new StringBuilder();
+                    while ((line = r.readLine()) != null)
+                        total.append(line);
 
-				try {
-					decodeMessage(data, total.toString());
-				} catch (JsonProcessingException e) {
-					sendErrorMsg(e.getLocalizedMessage() );
-					e.printStackTrace();
-				} catch (IOException e) {
-					sendErrorMsg(e.getLocalizedMessage() );
-					e.printStackTrace();
-				}
+                    try {
+                        decodeMessage(data, total.toString());
+                    } catch (JsonProcessingException e) {
+                        sendErrorMsg(e.getLocalizedMessage());
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        sendErrorMsg(e.getLocalizedMessage());
+                        e.printStackTrace();
+                    }
+                }
 
 				// Get the data in the entity
 			}
@@ -304,6 +293,47 @@ public class CommunicationService extends IntentService {
 		sendErrorMsg(response.toString() );
 	}
 
+    private void decodeByteResponse(Bundle data, HttpResponse response) throws IOException {
+        HttpEntity entity = response.getEntity();
+        if (entity == null)
+            return;
+
+        InputStream instream = entity.getContent();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len = 0;
+
+        // instream is content got from httpentity.getContent()
+        while ((len = instream.read(buffer)) != -1) {
+            baos.write(buffer, 0, len);
+        }
+        baos.close();
+
+        byte[] b = baos.toByteArray();
+
+        Intent i = new Intent("recivedData");
+        if (data.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
+            BitmapFactory.Options options=new BitmapFactory.Options();// Create object of bitmapfactory's option method for further option use
+            options.inPurgeable = true; // inPurgeable is used to free up memory while required
+            Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length, options);
+            i.putExtra("ReportImg", bmp);
+            Log.v(TAG, String.format("Banners DONE :%d", loadDataDone));
+        } else if (data.getString("ACTION").equalsIgnoreCase("ChiReport")) {
+            File tempFile = File.createTempFile("protokol", "pdf");
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
+            bos.write(b);
+            bos.flush();
+            bos.close();
+            i.putExtra("pdfFileName", tempFile.getName());
+            Log.v(TAG, String.format("ChiReport DONE :%d", loadDataDone));
+        }
+
+        i.putExtra("requestData", data);
+        i.putExtra("loadDataDone", loadDataDone);
+        sendBroadcast(i);
+    }
+
 	private void decodeMessage(Bundle data, String response)
 			throws JsonProcessingException, IOException {
 		Intent i = new Intent("recivedData");
@@ -321,8 +351,11 @@ public class CommunicationService extends IntentService {
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
-            final String tmp = root.path("PLANNED_ORDER").path("ACTIVITIES").asText();
             app.setPlannedActivitiesList(root.path("PLANNED_ORDER").path("ACTIVITIES"));
+            final String tmp = root.path("DEFERRED_SERVICE_DEMANDS").asText();
+            final boolean exist = root.path("DEFERRED_SERVICE_DEMANDS").isMissingNode();
+            app.setOdlozenePolozky(root.path("DEFERRED_SERVICE_DEMANDS"));
+            app.setSDA(root.path("RECALLS"));
             app.setCheckin(root.path("CHECKIN"));
             int readedLength = 0;
             while(readedLength < response.length()) {
@@ -331,10 +364,7 @@ public class CommunicationService extends IntentService {
                 Log.i(TAG, String.format("CheckinData: %s", substring));
                 readedLength += substring.length();
             }
-            // Log.v(TAG, root.path("CHECKIN").textValue());
-            // writeToFile("checkinRespose", root.path("CHECKIN"));
-            // PortableCheckin.checkin =
-            // PortableCheckin.parseJson(root.path("CHECKIN"), DMCheckin.class);
+
         } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
             Log.v(TAG, response);
             JsonNode root = mapper.readTree(response);

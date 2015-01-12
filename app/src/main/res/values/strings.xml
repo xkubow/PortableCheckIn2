@@ -163,4 +163,10 @@
     <string name="cinnost">Činnost</string>
     <string name="Planovane_cinnosti">Plánované činnosti</string>
     <string name="Zakazkovi_list">Zakázkový list</string>
+    <string name="Cena">Cena</string>
+    <string name="Kod_zavad">Kód závady</string>
+    <string name="Typ_akce">Typ akce</string>
+    <string name="Odlozene_sluzby">Odložené služby</string>
+    <string name="Svolavacie_a_dielenske_akcie">Svolávací a dílenské akce</string>
+
 </resources>

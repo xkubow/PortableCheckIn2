@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import cz.tsystems.base.LowerCaseNamingStrategy;
 import cz.tsystems.model.PrehliadkyModel;
@@ -60,6 +61,8 @@ public class PortableCheckin extends Application {
 	public static final int REQUEST_TAKE_PHOTO = 1;
 	public List<DMPlannedOrder> plannedOrderList;
     static public List<DMPlannedActivities>plannedActivitiesList;
+    static public List<DMOdlozenePolozky>odlozenePolozky;
+    static public List<DMSDA>sda;
 	public DMCheckin checkin;
 	static public DMUser user;
 	static public DMSetting setting;
@@ -157,6 +160,18 @@ public class PortableCheckin extends Application {
             PortableCheckin.plannedActivitiesList = parseJsonArray(plannedActivities, DMPlannedActivities.class);
         else
             PortableCheckin.plannedActivitiesList = null;
+    }
+    public void setOdlozenePolozky(JsonNode node) {
+        if(!node.isMissingNode())
+            PortableCheckin.odlozenePolozky = parseJsonArray(node, DMOdlozenePolozky.class);
+        else
+            PortableCheckin.odlozenePolozky = null;
+    }
+    public void setSDA(JsonNode node) {
+        if(!node.isMissingNode())
+            PortableCheckin.sda = parseJsonArray(node, DMSDA.class);
+        else
+            PortableCheckin.sda = null;
     }
 	
 	public String getLogin() {
@@ -336,7 +351,7 @@ public class PortableCheckin extends Application {
             return null;
 
         final String brand_id = checkin.brand_id;
-        final String query = "SELECT ID, \n" +
+        final String query = "SELECT ROWID as _id, ID,\n" +
                 "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI1 WHERE SI1.SILHOUETTE_ID = ID AND SI1.SILHOUETTE_TYPE_ID = 1) AS img1,\n" +
                 "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI2 WHERE SI2.SILHOUETTE_ID = ID AND SI2.SILHOUETTE_TYPE_ID = 2) AS img2,\n" +
                 "( SELECT IMAGE FROM SILHOUETTE_IMAGE SI3 WHERE SI3.SILHOUETTE_ID = ID AND SI3.SILHOUETTE_TYPE_ID = 3) AS img3,\n" +

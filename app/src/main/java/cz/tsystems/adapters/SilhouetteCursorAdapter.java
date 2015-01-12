@@ -11,45 +11,70 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
 
 import cz.tsystems.portablecheckin.R;
 
 /**
  * Created by KUBO on 11. 1. 2015.
  */
-public class SilhouetteCursorAdapter extends CursorAdapter {
+public class SilhouetteCursorAdapter extends SimpleCursorAdapter {
     Context context;
-    public SilhouetteCursorAdapter(Context context, Cursor c) {
-        super(context, c, false);
+    LayoutInflater inflater;
+    byte[] img;
+    Bitmap bitmap;
+    BitmapDrawable ob;
+
+    private class ViewHolder {
+        ImageView img1, img2, img3, img4;
+
+        ViewHolder(View v) {
+            img1 = (ImageView)v.findViewById(R.id.ingSilhouette1);
+            img2 = (ImageView)v.findViewById(R.id.ingSilhouette2);
+            img3 = (ImageView)v.findViewById(R.id.ingSilhouette3);
+            img4 = (ImageView)v.findViewById(R.id.ingSilhouette4);
+        }
+    }
+
+    public SilhouetteCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
+        super(context, layout, c, from, to, flags);
         this.context = context;
+        this.inflater = LayoutInflater.from(context);
+
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        return inflater.inflate(R.layout.item_siluets, parent, false);
+        View vView =  inflater.inflate(R.layout.item_siluets, parent, false);
+        vView.setTag( new ViewHolder(vView) );
+        // no need to bind data here. you do in later
+        return vView;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        byte[] img = cursor.getBlob(cursor.getColumnIndex("img1"));
-        Bitmap bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
-        BitmapDrawable ob = new BitmapDrawable(context.getResources(), bitmap);
-        ((ImageView) view.findViewById(R.id.ingSilhouette1)).setBackground(ob);
 
-        img = cursor.getBlob(cursor.getColumnIndex("img3"));
-        bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
-        ob = new BitmapDrawable(context.getResources(), bitmap);
-        ((ImageView) view.findViewById(R.id.ingSilhouette2)).setBackground(ob);
+        ViewHolder vh = (ViewHolder) view.getTag();
 
-        img = cursor.getBlob(cursor.getColumnIndex("img2"));
-        bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
-        ob = new BitmapDrawable(context.getResources(), bitmap);
-        ((ImageView) view.findViewById(R.id.ingSilhouette3)).setBackground(ob);
+        this.img = cursor.getBlob(cursor.getColumnIndex("img1"));
+        this.bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+//        this.ob = new BitmapDrawable(context.getResources(), bitmap);
+        vh.img1.setImageBitmap(this.bitmap);
 
-        img = cursor.getBlob(cursor.getColumnIndex("img4"));
-        bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
-        ob = new BitmapDrawable(context.getResources(), bitmap);
-        ((ImageView) view.findViewById(R.id.ingSilhouette4)).setBackground(ob);
+        this.img = cursor.getBlob(cursor.getColumnIndex("img3"));
+        this.bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+//        this.ob = new BitmapDrawable(context.getResources(), bitmap);
+        vh.img2.setImageBitmap(this.bitmap);
+
+        this.img = cursor.getBlob(cursor.getColumnIndex("img2"));
+        this.bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+//        this.ob = new BitmapDrawable(context.getResources(), bitmap);
+        vh.img3.setImageBitmap(this.bitmap);
+
+        this.img = cursor.getBlob(cursor.getColumnIndex("img4"));
+        this.bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+//        this.ob = new BitmapDrawable(context.getResources(), bitmap);
+        vh.img4.setImageBitmap(this.bitmap);
     }
 }

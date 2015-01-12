@@ -22,7 +22,7 @@ public class BaseGridActivity extends Activity {
 
     protected ListView listView;
     protected PortableCheckin app;
-    public static final int eBASEGRID = 0, eGRDPLANZAK = 1, eHISTORY = 2, ePLANACTIVITIES = 3, eVOZIDLOINFO = 4, eZAKAZNIKINFO = 5;
+    public static final int eBASEGRID = 0, eGRDPLANZAK = 1, eHISTORY = 2, ePLANACTIVITIES = 3, eODLOZENEPOLOZKY = 4, eSDA = 5, eVOZIDLOINFO = 6, eZAKAZNIKINFO = 7, eSILHOUETTES=8;
     public int type;
 
     @Override

@@ -83,6 +83,22 @@
             android:label="Zaakznik info"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.OdlozenePolozky"
+            android:label="Zaakznik info"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.grids.SDA"
+            android:label="Zaakznik info"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.portablecheckin.Protocol"
+            android:label="Zaakznik info"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+
 
     </application>
 

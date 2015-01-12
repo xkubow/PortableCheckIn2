@@ -13,8 +13,10 @@ import cz.tsystems.base.vinEditText;
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
+import cz.tsystems.grids.OdlozenePolozky;
 import cz.tsystems.grids.PlanActivities;
 import cz.tsystems.grids.PlanedOrdersGrid;
+import cz.tsystems.grids.SDA;
 
 //import android.app.DialogFragment;
 import android.support.v4.app.DialogFragment;
@@ -117,12 +119,12 @@ public class MainActivity extends BaseFragment {
                 startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             } else if (theButton.equals(fbtMajak)) {
                 ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
-//                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
-//                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+                Intent myIntent = new Intent(getActivity(), OdlozenePolozky.class);
+                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             } else if (theButton.equals(fbtMegafon)) {
                 ((FragmentPagerActivity)getActivity()).setCheckLogin(false);
-//                Intent myIntent = new Intent(getActivity(), PlanActivities.class);
-//                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+                Intent myIntent = new Intent(getActivity(), SDA.class);
+                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             }
         }
     };
