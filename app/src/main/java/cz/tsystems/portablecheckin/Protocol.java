@@ -124,6 +124,8 @@ public class Protocol extends Activity implements View.OnTouchListener {
     }
 
     public void setProtocolImg(final String filename) {
+        //http://stackoverflow.com/questions/3466297/how-to-display-a-part-of-an-image
+        //http://stackoverflow.com/questions/15698621/how-to-scale-and-save-view-to-sdcard
         try {
             Protocol.this.progressBar.setVisibility(View.GONE);
             FileInputStream fileInputStream = null;
@@ -168,7 +170,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
             // Choose the smallest ratio as inSampleSize value, this will guarantee
             // a final image with both dimensions larger than or equal to the
             // requested height and width.
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            inSampleSize = /*heightRatio < widthRatio ? heightRatio : */widthRatio;
 
         }
 
