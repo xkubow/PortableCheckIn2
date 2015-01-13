@@ -7,8 +7,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.FloatMath;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,10 +29,13 @@ import cz.tsystems.data.PortableCheckin;
 /**
  * Created by kubisj on 12.1.2015.
  */
-public class Protocol extends Activity {
+public class Protocol extends Activity implements View.OnTouchListener {
+    final String TAG = Protocol.class.getSimpleName();
     ImageView imgProtocol;
     PortableCheckin app;
     ProgressBar progressBar;
+    private Matrix matrix = new Matrix();
+    Matrix savedMatrix = new Matrix();
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -52,6 +60,8 @@ public class Protocol extends Activity {
         setContentView(R.layout.activity_protocol);
 
         app = (PortableCheckin)getApplicationContext();
+        imgProtocol = (ImageView) findViewById(R.id.imgProtocol);
+        imgProtocol.setOnTouchListener(this);
 
         setTitle(R.string.Protokol);
 
@@ -114,15 +124,178 @@ public class Protocol extends Activity {
     }
 
     public void setProtocolImg(final String filename) {
-        Protocol.this.progressBar.setVisibility(View.GONE);
-        FileInputStream fileInputStream = null;
-
         try {
+            Protocol.this.progressBar.setVisibility(View.GONE);
+            FileInputStream fileInputStream = null;
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(filename, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, imgProtocol.getWidth(), imgProtocol.getHeight());
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            Bitmap bitmap = BitmapFactory.decodeFile(filename, options);
+            imgProtocol.setImageBitmap(bitmap);
+
+/*        try {
             fileInputStream = new FileInputStream(new File(filename));
             Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream);
             imgProtocol.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }*/
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+// Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+
+        }
+
+        return inSampleSize;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // TODO Auto-generated method stub
+        final int DRAG = 1, NONE=2, ZOOM=3;
+        ImageView view = (ImageView) v;
+        view.setScaleType(ImageView.ScaleType.MATRIX);
+        float scale;
+        PointF start = null;
+        int mode = NONE;
+        float oldDist = 0;
+        PointF mid = null;
+
+        dumpEvent(event);
+        // Handle touch events here...
+
+        switch (event.getAction() & event.ACTION_MASK)
+        {
+            case MotionEvent.ACTION_DOWN:   // first finger down only
+                savedMatrix.set(matrix);
+                start.set(event.getX(), event.getY());
+                Log.d(TAG, "mode=DRAG"); // write to LogCat
+                mode = DRAG;
+                break;
+
+            case MotionEvent.ACTION_UP: // first finger lifted
+
+            case MotionEvent.ACTION_POINTER_UP: // second finger lifted
+
+                mode = NONE;
+                Log.d(TAG, "mode=NONE");
+                break;
+
+            case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
+
+                oldDist = spacing(event);
+                Log.d(TAG, "oldDist=" + oldDist);
+                if (oldDist > 5f) {
+                    savedMatrix.set(matrix);
+                    midPoint(mid, event);
+                    mode = ZOOM;
+                    Log.d(TAG, "mode=ZOOM");
+                }
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+
+                if (mode == DRAG)
+                {
+                    matrix.set(savedMatrix);
+                    matrix.postTranslate(event.getX() - start.x, event.getY() - start.y); // create the transformation in the matrix  of points
+                }
+                else if (mode == ZOOM)
+                {
+                    // pinch zooming
+                    float newDist = spacing(event);
+                    Log.d(TAG, "newDist=" + newDist);
+                    if (newDist > 5f)
+                    {
+                        matrix.set(savedMatrix);
+                        scale = newDist / oldDist; // setting the scaling of the
+                        // matrix...if scale > 1 means
+                        // zoom in...if scale < 1 means
+                        // zoom out
+                        matrix.postScale(scale, scale, mid.x, mid.y);
+                    }
+                }
+                break;
+        }
+
+        view.setImageMatrix(matrix); // display the transformation on screen
+
+        return true; // indicate event was handled
+    }
+    private float spacing(MotionEvent event)
+    {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return FloatMath.sqrt(x * x + y * y);
+    }
+
+/*
+ * --------------------------------------------------------------------------
+ * Method: midPoint Parameters: PointF object, MotionEvent Returns: void
+ * Description: calculates the midpoint between the two fingers
+ * ------------------------------------------------------------
+ */
+
+    private void midPoint(PointF point, MotionEvent event)
+    {
+        float x = event.getX(0) + event.getX(1);
+        float y = event.getY(0) + event.getY(1);
+        point.set(x / 2, y / 2);
+    }
+
+    /** Show an event in the LogCat view, for debugging */
+    private void dumpEvent(MotionEvent event)
+    {
+        String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE","POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
+        StringBuilder sb = new StringBuilder();
+        int action = event.getAction();
+        int actionCode = action & MotionEvent.ACTION_MASK;
+        sb.append("event ACTION_").append(names[actionCode]);
+
+        if (actionCode == MotionEvent.ACTION_POINTER_DOWN || actionCode == MotionEvent.ACTION_POINTER_UP)
+        {
+            sb.append("(pid ").append(action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
+            sb.append(")");
+        }
+
+        sb.append("[");
+        for (int i = 0; i < event.getPointerCount(); i++)
+        {
+            sb.append("#").append(i);
+            sb.append("(pid ").append(event.getPointerId(i));
+            sb.append(")=").append((int) event.getX(i));
+            sb.append(",").append((int) event.getY(i));
+            if (i + 1 < event.getPointerCount())
+                sb.append(";");
+        }
+
+        sb.append("]");
+        Log.d("Touch Events ---------", sb.toString());
     }
 }
