@@ -19,9 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.PortableCheckin;
@@ -29,13 +27,15 @@ import cz.tsystems.data.PortableCheckin;
 /**
  * Created by kubisj on 12.1.2015.
  */
-public class Protocol extends Activity implements View.OnTouchListener {
+public class Protocol extends Activity /*implements View.OnTouchListener */{
     final String TAG = Protocol.class.getSimpleName();
     ImageView imgProtocol;
     PortableCheckin app;
     ProgressBar progressBar;
     private Matrix matrix = new Matrix();
     Matrix savedMatrix = new Matrix();
+    Bitmap protokol_bmp;
+    private static int MAXHEIGTH = 4000;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -61,8 +61,8 @@ public class Protocol extends Activity implements View.OnTouchListener {
 
         app = (PortableCheckin)getApplicationContext();
         imgProtocol = (ImageView) findViewById(R.id.imgProtocol);
-        imgProtocol.setOnTouchListener(this);
-
+        imgProtocol.setBackgroundColor(getResources().getColor(R.color.white));
+        findViewById(R.id.contetView).setBackgroundColor(getResources().getColor(R.color.white));
         setTitle(R.string.Protokol);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -139,8 +139,9 @@ public class Protocol extends Activity implements View.OnTouchListener {
 
             // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false;
-            Bitmap bitmap = BitmapFactory.decodeFile(filename, options);
-            imgProtocol.setImageBitmap(bitmap);
+            protokol_bmp = BitmapFactory.decodeFile(filename, options);
+            Bitmap theBitmap = Bitmap.createBitmap(protokol_bmp, 0,0,1200, 700);
+            imgProtocol.setImageBitmap(theBitmap);
 
 /*        try {
             fileInputStream = new FileInputStream(new File(filename));
@@ -153,6 +154,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
             e.printStackTrace();
         }
     }
+
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -170,13 +172,13 @@ public class Protocol extends Activity implements View.OnTouchListener {
             // Choose the smallest ratio as inSampleSize value, this will guarantee
             // a final image with both dimensions larger than or equal to the
             // requested height and width.
-            inSampleSize = /*heightRatio < widthRatio ? heightRatio : */widthRatio;
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
 
         }
 
         return inSampleSize;
     }
-
+/*
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         // TODO Auto-generated method stub
@@ -257,12 +259,14 @@ public class Protocol extends Activity implements View.OnTouchListener {
         return FloatMath.sqrt(x * x + y * y);
     }
 
+*/
 /*
  * --------------------------------------------------------------------------
  * Method: midPoint Parameters: PointF object, MotionEvent Returns: void
  * Description: calculates the midpoint between the two fingers
  * ------------------------------------------------------------
- */
+ *//*
+
 
     private void midPoint(PointF point, MotionEvent event)
     {
@@ -271,7 +275,9 @@ public class Protocol extends Activity implements View.OnTouchListener {
         point.set(x / 2, y / 2);
     }
 
-    /** Show an event in the LogCat view, for debugging */
+    */
+/** Show an event in the LogCat view, for debugging *//*
+
     private void dumpEvent(MotionEvent event)
     {
         String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE","POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
@@ -300,4 +306,5 @@ public class Protocol extends Activity implements View.OnTouchListener {
         sb.append("]");
         Log.d("Touch Events ---------", sb.toString());
     }
+*/
 }

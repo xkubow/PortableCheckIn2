@@ -1,2 +1,2 @@
-include ':app', 'section_listview', 'PhotoView'
+include ':app', 'section_listview'
 include ':materialDesign'
