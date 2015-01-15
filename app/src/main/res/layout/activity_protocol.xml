@@ -10,7 +10,7 @@
             android:layout_alignParentBottom="false"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentEnd="false"
             android:scaleType="centerInside" />
 
 </RelativeLayout>

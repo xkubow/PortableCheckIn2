@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,15 +28,39 @@ import cz.tsystems.data.PortableCheckin;
 /**
  * Created by kubisj on 12.1.2015.
  */
-public class Protocol extends Activity /*implements View.OnTouchListener */{
+public class Protocol extends Activity implements View.OnTouchListener {
     final String TAG = Protocol.class.getSimpleName();
     ImageView imgProtocol;
     PortableCheckin app;
     ProgressBar progressBar;
-    private Matrix matrix = new Matrix();
-    Matrix savedMatrix = new Matrix();
     Bitmap protokol_bmp;
-    private static int MAXHEIGTH = 4000;
+
+    @SuppressWarnings("unused")
+    private static final float MIN_ZOOM = 1f,MAX_ZOOM = 1f;
+
+    // These matrices will be used to scale points of the image
+    Matrix matrix = new Matrix();
+    Matrix savedMatrix = new Matrix();
+
+    private float dx; // postTranslate X distance
+    private float dy; // postTranslate Y distance
+    private float[] matrixValues = new float[9];
+    float matrixX = 0; // X coordinate of matrix inside the ImageView
+    float matrixY = 0; // Y coordinate of matrix inside the ImageView
+    float width = 0; // width of drawable
+    float height = 0; // height of drawable
+
+    // The 3 states (events) which the user is trying to perform
+    static final int NONE = 0;
+    static final int DRAG = 1;
+    static final int ZOOM = 2;
+    int mode = NONE;
+
+    // these PointF objects are used to record the point(s) the user is touching
+    PointF base = new PointF();
+    PointF start = new PointF();
+    PointF mid = new PointF();
+    float oldDist = 1f;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -62,6 +87,7 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
         app = (PortableCheckin)getApplicationContext();
         imgProtocol = (ImageView) findViewById(R.id.imgProtocol);
         imgProtocol.setBackgroundColor(getResources().getColor(R.color.white));
+        imgProtocol.setOnTouchListener(this);
         findViewById(R.id.contetView).setBackgroundColor(getResources().getColor(R.color.white));
         setTitle(R.string.Protokol);
 
@@ -140,8 +166,11 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
             // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false;
             protokol_bmp = BitmapFactory.decodeFile(filename, options);
-            Bitmap theBitmap = Bitmap.createBitmap(protokol_bmp, 0,0,1200, 700);
-            imgProtocol.setImageBitmap(theBitmap);
+//            Bitmap theBitmap = Bitmap.createBitmap(protokol_bmp, 0,0,protokol_bmp.getWidth(), protokol_bmp.getHeight());
+            imgProtocol.setImageBitmap(protokol_bmp);
+            imgProtocol.setScaleType(ImageView.ScaleType.MATRIX);
+            imgProtocol.setImageMatrix(matrix);
+            base.set(0,0);
 
 /*        try {
             fileInputStream = new FileInputStream(new File(filename));
@@ -178,23 +207,17 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
 
         return inSampleSize;
     }
-/*
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        // TODO Auto-generated method stub
-        final int DRAG = 1, NONE=2, ZOOM=3;
+    public boolean onTouch(View v, MotionEvent event)
+    {
         ImageView view = (ImageView) v;
         view.setScaleType(ImageView.ScaleType.MATRIX);
         float scale;
-        PointF start = null;
-        int mode = NONE;
-        float oldDist = 0;
-        PointF mid = null;
 
         dumpEvent(event);
         // Handle touch events here...
 
-        switch (event.getAction() & event.ACTION_MASK)
+        switch (event.getAction() & MotionEvent.ACTION_MASK)
         {
             case MotionEvent.ACTION_DOWN:   // first finger down only
                 savedMatrix.set(matrix);
@@ -207,6 +230,10 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
 
             case MotionEvent.ACTION_POINTER_UP: // second finger lifted
 
+                if(mode == DRAG) {
+                    base.x += dx;
+                    base.y += dy;
+                }
                 mode = NONE;
                 Log.d(TAG, "mode=NONE");
                 break;
@@ -227,8 +254,20 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
 
                 if (mode == DRAG)
                 {
+                    imgProtocol.getImageMatrix().getValues(matrixValues);
                     matrix.set(savedMatrix);
-                    matrix.postTranslate(event.getX() - start.x, event.getY() - start.y); // create the transformation in the matrix  of points
+
+                    dx = event.getX() - start.x;
+                    dy = event.getY() - start.y;
+
+                    if((base.x + dx) < imgProtocol.getWidth()/2 || (base.x + dx) > imgProtocol.getWidth()/2)
+                        dx = 0;
+                    if((base.y + dy) < -(imgProtocol.getDrawable().getIntrinsicHeight() - imgProtocol.getHeight()/2))
+                        dy = 0;
+                    else if((base.y + dy) > 0)
+                        dy = 0;
+
+                    matrix.postTranslate(dx, dy); // create the transformation in the matrix  of points
                 }
                 else if (mode == ZOOM)
                 {
@@ -252,6 +291,14 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
 
         return true; // indicate event was handled
     }
+
+    /*
+     * --------------------------------------------------------------------------
+     * Method: spacing Parameters: MotionEvent Returns: float Description:
+     * checks the spacing between the two fingers on touch
+     * ----------------------------------------------------
+     */
+
     private float spacing(MotionEvent event)
     {
         float x = event.getX(0) - event.getX(1);
@@ -259,14 +306,12 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
         return FloatMath.sqrt(x * x + y * y);
     }
 
-*/
-/*
- * --------------------------------------------------------------------------
- * Method: midPoint Parameters: PointF object, MotionEvent Returns: void
- * Description: calculates the midpoint between the two fingers
- * ------------------------------------------------------------
- *//*
-
+    /*
+     * --------------------------------------------------------------------------
+     * Method: midPoint Parameters: PointF object, MotionEvent Returns: void
+     * Description: calculates the midpoint between the two fingers
+     * ------------------------------------------------------------
+     */
 
     private void midPoint(PointF point, MotionEvent event)
     {
@@ -275,9 +320,7 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
         point.set(x / 2, y / 2);
     }
 
-    */
-/** Show an event in the LogCat view, for debugging *//*
-
+    /** Show an event in the LogCat view, for debugging */
     private void dumpEvent(MotionEvent event)
     {
         String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE","POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
@@ -306,5 +349,4 @@ public class Protocol extends Activity /*implements View.OnTouchListener */{
         sb.append("]");
         Log.d("Touch Events ---------", sb.toString());
     }
-*/
 }
