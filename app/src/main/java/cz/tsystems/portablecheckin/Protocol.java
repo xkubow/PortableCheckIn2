@@ -260,11 +260,12 @@ public class Protocol extends Activity implements View.OnTouchListener {
                     dx = event.getX() - start.x;
                     dy = event.getY() - start.y;
 
-                    if((base.x + dx) < imgProtocol.getWidth()/2 || (base.x + dx) > imgProtocol.getWidth()/2)
+                    if((matrixValues[Matrix.MTRANS_X] + dx) < 0
+                            || (matrixValues[Matrix.MTRANS_X] + dx) > imgProtocol.getDrawable().getIntrinsicWidth())
                         dx = 0;
-                    if((base.y + dy) < -(imgProtocol.getDrawable().getIntrinsicHeight() - imgProtocol.getHeight()/2))
+                    if((dy + matrixValues[Matrix.MTRANS_Y]) < -(imgProtocol.getDrawable().getIntrinsicHeight() /*- imgProtocol.getHeight()/2*/))
                         dy = 0;
-                    else if((base.y + dy) > 0)
+                    else if((dy + matrixValues[Matrix.MTRANS_Y]) > 0)
                         dy = 0;
 
                     matrix.postTranslate(dx, dy); // create the transformation in the matrix  of points
