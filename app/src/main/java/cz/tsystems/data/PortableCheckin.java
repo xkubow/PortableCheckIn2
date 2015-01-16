@@ -50,8 +50,8 @@ public class PortableCheckin extends Application {
 	private List<DMOffers> offers;
     private List<DMPacket> packets;
 	private List<List<DMUnit>> unitList;
-	private List<DMVybava> vybavaList = new ArrayList<DMVybava>();
-    private List<DMService> serviceList = new ArrayList<DMService>();
+	static public List<DMVybava> vybavaList = new ArrayList<DMVybava>();
+    static public List<DMService> serviceList = new ArrayList<DMService>();
 	private DMSilhouette selectedSilhouette;
 	private String login;
 	private String deviceID;

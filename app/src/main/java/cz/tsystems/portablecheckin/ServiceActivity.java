@@ -1,6 +1,5 @@
 package cz.tsystems.portablecheckin;
 
-import java.util.Iterator;
 import java.util.List;
 
 import cz.tsystems.adapters.PacketsArrayAdapter;
@@ -10,7 +9,6 @@ import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.data.DMBaseItem;
-import cz.tsystems.data.DMPrehliadky;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
 import cz.tsystems.data.DMUnit;
@@ -102,8 +100,8 @@ public class ServiceActivity extends BaseFragment {
                             break;
                     }
                     if(item != null) {
-                        item.checked = !item.checked;
-                        b.setChecked(item.checked);
+                        item.setChecked(!item.getChecked());
+                        b.setChecked(item.getChecked());
                     }
                 } else if(prehliadkaMaster.typ == DMPrehliadkyMaster.eUNIT) {
                     DMUnit item = unitAdapter.getItem(position);

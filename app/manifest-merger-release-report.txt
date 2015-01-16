@@ -15,11 +15,11 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 uses-sdk
 ADDED from AndroidManifest.xml:7:5
-MERGED from com.android.support:support-v4:21.0.2:15:5
-MERGED from com.android.support:appcompat-v7:21.0.2:15:5
-MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from com.android.support:appcompat-v7:21.0.3:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from PortableCheckIn2:materialDesign:unspecified:7:5
-MERGED from com.android.support:support-v4:21.0.2:15:5
+MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from PortableCheckIn2:section_listview:unspecified:7:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:9:9
@@ -61,10 +61,10 @@ ADDED from AndroidManifest.xml:20:5
 		ADDED from AndroidManifest.xml:20:22
 application
 ADDED from AndroidManifest.xml:22:5
-MERGED from com.android.support:support-v4:21.0.2:16:5
-MERGED from com.android.support:appcompat-v7:21.0.2:16:5
-MERGED from com.android.support:support-v4:21.0.2:16:5
-MERGED from com.android.support:support-v4:21.0.2:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:appcompat-v7:21.0.3:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from com.android.support:support-v4:21.0.3:16:5
 MERGED from PortableCheckIn2:section_listview:unspecified:11:5
 	android:allowBackup
 		ADDED from PortableCheckIn2:section_listview:unspecified:11:18
@@ -214,3 +214,13 @@ ADDED from AndroidManifest.xml:91:9
 		ADDED from AndroidManifest.xml:92:13
 	android:launchMode
 		ADDED from AndroidManifest.xml:94:13
+activity#cz.tsystems.portablecheckin.Protocol
+ADDED from AndroidManifest.xml:96:9
+	android:label
+		ADDED from AndroidManifest.xml:98:13
+	android:theme
+		ADDED from AndroidManifest.xml:100:13
+	android:name
+		ADDED from AndroidManifest.xml:97:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:99:13

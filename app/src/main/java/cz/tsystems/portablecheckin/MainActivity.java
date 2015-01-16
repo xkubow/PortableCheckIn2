@@ -207,8 +207,8 @@ public class MainActivity extends BaseFragment {
 		
 		values1 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout1);
 		values2 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout2);
-		
-		theDatePicker = new DatePicker(getActivity());		
+
+		theDatePicker = new DatePicker(getActivity());
 		txtRZV = (EditText) values1.findViewById(R.id.txtSPZ);
 		txtRZV.setOnEditorActionListener(rzvOnEditorActionListener);
         EditText edtTmp = (EditText) values2.findViewById(R.id.txtVIN);
@@ -374,6 +374,8 @@ public class MainActivity extends BaseFragment {
             try {
                 Bundle b = intent.getExtras().getBundle("requestData");
                 serviceAction = b.getString("ACTION");
+                if(serviceAction == null)
+                    return;
                 Log.d("SHOWDATA", intent.getExtras().toString());
             } catch (NullPointerException e) {
                 app.getDialog(getActivity(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON).show();

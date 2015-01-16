@@ -15,9 +15,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Set;
 
@@ -31,6 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
@@ -112,6 +117,8 @@ public class CommunicationService extends IntentService {
 				|| intent.getStringExtra("ACTION").equalsIgnoreCase(
 						"GetBanners"))
 			sendGetMime(intent.getExtras());
+        else if(intent.getStringExtra("ACTION").equalsIgnoreCase("SaveCheckin"))
+            sendPostJson(intent.getExtras());
 		else
 			sendGetJson(intent.getExtras());
 	}
@@ -280,6 +287,80 @@ public class CommunicationService extends IntentService {
 			e.printStackTrace();
 		}
 	}
+
+    public void sendPostJson(Bundle data) {
+        HttpClient client = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        HttpResponse response;
+        String valSeparator = "?";
+        StringBuilder total;
+        String line;
+
+        try {
+            String theUrl = URL + "/" + data.getString("ACTIONURL");
+
+            Set<String> keys = data.keySet();
+            for (String key : keys) {
+                final Object value = data.get(key);
+                if (key.equalsIgnoreCase("ACTION")
+                        || key.equalsIgnoreCase("ACTIONURL"))
+                    continue;
+                theUrl += valSeparator + key + "="
+                        + URLEncoder.encode(value.toString(), "UTF-8");
+                valSeparator = "&";
+            }
+
+            Log.d("Message type", data.getString("ACTION") + ", " + theUrl);
+            HttpPost post = new HttpPost(theUrl);
+
+            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
+            post.addHeader("PCHI-DEVICE-NAME", app.getLocalHostName());
+            Log.d("DEVICEID", app.getDeviceID());
+            post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
+            post.addHeader("Authorization", "basic " + app.getLogin());
+            post.addHeader("accept-language", "cz");
+
+            if(data.getString("ACTION").equals("SaveCheckin")) {
+                JSONObject jsonObject = getSaveCheckinData();
+                StringEntity entity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
+                entity.setContentType("application/json");
+                post.setEntity(entity);
+            }
+
+            showNotification(data);
+            response = client.execute(post);
+
+			/* Checking response */
+            if (response != null) {
+
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    decodeError(response);
+                    return;
+                }
+
+                InputStream in = response.getEntity().getContent();
+                InputStreamReader is = new InputStreamReader(in, "UTF-8");
+                BufferedReader r = new BufferedReader(is);
+                total = new StringBuilder();
+                while ((line = r.readLine()) != null)
+                    total.append(line);
+
+                try {
+                    decodeMessage(data, total.toString());
+                } catch (JsonProcessingException e) {
+                    sendErrorMsg(e.getLocalizedMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    sendErrorMsg(e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+
+            }
+        } catch (Exception e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        }
+    }
 	
 	private void sendErrorMsg(String msg)
 	{
@@ -298,32 +379,12 @@ public class CommunicationService extends IntentService {
         if (entity == null)
             return;
 
-//        InputStream instream = entity.getContent();
-/*        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-        int len = 0;
-
-        // instream is content got from httpentity.getContent()
-        while ((len = instream.read(buffer)) != -1) {
-            baos.write(buffer, 0, len);
-        }
-        baos.close();
-
-        byte[] b = baos.toByteArray();*/
-
         Intent i = new Intent("recivedData");
         File tempFile = null;
         if (data.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
             tempFile = File.createTempFile("protokol", "png");
-//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
         } else if (data.getString("ACTION").equalsIgnoreCase("ChiReport")) {
             tempFile = File.createTempFile("protokol", "pdf");
-//            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
-//            bos.write(b);
-//            bos.flush();
-//            bos.close();
-//            i.putExtra("pdfFileName", tempFile.getAbsoluteFile());
             Log.v(TAG, String.format("ChiReport DONE :%d", loadDataDone));
         }
         FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
@@ -569,5 +630,89 @@ public class CommunicationService extends IntentService {
 		img.compress(Bitmap.CompressFormat.PNG, 90, out);
 
 	}
+
+    private JSONObject getSaveCheckinData() {
+        JSONObject jsonObject = new JSONObject();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            System.out.println(mapper.writeValueAsString(app.getCheckin()));
+            jsonObject.put("CHECKIN", mapper.writeValueAsString(app.getCheckin()));
+            //CHECKIN_DAMAGE_POINT
+            jsonObject.put("CHECKIN_EQUIPMENT", NullNode.getInstance());
+/*            CHECKIN_EQUIPMENT:[  {
+                "CAR_EQUIPMENT_ID" = 200;
+                CHECKED = 1;
+                "OBLIGATORY_EQUIPMENT" = 1;
+            }]*/
+            jsonObject.put("CHECKIN_EQUIPMENT", mapper.writeValueAsString(app.vybavaList));
+            /*CHECKIN_EQUIPMENT_FREE*/
+            jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
+/*            CHECKIN_OFFER" =     (
+            {
+                CHECKED = 1;
+                "CHECK_OFFER_ID" = 52;
+                "LANG_ENUM" = "<null>";
+                "SELL_PRICE" = 150;
+                "SHOW_OFFER" = 1;
+                "VALID_FROM" = 1356998400;
+                "VALID_UNTIL" = 4070908800;
+            },*/
+            jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
+/*            "CHECKIN_SERVICE" =     (
+                    {
+                            "BRAND_ID" = "<null>";
+            "CHECK_SERVICE_ID" = 50;
+            "CHECK_SERVICE_ID:1" = "<null>";
+            "CHECK_SERVICE_TXT_DEF" = "Technical and Emission Insp.";
+            "CHECK_SERVICE_TXT_LOC" = "<null>";
+            INSERTED = 1356998400;
+            "LANG_ENUM" = "<null>";
+            "LAST_UPDATED" = "<null>";
+            "SELL_PRICE" = "<null>";
+            "SHOW_SERVICE" = 1;
+            TEXT = "Technical and Emission Insp.";
+            "VALID_FROM" = 1356998400;
+            "VALID_UNTIL" = 4070908800;
+            },*/
+            jsonObject.put("CHECKIN_SERVICE", mapper.writeValueAsString(app.serviceList));
+/*            CHECKIN_SERVICE_FREE" =     (
+            );*/
+            jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
+/*            CHECKIN_UNIT" =     (
+            {
+                "CHCK_PART_ID" = 1;
+                "CHCK_PART_POSITION_ID" = 1;
+                "CHCK_STATUS_ID" = 0;
+                "CHCK_UNIT_ID" = 1;
+                "SELL_PRICE" = "";
+            },*/
+            jsonObject.put("CHECKIN_SERVICE", NullNode.getInstance());
+/*            "CHECKIN_WORKSHOP_PACKET" =     (
+                    {
+                            "BRAND_ID" = C;
+            "CHCK_PART_ID" = 13;
+            "CHCK_PART_TXT" = "engine oil level";
+            "CHCK_STATUS_ID" = 1;
+            "CHCK_UNIT_ID" = 2;
+            "CHCK_UNIT_TXT" = Engine;
+            ECONOMIC = 0;
+            "GROUP_NR" = 2;
+            "GROUP_TEXT" = "Servisn\U00ed prohl\U00eddka";
+            RESTRICTIONS = "<null>";
+            "SELL_PRICE" = 1754;
+            "SPARE_PART_DISPON_ID" = 0;
+            "SPARE_PART_DISPON_TXT" = "<null>";
+            "WORKSHOP_PACKET_DESCRIPTION" = "Inspek\U010dn\U00ed servis ka\U017ed\U00fdch 12 m\U011bs\U00edc\U016f";
+            "WORKSHOP_PACKET_NUMBER" = "0102 36044";
+            }*/
+            jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
 
 }

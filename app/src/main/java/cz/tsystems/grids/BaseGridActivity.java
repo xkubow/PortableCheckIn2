@@ -100,7 +100,7 @@ public class BaseGridActivity extends Activity {
                 // app icon in action bar clicked; goto parent activity.
                 Intent intent = new Intent();
                 intent.putExtra("type", type);
-                this.setResult(RESULT_OK, intent);
+                this.setResult(RESULT_CANCELED, intent);
                 this.finish();
                 return true;
             default:

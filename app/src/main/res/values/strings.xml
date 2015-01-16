@@ -8,24 +8,24 @@
     <string name="CheckInNR">CheckIn NR</string>
     <string name="Informace_o_Vozidle">Informace o vozidle</string>
     <string name="SPZ">SPZ</string>
-    <string name="PredajDat">Predaj dat</string>
-    <string name="PoistPripad">Poist pripad</string>
-    <string name="STK">STK</string>
+    <string name="PredajDat">Datum prodeje/MR</string>
+    <string name="PoistPripad">Pojišťovací událost</string>
+    <string name="STK">Platnost STK</string>
     <string name="OTP">OTP</string>
     <string name="StavPaliva">Stav paliva</string>
     <string name="VIN">VIN</string>
-    <string name="Zakaznik">Zakaznik</string>
-    <string name="VozPristavil">Voz pristavil</string>
+    <string name="Zakaznik">Zákazník</string>
+    <string name="VozPristavil">Vůz přistavil</string>
     <string name="StavTachomeru">Stav tachomeru</string>
     <string name="PlatnostEK">Platnost EK</string>
-    <string name="ServisnaKnizka">Servisna knizka</string>
-    <string name="Interier">Interier</string>
+    <string name="ServisnaKnizka">Servisní knížka</string>
+    <string name="Interier">Interiér</string>
     <string name="BluePrint">Blue print</string>
-    <string name="LevyBok">Levy bok</string>
-    <string name="ZadnaCast">Zadna cast</string>
-    <string name="PravyBok">Pravy bok</string>
-    <string name="PrednaCast">Predna cast</string>
-    <string name="Strecha">Strecha</string>
+    <string name="LevyBok">Levý bok</string>
+    <string name="ZadnaCast">Zadní část</string>
+    <string name="PravyBok">Pravý bok</string>
+    <string name="PrednaCast">Přední část</string>
+    <string name="Strecha">Střecha</string>
     <string name="Pohledy">Pohledy</string>
     <string name="stavInterier">AA,A,B,CC,C</string>
     <string name="A">A</string>
@@ -33,10 +33,10 @@
     <string name="C">C</string>
     <string name="AA">AA</string>
     <string name="CC">CC</string>
-    <string name="Exterier">Exterier</string>
-    <string name="Oderky">Oderky</string>
-    <string name="UserName">User name</string>
-    <string name="Password">Password</string>
+    <string name="Exterier">Exteriér</string>
+    <string name="Oderky">Oděrky</string>
+    <string name="UserName">Uživatel</string>
+    <string name="Password">Heslo</string>
     <string name="Setup">Nastavení</string>
     <string name="Login">Přihlásit</string>
     <string name="serviceNotifier">service notifier</string>
@@ -72,7 +72,7 @@
     <string name="Informace_o_zakaznikovi">Informace o zákazníkovi</string>
     <string name="Protokol">Protokol</string>
     <string name="Palivo">Palivo</string>
-    <string name="Scenar">Scenar</string>
+    <string name="Scenar">Scénář</string>
     <string name="Typ">Typ</string>
     <string name="Popis">Popis</string>
     <string name="PPNDc">PP/ND č</string>
@@ -93,8 +93,8 @@
         <item>@string/hodnota</item>
     </string-array>
 
-    <string name="Vybavy">Vybavy</string>
-    <string name="PovinneVybavy">Povinne vybavy</string>
+    <string name="Vybavy">Výbavy</string>
+    <string name="PovinneVybavy">Povinne výbavy</string>
     <string name="Loading_Data">Načítavam data</string>
     <string name="Please_wait">Prosím čekejte</string>
     <string name="Error_title">Chyba</string>
@@ -147,8 +147,9 @@
     <string name="title_activity_item_packet">Item_packet</string>
     <string name="Poradce">Poradce</string>
     <string name="CisloPlanZakazky">Číslo plánované zakázky</string>
+    <string name="CisloCheckinu">Check-In č.</string>
     <string name="VOZIDLO">VOZIDLO</string>
-    <string name="POSKODENI">POŠKODENÍ</string>
+    <string name="POSKODENI">POŠKOZENÍ</string>
     <string name="PROHLIDKA">PROHLÍDKA</string>
     <string name="NABIDKA">NABÍDKA</string>
     <string name="heslo">Heslo</string>
@@ -168,5 +169,8 @@
     <string name="Typ_akce">Typ akce</string>
     <string name="Odlozene_sluzby">Odložené služby</string>
     <string name="Svolavacie_a_dielenske_akcie">Svolávací a dílenské akce</string>
+    <string name="vozidlo_nevybrano">Vozidlo nevybráno</string>
+    <string name="Sluzby">Služby</string>
+    <string name="celky">Celky</string>
 
 </resources>

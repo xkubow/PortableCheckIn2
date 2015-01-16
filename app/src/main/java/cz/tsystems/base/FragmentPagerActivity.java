@@ -47,6 +47,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FragmentPagerActivity extends Activity implements TabListener {
 
 //	ViewPager mViewPager;
@@ -98,7 +104,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         lblLoggetUser = (TextView) findViewById(R.id.lblLoggetUser);
         lblCheckinNR = (TextView) findViewById(R.id.lblCheckIn_nr);
         lblVehicleCaption = (TextView)findViewById(R.id.lblCarCaption);
-        lblVehicleCaption.setText("");
+        lblVehicleCaption.setText(R.string.vozidlo_nevybrano);
         btnBrand = (Button)findViewById(R.id.btnBrand);
 
         btnBrand.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +148,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
         lblVehicleCaption.setText(app.getCheckin().vehicle_description);
         setBrand(app.getCheckin());
-        setCheckinNr(app.getCheckin());
-        updateLblCheckinNr();
+        setCheckinNr();
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -257,6 +262,17 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 return  false;
             }
         });
+        menu.findItem(R.id.action_send).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                app.showProgrssDialog(FragmentPagerActivity.this);
+                Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+                msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
+                msgIntent.putExtra("ACTION", "SaveCheckin");
+                startService(msgIntent);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
 	}
 
@@ -330,10 +346,12 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         }
     }
 
-    private void updateLblCheckinNr()
-    {
-        if(app.getCheckin().checkin_number > 0)
-            lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
+    public void setCheckinNr() {
+        if(app.getCheckin().checkin_number > 0) {
+            final String planZakPrefix = getResources().getString(R.string.CisloCheckinu);
+            final Spanned theNR = Html.fromHtml(planZakPrefix + ": <b>"+String.valueOf(app.getCheckin().checkin_number)+"</b>");
+            lblCheckinNR.setText(theNR);
+        }
         else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
             final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);
             final Spanned theNR = Html.fromHtml(planZakPrefix + ": <b>"+String.valueOf(app.getCheckin().planned_order_no)+"</b>");
@@ -341,15 +359,6 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         }
         else
             lblCheckinNR.setText("");
-    }
-
-    public void setCheckinNr(DMCheckin checkinData) {
-        if(checkinData.planned_order_id != null && checkinData.checkin_id <= 0) {
-//            lblCheckinNR.setTextColor(getResources().getColor(R.color.blue));
-            lblCheckinNR.setText(checkinData.planned_order_no);
-        }
-
-        this.updateLblCheckinNr();
     }
 
 
