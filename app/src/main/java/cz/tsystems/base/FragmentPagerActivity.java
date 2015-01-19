@@ -141,18 +141,18 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         ((TextView) view.findViewById(R.id.tab_text)).setText(titleResource);
 //        view.findViewById(R.id.tab_text).setBackgroundResource(backgroundResource);
-        updateTabBadge((TextView) view.findViewById(R.id.tab_badge), 4);
+        updateTabBadge((TextView) view.findViewById(R.id.tab_badge), "4/17");
         return view;
     }
 
-    public static void updateTabBadge(ActionBar.Tab tab, int badgeNumber) {
+    public static void updateTabBadge(ActionBar.Tab tab, final String badgeNumber) {
         updateTabBadge((TextView) tab.getCustomView().findViewById(R.id.tab_badge), badgeNumber);
     }
 
-    private static void updateTabBadge(TextView view, int badgeNumber) {
-        if (badgeNumber > 0) {
+    private static void updateTabBadge(TextView view, final String badgeNumber) {
+        if (badgeNumber.length() > 0) {
             view.setVisibility(View.VISIBLE);
-            view.setText(Integer.toString(badgeNumber));
+            view.setText(badgeNumber);
         }
         else {
             view.setVisibility(View.GONE);

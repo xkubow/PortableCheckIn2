@@ -19,6 +19,7 @@ import cz.tsystems.grids.PlanedOrdersGrid;
 import cz.tsystems.grids.SDA;
 
 //import android.app.DialogFragment;
+import android.app.ActionBar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.app.DatePickerDialog;
@@ -523,6 +524,7 @@ public class MainActivity extends BaseFragment {
 	private void populateTextsAndRbtn(ViewGroup theView) {
 		String fieldName = "";
 		DMCheckin checkinData = app.getCheckin();
+        int povinne = 0, povinneNevyplnene = 0;
 		for (int i = 0; i < theView.getChildCount(); i++) {
 			View v = theView.getChildAt(i);
 			Class<? extends View> c = v.getClass();
@@ -544,17 +546,25 @@ public class MainActivity extends BaseFragment {
 					continue;				
 
 				if (c == EditText.class || c == vinEditText.class) {
-					((EditText) v).setText("");
+
+                    EditText editText = (EditText) v;
+                    if (editText.getHint() != null && editText.getHint().toString().equalsIgnoreCase(getResources().getString(R.string.Pozadovane))) {
+                        povinne++;
+                        if(editText.length() == 0)
+                            povinneNevyplnene++;
+                    }
+
+                    editText.setText("");
 					if (field.getType() == String.class)// jnCheckin.hasNonNull(fieldName))
-						((EditText) v).setText((String) field.get(checkinData));
+                        editText.setText((String) field.get(checkinData));
 					else if (field.getType() == int.class)
-						((EditText) v).setText(String.valueOf(field.getInt(checkinData)));
+                        editText.setText(String.valueOf(field.getInt(checkinData)));
 					else if (field.getType() == short.class)
-						((EditText) v).setText(String.valueOf(field.getShort(checkinData)));
+                        editText.setText(String.valueOf(field.getShort(checkinData)));
 					else if (field.getType() == double.class)
-						((EditText) v).setText(String.valueOf((int)field.getDouble(checkinData)));
+                        editText.setText(String.valueOf((int)field.getDouble(checkinData)));
 					else if (field.getType() == Date.class)
-						((EditText) v).setText(sdto.format((Date) field.get(checkinData)));
+                        editText.setText(sdto.format((Date) field.get(checkinData)));
 
 				} else if (c == Switch.class) {
 					((Switch) v).setChecked(field.getBoolean(checkinData));
@@ -568,6 +578,11 @@ public class MainActivity extends BaseFragment {
 				e.printStackTrace();
 			}
 		}
+
+        ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
+        TextView textView = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+        textView.setText("xxxx");
+//        ((FragmentPagerActivity)getActivity()).updateTabBadge(getActivity().getActionBar().getSelectedTab(), String.format("%d/%d"));
 	}
 
 	@Override
