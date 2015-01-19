@@ -32,7 +32,7 @@ public class PlannedOrderAdapter extends ArrayAdapter<DMPlannedOrder> implements
         int listPosition = 0;
         boolean doSection = true;
         for (DMPlannedOrder item : objects) {
-            if((item.personal_id == app.user.personal_id)) {
+            if((item.personal_id.equals(app.user.personal_id))) {
                 if(doSection) {
                     DMPlannedOrder section = new DMPlannedOrder(context.getResources().getString(R.string.My));
                     section.sectionPosition = 0;

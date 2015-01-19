@@ -22,4 +22,5 @@
     <color name="grid_caption">#C6DFE7</color>
     <color name="lightGray">#E4E4E4</color>
     <color name="actionBar">#006384</color>
+    <color name="badge_background">#d7a901</color>
 </resources>

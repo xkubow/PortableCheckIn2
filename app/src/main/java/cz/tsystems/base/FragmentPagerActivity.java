@@ -44,7 +44,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -124,7 +126,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		theFragments.add(new ServiceActivity());
 		theFragments.add(new OffersActivity());
 		
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.VOZIDLO));//setIcon(R.drawable.car_icon_riadky2));
+		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, R.string.VOZIDLO)).setTabListener(this));//.setText(R.string.VOZIDLO));//setIcon(R.drawable.car_icon_riadky2));
 		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.POSKODENI));//setIcon(R.drawable.car_icon_body2));
 		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.PROHLIDKA));//setIcon(R.drawable.car_icon_sipka2));
 		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.NABIDKA));//setIcon(R.drawable.car_icon_nabidka2));
@@ -132,6 +134,30 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         app.setActualActivity(this);
 
 	}
+
+    public static View renderTabView(Context context, int titleResource) {
+        FrameLayout view = (FrameLayout ) LayoutInflater.from(context).inflate(R.layout.textview_tab, null);
+        // We need to manually set the LayoutParams here because we don't have a view root
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ((TextView) view.findViewById(R.id.tab_text)).setText(titleResource);
+//        view.findViewById(R.id.tab_text).setBackgroundResource(backgroundResource);
+        updateTabBadge((TextView) view.findViewById(R.id.tab_badge), 4);
+        return view;
+    }
+
+    public static void updateTabBadge(ActionBar.Tab tab, int badgeNumber) {
+        updateTabBadge((TextView) tab.getCustomView().findViewById(R.id.tab_badge), badgeNumber);
+    }
+
+    private static void updateTabBadge(TextView view, int badgeNumber) {
+        if (badgeNumber > 0) {
+            view.setVisibility(View.VISIBLE);
+            view.setText(Integer.toString(badgeNumber));
+        }
+        else {
+            view.setVisibility(View.GONE);
+        }
+    }
 
 	private void registerRecaiver() {
 		IntentFilter filterSend = new IntentFilter();

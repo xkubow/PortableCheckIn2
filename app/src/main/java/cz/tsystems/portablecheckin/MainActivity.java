@@ -355,11 +355,11 @@ public class MainActivity extends BaseFragment {
                 app.getCheckin().interior_state = (short) value;
             }
         });
-        stavOleja.setValue(app.getCheckin().oilState);
+        stavOleja.setValue(app.getCheckin().oil_level);
         stavOleja.setOnValueChangedListener(new Slider.OnValueChangedListener() {
             @Override
             public void onValueChanged(int value) {
-                app.getCheckin().oilState = (short) value;
+                app.getCheckin().oil_level = (short) value;
             }
         });
 
@@ -373,6 +373,8 @@ public class MainActivity extends BaseFragment {
 		if (action.equalsIgnoreCase("recivedData")) {
             try {
                 Bundle b = intent.getExtras().getBundle("requestData");
+                if(b == null)
+                    return;
                 serviceAction = b.getString("ACTION");
                 if(serviceAction == null)
                     return;

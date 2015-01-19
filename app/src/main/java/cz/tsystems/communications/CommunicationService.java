@@ -16,13 +16,16 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 import javax.mail.BodyPart;
@@ -37,6 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
+import cz.tsystems.base.MyPropertyNameStrategy;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
 import cz.tsystems.portablecheckin.R;
@@ -119,6 +123,7 @@ public class CommunicationService extends IntentService {
 			sendGetMime(intent.getExtras());
         else if(intent.getStringExtra("ACTION").equalsIgnoreCase("SaveCheckin"))
             sendPostJson(intent.getExtras());
+//            getSaveCheckinData();
 		else
 			sendGetJson(intent.getExtras());
 	}
@@ -247,7 +252,9 @@ public class CommunicationService extends IntentService {
 			get.addHeader("Authorization", "basic " + app.getLogin());
 			get.addHeader("accept-language", "cz");
 			showNotification(data);
+            Log.d(TAG, "starting request");
 			response = client.execute(get);
+            Log.d(TAG, "geting response");
 
 			/* Checking response */
 			if (response != null) {
@@ -282,9 +289,16 @@ public class CommunicationService extends IntentService {
 
 				// Get the data in the entity
 			}
-		} catch (Exception e) {
+		}
+        catch (HttpHostConnectException e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        }
+        catch (Exception e) {
 			sendErrorMsg(e.getLocalizedMessage() );
 			e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
 		}
 	}
 
@@ -634,78 +648,20 @@ public class CommunicationService extends IntentService {
     private JSONObject getSaveCheckinData() {
         JSONObject jsonObject = new JSONObject();
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setPropertyNamingStrategy(new MyPropertyNameStrategy());
+        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         try {
-            System.out.println(mapper.writeValueAsString(app.getCheckin()));
-            jsonObject.put("CHECKIN", mapper.writeValueAsString(app.getCheckin()));
-            //CHECKIN_DAMAGE_POINT
-            jsonObject.put("CHECKIN_EQUIPMENT", NullNode.getInstance());
-/*            CHECKIN_EQUIPMENT:[  {
-                "CAR_EQUIPMENT_ID" = 200;
-                CHECKED = 1;
-                "OBLIGATORY_EQUIPMENT" = 1;
-            }]*/
-            jsonObject.put("CHECKIN_EQUIPMENT", mapper.writeValueAsString(app.vybavaList));
-            /*CHECKIN_EQUIPMENT_FREE*/
-            jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
-/*            CHECKIN_OFFER" =     (
-            {
-                CHECKED = 1;
-                "CHECK_OFFER_ID" = 52;
-                "LANG_ENUM" = "<null>";
-                "SELL_PRICE" = 150;
-                "SHOW_OFFER" = 1;
-                "VALID_FROM" = 1356998400;
-                "VALID_UNTIL" = 4070908800;
-            },*/
-            jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
-/*            "CHECKIN_SERVICE" =     (
-                    {
-                            "BRAND_ID" = "<null>";
-            "CHECK_SERVICE_ID" = 50;
-            "CHECK_SERVICE_ID:1" = "<null>";
-            "CHECK_SERVICE_TXT_DEF" = "Technical and Emission Insp.";
-            "CHECK_SERVICE_TXT_LOC" = "<null>";
-            INSERTED = 1356998400;
-            "LANG_ENUM" = "<null>";
-            "LAST_UPDATED" = "<null>";
-            "SELL_PRICE" = "<null>";
-            "SHOW_SERVICE" = 1;
-            TEXT = "Technical and Emission Insp.";
-            "VALID_FROM" = 1356998400;
-            "VALID_UNTIL" = 4070908800;
-            },*/
-            jsonObject.put("CHECKIN_SERVICE", mapper.writeValueAsString(app.serviceList));
-/*            CHECKIN_SERVICE_FREE" =     (
-            );*/
-            jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
-/*            CHECKIN_UNIT" =     (
-            {
-                "CHCK_PART_ID" = 1;
-                "CHCK_PART_POSITION_ID" = 1;
-                "CHCK_STATUS_ID" = 0;
-                "CHCK_UNIT_ID" = 1;
-                "SELL_PRICE" = "";
-            },*/
-            jsonObject.put("CHECKIN_SERVICE", NullNode.getInstance());
-/*            "CHECKIN_WORKSHOP_PACKET" =     (
-                    {
-                            "BRAND_ID" = C;
-            "CHCK_PART_ID" = 13;
-            "CHCK_PART_TXT" = "engine oil level";
-            "CHCK_STATUS_ID" = 1;
-            "CHCK_UNIT_ID" = 2;
-            "CHCK_UNIT_TXT" = Engine;
-            ECONOMIC = 0;
-            "GROUP_NR" = 2;
-            "GROUP_TEXT" = "Servisn\U00ed prohl\U00eddka";
-            RESTRICTIONS = "<null>";
-            "SELL_PRICE" = 1754;
-            "SPARE_PART_DISPON_ID" = 0;
-            "SPARE_PART_DISPON_TXT" = "<null>";
-            "WORKSHOP_PACKET_DESCRIPTION" = "Inspek\U010dn\U00ed servis ka\U017ed\U00fdch 12 m\U011bs\U00edc\U016f";
-            "WORKSHOP_PACKET_NUMBER" = "0102 36044";
-            }*/
+//            System.out.println(mapper.writeValueAsString(app.getCheckin()));
             jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
+            jsonObject.put("CHECKIN_UNIT", NullNode.getInstance());
+            jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
+            jsonObject.put("CHECKIN_SERVICE", NullNode.getInstance());
+            jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
+            jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
+            jsonObject.put("CHECKIN_EQUIPMENT", new JSONArray(mapper.writeValueAsString(app.vybavaList)));
+            JSONArray jo = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPoints()));
+            jsonObject.put("CHECKIN_DAMAGE_POINT", jo);
+            jsonObject.put("CHECKIN", new JSONObject(mapper.writeValueAsString(app.getCheckin())));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
