@@ -28,6 +28,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -60,7 +62,7 @@ public class MainActivity extends BaseFragment {
 	private DatePicker theDatePicker;
 	private final SimpleDateFormat sdfrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private final SimpleDateFormat sdto = new SimpleDateFormat("MM.yyyy");
-	EditText txtSTKDate, txtEmiseDate, txtScenar, txtRZV;
+	EditText txtSTKDate, txtEmiseDate, txtScenar, txtRZV, txtZakaznik, txtStavTachometru;
 	Spinner spScenare, spTypPaliva;
 	vinEditText txtVIN;
 	Button btnSPZ, btnSTK, btnEmise;// btnPalivo;// btnScenare;
@@ -68,6 +70,33 @@ public class MainActivity extends BaseFragment {
     ButtonFloat fbtPZ, fbtMajak, fbtMegafon;
     Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
+
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            int povinneNevyplnene = 0;
+            povinneNevyplnene += (txtRZV.length() > 0)?1:0;
+            povinneNevyplnene += (txtVIN.length() > 0)?1:0;
+            povinneNevyplnene += (txtZakaznik.length() > 0)?1:0;
+            povinneNevyplnene += (txtStavTachometru.length() > 0)?1:0;
+            povinneNevyplnene += (txtSTKDate.length() > 0)?1:0;
+            povinneNevyplnene += (txtEmiseDate.length() > 0)?1:0;
+
+            ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
+            TextView textView = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+            textView.setText(String.valueOf(povinneNevyplnene) + "/6");
+        }
+    };
 	
 
 	OnItemSelectedListener scenarSelectedListener =  new OnItemSelectedListener() {
@@ -216,10 +245,19 @@ public class MainActivity extends BaseFragment {
 		txtVIN = (vinEditText) edtTmp;
 		txtVIN.setOnEditorActionListener(vinEditorActionListener);
 
+        txtZakaznik = (EditText) values2.findViewById(R.id.txtZakaznik);
+        txtStavTachometru = (EditText) values2.findViewById(R.id.txtStavTachomeru);
 		txtSTKDate = (EditText)values1.findViewById(R.id.txtSTK);
 		txtEmiseDate = (EditText)values2.findViewById(R.id.txtEmise);
 		spScenare = (Spinner)values1.findViewById(R.id.spScenar);
         spTypPaliva = (Spinner)values1.findViewById(R.id.spTypPaliva);
+
+        txtRZV.addTextChangedListener(textWatcher);
+        txtVIN.addTextChangedListener(textWatcher);
+        txtZakaznik.addTextChangedListener(textWatcher);
+        txtStavTachometru.addTextChangedListener(textWatcher);
+        txtSTKDate.addTextChangedListener(textWatcher);
+        txtEmiseDate.addTextChangedListener(textWatcher);
 		
 		spScenare.setOnItemSelectedListener(scenarSelectedListener);
 				
@@ -524,7 +562,6 @@ public class MainActivity extends BaseFragment {
 	private void populateTextsAndRbtn(ViewGroup theView) {
 		String fieldName = "";
 		DMCheckin checkinData = app.getCheckin();
-        int povinne = 0, povinneNevyplnene = 0;
 		for (int i = 0; i < theView.getChildCount(); i++) {
 			View v = theView.getChildAt(i);
 			Class<? extends View> c = v.getClass();
@@ -548,12 +585,6 @@ public class MainActivity extends BaseFragment {
 				if (c == EditText.class || c == vinEditText.class) {
 
                     EditText editText = (EditText) v;
-                    if (editText.getHint() != null && editText.getHint().toString().equalsIgnoreCase(getResources().getString(R.string.Pozadovane))) {
-                        povinne++;
-                        if(editText.length() == 0)
-                            povinneNevyplnene++;
-                    }
-
                     editText.setText("");
 					if (field.getType() == String.class)// jnCheckin.hasNonNull(fieldName))
                         editText.setText((String) field.get(checkinData));
@@ -578,11 +609,6 @@ public class MainActivity extends BaseFragment {
 				e.printStackTrace();
 			}
 		}
-
-        ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
-        TextView textView = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-        textView.setText("xxxx");
-//        ((FragmentPagerActivity)getActivity()).updateTabBadge(getActivity().getActionBar().getSelectedTab(), String.format("%d/%d"));
 	}
 
 	@Override

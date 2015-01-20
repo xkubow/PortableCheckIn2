@@ -78,6 +78,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
+            String errorMsg = intent.getStringExtra("ErrorMsg");
+
+            if(errorMsg != null && errorMsg.length() > 0)
+            {
+                app.getDialog(FragmentPagerActivity.this, "error", errorMsg, PortableCheckin.DialogType.SINGLE_BUTTON).show();
+                return;
+            }
+
             String action = intent.getAction();
             if(action.equalsIgnoreCase("recivedData")) {
                 final Bundle b = intent.getExtras().getBundle("recivedData");
@@ -338,7 +346,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     private void showBrandLogos() {
 
         AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setTitle("Example");
+        b.setTitle(R.string.brands);
         final Cursor cursor = app.getBrands();
         int index = 0;
         final int brandIdIndex = cursor.getColumnIndex(DMBrand.columnNames[DMBrand.ColumnsEnum.BRAND_ID.ordinal()]);

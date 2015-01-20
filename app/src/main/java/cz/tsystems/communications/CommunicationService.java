@@ -430,11 +430,14 @@ public class CommunicationService extends IntentService {
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
             app.setPlannedActivitiesList(root.path("PLANNED_ORDER").path("ACTIVITIES"));
-            final String tmp = root.path("DEFERRED_SERVICE_DEMANDS").asText();
-            final boolean exist = root.path("DEFERRED_SERVICE_DEMANDS").isMissingNode();
             app.setOdlozenePolozky(root.path("DEFERRED_SERVICE_DEMANDS"));
             app.setSDA(root.path("RECALLS"));
             app.setCheckin(root.path("CHECKIN"));
+            app.loadSilhouette();
+            app.getSilhouette().setPointsFromJson(root.path("DAMAGE_POINTS"));
+            app.setVybavaList(root.path("EQUIPMENT"));
+            app.setServiceList(root.path("SERVICE"));
+
             int readedLength = 0;
             while(readedLength < response.length()) {
                 final int lengthToRead = (response.length()-readedLength > 3500)?3500:response.length()-readedLength;
@@ -650,17 +653,21 @@ public class CommunicationService extends IntentService {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setPropertyNamingStrategy(new MyPropertyNameStrategy());
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+        app.getCheckin().personal_id = app.user.personal_id;
         try {
 //            System.out.println(mapper.writeValueAsString(app.getCheckin()));
+            JSONArray jsonArray;
             jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
             jsonObject.put("CHECKIN_UNIT", NullNode.getInstance());
             jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
-            jsonObject.put("CHECKIN_SERVICE", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getServiceList()));
+            jsonObject.put("CHECKIN_SERVICE", jsonArray);
             jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
             jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
-            jsonObject.put("CHECKIN_EQUIPMENT", new JSONArray(mapper.writeValueAsString(app.vybavaList)));
-            JSONArray jo = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPoints()));
-            jsonObject.put("CHECKIN_DAMAGE_POINT", jo);
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.vybavaList));
+            jsonObject.put("CHECKIN_EQUIPMENT", jsonArray);
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPoints()));
+            jsonObject.put("CHECKIN_DAMAGE_POINT", jsonArray);
             jsonObject.put("CHECKIN", new JSONObject(mapper.writeValueAsString(app.getCheckin())));
         } catch (JsonProcessingException e) {
             e.printStackTrace();

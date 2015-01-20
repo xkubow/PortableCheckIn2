@@ -31,9 +31,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PointF;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -615,6 +613,13 @@ public class PortableCheckin extends Application {
         return filtered;
     }
 
+    public void setVybavaList(JsonNode vybavaNode) {
+        if(!vybavaNode.isMissingNode())
+            PortableCheckin.vybavaList = parseJsonArray(vybavaNode, DMVybava.class);
+        else
+            PortableCheckin.vybavaList = null;
+    }
+
     public void setVybavaList(List<DMVybava> vybavaList) {
         this.vybavaList = vybavaList;
     }
@@ -626,7 +631,7 @@ public class PortableCheckin extends Application {
     }
 
     public DMService getService(final int location) {
-        if(vybavaList == null || vybavaList.size() <= location)
+        if(serviceList == null || serviceList.size() <= location)
             return null;
         return serviceList.get(location);
     }
@@ -641,7 +646,14 @@ public class PortableCheckin extends Application {
         this.serviceList = newServiceList;
     }
 
-    public void addVybava(DMService service) {
+    public void setServiceList(JsonNode serviceNode) {
+        if(!serviceNode.isMissingNode())
+            PortableCheckin.serviceList = parseJsonArray(serviceNode, DMService.class);
+        else
+            PortableCheckin.serviceList = null;
+    }
+
+    public void addService(DMService service) {
         if(serviceList == null)
             serviceList = new ArrayList<DMService>();
         serviceList.add(service);

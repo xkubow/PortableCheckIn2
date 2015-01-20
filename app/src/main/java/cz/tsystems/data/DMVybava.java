@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class DMVybava extends DMBaseItem {
     @JsonIgnore
 	final static String TAG = DMVybava.class.getSimpleName();
@@ -25,7 +27,9 @@ public class DMVybava extends DMBaseItem {
     public void setText(final String newText){this.text = newText;};
     public boolean getChecked(){return checked;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
-	
+
+    public DMVybava(){};
+
 	public DMVybava(Context context, long id, String text, final boolean checked, final boolean editable) {
 		this.car_equipment_id = id;
 		this.text = text;
