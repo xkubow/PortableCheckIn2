@@ -617,7 +617,7 @@ public class PortableCheckin extends Application {
         if(!vybavaNode.isMissingNode())
             PortableCheckin.vybavaList = parseJsonArray(vybavaNode, DMVybava.class);
         else
-            PortableCheckin.vybavaList = null;
+            loadVybavy();
     }
 
     public void setVybavaList(List<DMVybava> vybavaList) {
@@ -650,7 +650,7 @@ public class PortableCheckin extends Application {
         if(!serviceNode.isMissingNode())
             PortableCheckin.serviceList = parseJsonArray(serviceNode, DMService.class);
         else
-            PortableCheckin.serviceList = null;
+            loadServices();
     }
 
     public void addService(DMService service) {
