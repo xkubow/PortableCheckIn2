@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class DMVybava extends DMBaseItem {
@@ -14,18 +15,26 @@ public class DMVybava extends DMBaseItem {
     public long car_equipment_id;
     @JsonIgnore
     public String text;
+    @JsonIgnore
     public boolean checked;
+    @JsonIgnore
 	public boolean obligatory_equipment;
     @JsonIgnore
     public boolean editable = false;
 	private Context context;
 
+    @JsonIgnore
     public long get_id(){return car_equipment_id;};
     public void set_id(final long id){
         car_equipment_id = id;};
     public String getText(){return text;};
     public void setText(final String newText){this.text = newText;};
+    @JsonIgnore
     public boolean getChecked(){return checked;};
+    @JsonProperty("CHECKED")
+    public int getCheckedJson(){return (checked)?1:0;};
+    @JsonProperty("OBLIGATORY_EQUIPMENT")
+    public int getobligatory_equipmentJson(){return (obligatory_equipment)?1:0;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
 
     public DMVybava(){};

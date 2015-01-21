@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by kubisj on 21.11.2014.
@@ -18,12 +19,16 @@ public class DMService extends DMBaseItem {
     public boolean editable = false;
     private Context context;
 
+    @JsonIgnore
     public long get_id(){return check_service_id;};
     public void set_id(final long id){
         check_service_id = id;};
     public String getText(){return text;};
     public void setText(final String newText){this.text = newText;};
+    @JsonIgnore
     public boolean getChecked(){return checked;};
+    @JsonProperty("CHECKED")
+    public int getCheckedJson(){return (checked)?1:0;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
 
     public DMService(Cursor c, boolean checked) {
