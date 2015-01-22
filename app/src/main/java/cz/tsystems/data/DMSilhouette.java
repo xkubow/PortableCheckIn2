@@ -81,7 +81,7 @@ public class DMSilhouette extends Object {
 
         if(silhouettePoints != null)
             for(DMDamagePoints damagePoint : silhouettePoints)
-                silImageData[damagePoint.image_enum].points.add(damagePoint);
+                silImageData[damagePoint.image_enum-1].points.add(damagePoint);
 //        this.silImageData[location].points = points;
     }
 	

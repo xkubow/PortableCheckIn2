@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
@@ -120,7 +121,7 @@ public class BodyActivity extends BaseFragment {
             view.setScaleType(ImageView.ScaleType.MATRIX);
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-               	final int X = (int)event.getX() - 20;
+               	final int X = (int)event.getX();// - 20;
                	final int Y = (int)event.getY() - 20;
 	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?2:1);
 	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked()?2:1);
@@ -206,7 +207,8 @@ public class BodyActivity extends BaseFragment {
     private void reloadPoits() {
         pointsLayout.removeAllViews();
         int i = 1;
-        for(int[] point : app.getSilhouette().getPoints(getRbtnSilueteIndex()))
+        List<int[]> points = app.getSilhouette().getPoints(getRbtnSilueteIndex());
+        for(int[] point : points)
             addPoint(point[0], point[1], i++, point[2]);
     }
 	
