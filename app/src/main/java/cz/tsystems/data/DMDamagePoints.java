@@ -23,7 +23,7 @@ public class DMDamagePoints {
         coord_x = newCoord_x;
         coord_y = newCoord_y;
         damage_enum = newDamage_enum;
-        image_enum = newImage_enum+1;
+        image_enum = newImage_enum;
         order = newOrder+1;
     }
     @JsonIgnore

@@ -373,7 +373,10 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     public void setBrand(DMCheckin checkinData) {
         if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {
             btnBrand.setEnabled(false);
-            app.setSelectedBrand(checkinData.brand_id);
+            if(app.getCheckin().checkin_id > 0)
+                app.selectedBrand = app.getBrand(app.getCheckin().brand_id); // vybavy aj servisi uz existuju zo serveru
+            else
+                app.setSelectedBrand(checkinData.brand_id); // nastavuju sa aj vybavy aj servisi
             setBrandImage();
         } else {
             btnBrand.setEnabled(true);

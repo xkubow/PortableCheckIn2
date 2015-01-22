@@ -15,9 +15,7 @@ public class DMVybava extends DMBaseItem {
     public long car_equipment_id;
     @JsonIgnore
     public String text;
-    @JsonIgnore
     public boolean checked;
-    @JsonIgnore
 	public boolean obligatory_equipment;
     @JsonIgnore
     public boolean editable = false;
@@ -25,16 +23,18 @@ public class DMVybava extends DMBaseItem {
 
     @JsonIgnore
     public long get_id(){return car_equipment_id;};
+    @JsonIgnore
     public void set_id(final long id){
         car_equipment_id = id;};
     public String getText(){return text;};
+    @JsonProperty("CAR_EQUIPMENT_TXT")
     public void setText(final String newText){this.text = newText;};
-    @JsonIgnore
+//    @JsonIgnore
     public boolean getChecked(){return checked;};
-    @JsonProperty("CHECKED")
-    public int getCheckedJson(){return (checked)?1:0;};
-    @JsonProperty("OBLIGATORY_EQUIPMENT")
-    public int getobligatory_equipmentJson(){return (obligatory_equipment)?1:0;};
+//    @JsonProperty("CHECKED")
+//    public int getCheckedJson(){return (checked)?1:0;};
+//    @JsonProperty("OBLIGATORY_EQUIPMENT")
+//    public int getobligatory_equipmentJson(){return (obligatory_equipment)?1:0;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
 
     public DMVybava(){};
@@ -52,7 +52,6 @@ public class DMVybava extends DMBaseItem {
 		this.car_equipment_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));
 		this.text = c.getString(c.getColumnIndex("TEXT"));
 		this.obligatory_equipment = Boolean.valueOf( c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT")));
-		Log.v(TAG, String.valueOf(this.obligatory_equipment ) + " :" + String.valueOf(this.obligatory_equipment));
 		this.checked = checked;
 	}
 

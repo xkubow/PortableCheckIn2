@@ -12,7 +12,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import cz.tsystems.base.LowerCaseNamingStrategy;
 import cz.tsystems.model.PrehliadkyModel;
@@ -44,7 +43,7 @@ public class PortableCheckin extends Application {
     }
 	
 	private DMScenar selectedScenar;
-	private DMBrand selectedBrand;
+	public DMBrand selectedBrand;
 	private List<DMOffers> offers;
     private List<DMPacket> packets;
 	private List<List<DMUnit>> unitList;
@@ -596,6 +595,20 @@ public class PortableCheckin extends Application {
         return vybavaList.get(location);
     }
 
+    public List<DMVybava> getEditableVybava(final boolean editable) {
+        List<DMVybava> filtered = new ArrayList<DMVybava>();
+
+        if(vybavaList == null)
+            return new ArrayList<DMVybava>();
+
+        for(Iterator<DMVybava> iterator = vybavaList.iterator(); iterator.hasNext();) {
+            final DMVybava vybava = iterator.next();
+            if(vybava.editable == editable)
+                filtered.add(vybava);
+        }
+        return filtered;
+    }
+
     public List<DMVybava> getVybavaList(final boolean obligatory) {
         List<DMVybava> filtered = new ArrayList<DMVybava>();
 
@@ -607,9 +620,6 @@ public class PortableCheckin extends Application {
             if(vybava.obligatory_equipment == obligatory)
                 filtered.add(vybava);
         }
-
-        Log.i(TAG, String.valueOf(filtered.size()));
-
         return filtered;
     }
 
@@ -634,6 +644,20 @@ public class PortableCheckin extends Application {
         if(serviceList == null || serviceList.size() <= location)
             return null;
         return serviceList.get(location);
+    }
+
+    public List<DMService> getEditableService(final boolean editable) {
+        List<DMService> filtered = new ArrayList<DMService>();
+
+        if(serviceList == null)
+            return new ArrayList<DMService>();
+
+        for(Iterator<DMService> iterator = serviceList.iterator(); iterator.hasNext();) {
+            final DMService service = iterator.next();
+            if(service.eidtable == editable)
+                filtered.add(service);
+        }
+        return filtered;
     }
 
     public List<DMService> getServiceList() {

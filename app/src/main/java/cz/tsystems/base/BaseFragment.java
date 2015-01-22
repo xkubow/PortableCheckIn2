@@ -7,5 +7,7 @@ import android.content.Intent;
 public abstract class BaseFragment extends Fragment {
 
 	public abstract void showData(Intent intent);
+
+
 	public abstract void updateData(Intent intent);	
 }

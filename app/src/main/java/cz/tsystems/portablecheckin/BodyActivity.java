@@ -10,6 +10,7 @@ import java.util.Date;
 
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
+import cz.tsystems.data.DMDamagePoints;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.grids.Siluets;
 
@@ -101,9 +102,9 @@ public class BodyActivity extends BaseFragment {
 				RelativeLayout.LayoutParams params = (LayoutParams) v.getLayoutParams();
 				params.setMargins((int)X,  (int)Y, 0, 0);
 				button.setLayoutParams(params);
-                int[] point = app.getSilhouette().getpoint(getRbtnSilueteIndex(),Integer.valueOf(button.getText().toString())-1);
-                point[0] = (int)X;
-                point[1] = (int)Y;
+                DMDamagePoints point = app.getSilhouette().getDMPoint(getRbtnSilueteIndex(), Integer.valueOf(button.getText().toString()) - 1);
+                point.coord_x = (int)X;
+                point.coord_y = (int)Y;
             }
             return true;
 		}
@@ -121,8 +122,8 @@ public class BodyActivity extends BaseFragment {
             case MotionEvent.ACTION_DOWN:
                	final int X = (int)event.getX() - 20;
                	final int Y = (int)event.getY() - 20;
-	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?2:1);               	
-	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked());
+	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?2:1);
+	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked()?2:1);
                 break;
             }
             return true;
@@ -130,11 +131,11 @@ public class BodyActivity extends BaseFragment {
    };
 
    
-   private void addPoint(final int x, final int y, final int index, final boolean typ) {
+   private void addPoint(final int x, final int y, final int index, final int typ) {
 		selectedPoint = new Button(app);
 		selectedPoint.setOnTouchListener(btnPointTouchListener);
 		 selectedPoint.setLayoutParams(new RelativeLayout.LayoutParams(40, 40));
-		if(typ)
+		if(typ == 2)
 			selectedPoint.setBackgroundResource(R.drawable.stop);			
 		else
 			selectedPoint.setBackgroundResource(R.drawable.point);
@@ -206,7 +207,7 @@ public class BodyActivity extends BaseFragment {
         pointsLayout.removeAllViews();
         int i = 1;
         for(int[] point : app.getSilhouette().getPoints(getRbtnSilueteIndex()))
-            addPoint(point[0], point[1], i++, (point[2] == 2));
+            addPoint(point[0], point[1], i++, point[2]);
     }
 	
 	public void changeSiluet() {
@@ -222,10 +223,25 @@ public class BodyActivity extends BaseFragment {
 			addImageView(photoPath);
 
 	}
-	
+	@Override
 	public void showData(Intent intent)
 	{
-		
+        app.dismisProgressDialog();
+        String action = intent.getAction();
+        String serviceAction = null;
+        if (action.equalsIgnoreCase("recivedData")) {
+            try {
+                Bundle b = intent.getExtras().getBundle("requestData");
+                if(b == null)
+                    return;
+                serviceAction = b.getString("ACTION");
+                if(serviceAction == null)
+                    return;
+                Log.d("SHOWDATA", intent.getExtras().toString());
+            } catch (NullPointerException e) {
+                app.getDialog(getActivity(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON).show();
+            }
+        }
 	}
 
 	@Override

@@ -659,12 +659,14 @@ public class CommunicationService extends IntentService {
             JSONArray jsonArray;
             jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
             jsonObject.put("CHECKIN_UNIT", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableService(true)));
             jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getServiceList()));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableService(false)));
             jsonObject.put("CHECKIN_SERVICE", jsonArray);
             jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(true)));
             jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.vybavaList));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(false)));
             jsonObject.put("CHECKIN_EQUIPMENT", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPoints()));
             jsonObject.put("CHECKIN_DAMAGE_POINT", jsonArray);

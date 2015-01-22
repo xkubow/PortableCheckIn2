@@ -4,11 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by kubisj on 21.11.2014.
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class DMService extends DMBaseItem {
 
     public long check_service_id;
@@ -16,25 +18,32 @@ public class DMService extends DMBaseItem {
     public String text;
     public boolean checked;
     @JsonIgnore
-    public boolean editable = false;
+    public boolean isFree;
+    @JsonIgnore
+    public boolean eidtable = false;
+    public Double sell_price;
     private Context context;
 
     @JsonIgnore
     public long get_id(){return check_service_id;};
+    @JsonIgnore
     public void set_id(final long id){
         check_service_id = id;};
     public String getText(){return text;};
     public void setText(final String newText){this.text = newText;};
-    @JsonIgnore
+    @JsonProperty("CHECK_SERVICE_TXT")
+    public void setCheck_service_txt(final String newText){this.text = newText;};
     public boolean getChecked(){return checked;};
-    @JsonProperty("CHECKED")
-    public int getCheckedJson(){return (checked)?1:0;};
+//    @JsonProperty("CHECKED")
+//    public int getCheckedJson(){return (checked)?1:0;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
 
+    public DMService(){};
     public DMService(Cursor c, boolean checked) {
         this.check_service_id = c.getLong(c.getColumnIndex("CHECK_SERVICE_ID"));
         this.text = c.getString(c.getColumnIndex("TEXT"));
         this.checked = checked;
+        this.isFree = false;
     }
 
     public DMService(Context context, final long newService_id, final String newTtext, final boolean checked, final boolean newEditable) {
@@ -42,7 +51,7 @@ public class DMService extends DMBaseItem {
         this.text = newTtext;
         this.checked = checked;
         this.context = context;
-        this.editable = newEditable;
+        this.eidtable = newEditable;
     }
 
     public int compareTo(DMService another) {

@@ -187,6 +187,22 @@ public class ServiceActivity extends BaseFragment {
 
 	@Override
 	public void showData(Intent intent) {
+        app.dismisProgressDialog();
+        String action = intent.getAction();
+        String serviceAction = null;
+        if (action.equalsIgnoreCase("recivedData")) {
+            try {
+                Bundle b = intent.getExtras().getBundle("requestData");
+                if(b == null)
+                    return;
+                serviceAction = b.getString("ACTION");
+                if(serviceAction == null)
+                    return;
+                Log.d("SHOWDATA", intent.getExtras().toString());
+            } catch (NullPointerException e) {
+                app.getDialog(getActivity(), "error", e.getLocalizedMessage(), PortableCheckin.DialogType.SINGLE_BUTTON).show();
+            }
+        }
 		// TODO Auto-generated method stub
 		
 	}
