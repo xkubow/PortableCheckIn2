@@ -1,8 +1,6 @@
 package cz.tsystems.communications;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -668,7 +666,7 @@ public class CommunicationService extends IntentService {
             jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(false)));
             jsonObject.put("CHECKIN_EQUIPMENT", jsonArray);
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPoints()));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPointsTo1024()));
             jsonObject.put("CHECKIN_DAMAGE_POINT", jsonArray);
             jsonObject.put("CHECKIN", new JSONObject(mapper.writeValueAsString(app.getCheckin())));
         } catch (JsonProcessingException e) {

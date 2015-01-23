@@ -37,7 +37,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <ImageView
+    <cz.tsystems.base.SilhouetteImageView
         android:id="@+id/imgViewSilueta"
         android:layout_width="match_parent"
         android:layout_height="400dp"

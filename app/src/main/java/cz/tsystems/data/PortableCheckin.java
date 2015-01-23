@@ -41,6 +41,23 @@ public class PortableCheckin extends Application {
     public static enum DialogType {
         SINGLE_BUTTON
     }
+    public static class Size {
+        public static double height;
+        public static double width;
+        public static double heightTo1024, widthTo1024, heightFrom1024, widthFrom1024;;
+
+        public static void setHeight(double height) {
+            Size.height = height;
+            Size.heightTo1024 = 1024.0/height;
+            Size.heightFrom1024 = height/1024.0;
+        }
+
+        public static void setWidth(double width) {
+            Size.width = width;
+            Size.widthTo1024 = 1024.0/width;
+            Size.widthFrom1024 = width/1024.0;
+        }
+    }
 	
 	private DMScenar selectedScenar;
 	public DMBrand selectedBrand;
@@ -63,6 +80,7 @@ public class PortableCheckin extends Application {
 	public DMCheckin checkin;
 	static public DMUser user;
 	static public DMSetting setting;
+    static public Size silhuetteSize;
 	
 	static public TypeReference<List<DMCustomerInfo>> customerInfoTypeRef = new TypeReference<List<DMCustomerInfo>>(){};
 	static public List<DMCustomerInfo> custumerInfoList;

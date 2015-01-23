@@ -11,7 +11,9 @@ import java.util.List;
 
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
-import cz.tsystems.data.DMDamagePoints;
+import cz.tsystems.base.SilhouetteImageView;
+import cz.tsystems.base.SilhouetteImgListener;
+import cz.tsystems.data.DMDamagePoint;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.grids.Siluets;
 
@@ -44,15 +46,13 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.gc.materialdesign.views.ButtonFloat;
-
 public class BodyActivity extends BaseFragment {
 	final String TAG = "BodyActivity";
 	PortableCheckin app;
 	RelativeLayout values1, pointsLayout;
 	RadioGroup rbtnSilouettes;
 	LinearLayout imageLayout;
-	ImageView imgView;
+    SilhouetteImageView imgView;
 	Button selectedPoint, btnSiluets;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
     com.gc.materialdesign.views.Switch chkPointType;
@@ -88,7 +88,7 @@ public class BodyActivity extends BaseFragment {
                 moved = true;
                 pointsLayout.getLocationInWindow(location);
                 float X = event.getRawX() - location[0] - 20;
-                float Y = event.getRawY() - location[1] - 20;
+                float Y = event.getRawY() - location[1];
                 final float XBoudary = pointsLayout.getWidth()-v.getWidth();
                 final float YBoudary = pointsLayout.getHeight()-v.getHeight();
                 if(X < 0)
@@ -101,11 +101,11 @@ public class BodyActivity extends BaseFragment {
                     Y = YBoudary;
 
 				RelativeLayout.LayoutParams params = (LayoutParams) v.getLayoutParams();
-				params.setMargins((int)X,  (int)Y, 0, 0);
+				params.setMargins((int)X,  (int)Y-20, 0, 0);
 				button.setLayoutParams(params);
-                DMDamagePoints point = app.getSilhouette().getDMPoint(getRbtnSilueteIndex(), Integer.valueOf(button.getText().toString()) - 1);
-                point.coord_x = (int)X;
-                point.coord_y = (int)Y;
+                DMDamagePoint point = app.getSilhouette().getDMPoint(getRbtnSilueteIndex(), Integer.valueOf(button.getText().toString()) - 1);
+                point.setX((int)X);
+                point.setY((int)Y);
             }
             return true;
 		}
@@ -122,9 +122,9 @@ public class BodyActivity extends BaseFragment {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                	final int X = (int)event.getX();// - 20;
-               	final int Y = (int)event.getY() - 20;
-	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?2:1);
-	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked()?2:1);
+               	final int Y = (int)event.getY();
+	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?1:2);
+	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked()?1:2);
                 break;
             }
             return true;
@@ -136,14 +136,14 @@ public class BodyActivity extends BaseFragment {
 		selectedPoint = new Button(app);
 		selectedPoint.setOnTouchListener(btnPointTouchListener);
 		 selectedPoint.setLayoutParams(new RelativeLayout.LayoutParams(40, 40));
-		if(typ == 2)
+		if(typ == 1)
 			selectedPoint.setBackgroundResource(R.drawable.stop);			
 		else
 			selectedPoint.setBackgroundResource(R.drawable.point);
 		RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(40, 40);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		lay.setMargins(x, y, 0, 0);
+		lay.setMargins(x, y-20, 0, 0);
 		selectedPoint.setText(String.valueOf(index));
 		pointsLayout.addView(selectedPoint, lay);
    }
@@ -158,14 +158,19 @@ public class BodyActivity extends BaseFragment {
 //		values2 = (RelativeLayout) rootView.findViewById(R.id.rlControls);
 //		imgSilLayout = (RelativeLayout) rootView.findViewById(R.id.rlImageSilueta);
 		pointsLayout = (RelativeLayout) rootView.findViewById(R.id.rlPoints);
-		imgView =  (ImageView) rootView.findViewById(R.id.imgViewSilueta);
+		imgView =  (SilhouetteImageView) rootView.findViewById(R.id.imgViewSilueta);
 		imgView.setOnTouchListener(imageOnTouchListener);
+        imgView.setImageListener(new SilhouetteImgListener() {
+            @Override
+            public void onSizeChanged(int w, int h) {
+                changeSiluet();
+            }
+        });
 		chkPointType = (com.gc.materialdesign.views.Switch) rootView.findViewById(R.id.chkOderky);
 		btnPhoto = (com.gc.materialdesign.views.ButtonFloat) rootView.findViewById(R.id.btnPhoto);
 		btnPhoto.setOnClickListener(btnPhotoClickLisener);
 		imageLayout = (LinearLayout) rootView.findViewById(R.id.llPhotos);
-		
-		
+
 		rbtnSilouettes = (RadioGroup) rootView.findViewById(R.id.rdbPohledy);
 		rbtnSilouettes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 			
@@ -190,13 +195,15 @@ public class BodyActivity extends BaseFragment {
 	
 	@Override
 	public void onStart() {
+        super.onStart();
 		// TODO Auto-generated method stub
-        if(!isTakeImage)
-            changeSiluet();
-        isTakeImage = false;
-		super.onStart();
 	}
-	
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
 	private final short getRbtnSilueteIndex()
 	{
 		int checkedRadioButton = rbtnSilouettes.getCheckedRadioButtonId();
@@ -207,9 +214,9 @@ public class BodyActivity extends BaseFragment {
     private void reloadPoits() {
         pointsLayout.removeAllViews();
         int i = 1;
-        List<int[]> points = app.getSilhouette().getPoints(getRbtnSilueteIndex());
-        for(int[] point : points)
-            addPoint(point[0], point[1], i++, point[2]);
+        List<DMDamagePoint> points = app.getSilhouette().getPoints(getRbtnSilueteIndex());
+        for(DMDamagePoint point : points)
+            addPoint(point.getX(), point.getY(), i++, point.damage_enum);
     }
 	
 	public void changeSiluet() {

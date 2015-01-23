@@ -8,10 +8,7 @@ import java.util.List;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.json.JSONArray;
 
 public class DMSilhouette extends Object {
     final String TAG = DMSilhouette.class.getSimpleName();
@@ -19,15 +16,8 @@ public class DMSilhouette extends Object {
 
         public Bitmap image;// = new ArrayList<Bitmap>(5);
 
-        public List<DMDamagePoints> points = new ArrayList<>();
+        public List<DMDamagePoint> points = new ArrayList<>();
         public List<String> photoFileName = new ArrayList<String>();
-
-        public List<int[]> getAllPointArray() {
-            List<int[]> listPoints = new ArrayList<>();
-            for (DMDamagePoints p : points)
-                listPoints.add(p.getPointArray());
-            return listPoints;
-        }
 	}
 
 	private int silhuetteId;
@@ -46,8 +36,9 @@ public class DMSilhouette extends Object {
 		this.silImageData[location].image = image;
 	}
 
-    public List<DMDamagePoints> getAllPoints() {
-        List<DMDamagePoints> thePoints = new ArrayList<>();
+    public List<DMDamagePoint> getAllPointsTo1024() {
+        List<DMDamagePoint> thePoints = new ArrayList<>();
+
         thePoints.addAll(silImageData[0].points);
         thePoints.addAll(silImageData[1].points);
         thePoints.addAll(silImageData[2].points);
@@ -56,8 +47,8 @@ public class DMSilhouette extends Object {
         return thePoints;
     }
 
-	public List<int[]> getPoints(final short location) {
-		return silImageData[location].getAllPointArray();
+	public List<DMDamagePoint> getPoints(final short location) {
+		return silImageData[location].points;
 	}
 
     public void removeAllPoints() {
@@ -65,44 +56,40 @@ public class DMSilhouette extends Object {
             silhouetteImage.points.clear();
     }
 
-	public void setPoints(final short location, List<DMDamagePoints> points) {
+	public void setPoints(final short location, List<DMDamagePoint> points) {
 		this.silImageData[location].points = points;
 	}
 
     public void setPointsFromJson(JsonNode jsonArray) {
-        List<DMDamagePoints> silhouettePoints;// = new ArrayList<>();
+        List<DMDamagePoint> silhouettePoints;// = new ArrayList<>();
 
         removeAllPoints();
 
         if(!jsonArray.isMissingNode())
-            silhouettePoints = PortableCheckin.parseJsonArray(jsonArray, DMDamagePoints.class);
+            silhouettePoints = PortableCheckin.parseJsonArray(jsonArray, DMDamagePoint.class);
         else
             silhouettePoints = null;
 
         if(silhouettePoints != null)
-            for(DMDamagePoints damagePoint : silhouettePoints)
+            for(DMDamagePoint damagePoint : silhouettePoints)
                 silImageData[damagePoint.image_enum-1].points.add(damagePoint);
 //        this.silImageData[location].points = points;
     }
 	
 	public void addPoint(final int location, final int X, final int Y, final int typ) {
         final int pos = this.silImageData[location].points.size();
-		this.silImageData[location].points.add(new DMDamagePoints(X, Y, typ, location+1, pos));
+		this.silImageData[location].points.add(new DMDamagePoint(X, Y, typ, location+1, pos));
 	}
 
     public void deletePoint(final short location, final short index) {
         this.silImageData[location].points.remove(index);
     }
 
-    public DMDamagePoints getDMPoint(final short location, final int index) {
+    public DMDamagePoint getDMPoint(final short location, final int index) {
         Log.i(TAG, String.valueOf(location) + ", " + String.valueOf(index));
         return this.silImageData[location].points.get(index);
     }
 	
-	public int[] getpoint(final short location, final int index) {
-		return this.silImageData[location].points.get(index).getPointArray();
-	}
-
 	public int getSilhuetteId() {
 		return silhuetteId;
 	}
