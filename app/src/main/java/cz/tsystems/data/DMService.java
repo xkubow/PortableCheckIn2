@@ -18,9 +18,7 @@ public class DMService extends DMBaseItem {
     public String text;
     public boolean checked;
     @JsonIgnore
-    public boolean isFree;
-    @JsonIgnore
-    public boolean eidtable = false;
+    public boolean editable = false;
     public Double sell_price;
     private Context context;
 
@@ -43,7 +41,7 @@ public class DMService extends DMBaseItem {
         this.check_service_id = c.getLong(c.getColumnIndex("CHECK_SERVICE_ID"));
         this.text = c.getString(c.getColumnIndex("TEXT"));
         this.checked = checked;
-        this.isFree = false;
+        this.editable = false;
     }
 
     public DMService(Context context, final long newService_id, final String newTtext, final boolean checked, final boolean newEditable) {
@@ -51,10 +49,12 @@ public class DMService extends DMBaseItem {
         this.text = newTtext;
         this.checked = checked;
         this.context = context;
-        this.eidtable = newEditable;
+        this.editable = newEditable;
     }
 
     public int compareTo(DMService another) {
         return (this.check_service_id == another.check_service_id)?1:0;
     }
+
+    public boolean getEditable(){return this.editable;};
 }

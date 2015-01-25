@@ -22,8 +22,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -84,7 +86,7 @@ public class ServiceActivity extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
-                CheckBox b = (CheckBox)view.findViewById(R.id.checkBox);
+                com.gc.materialdesign.views.CheckBox b = (com.gc.materialdesign.views.CheckBox)view.findViewById(R.id.checkBox);
 
                 DMPrehliadkyMaster prehliadkaMaster = ServiceActivity.this.selectedPrehliadky;
 
@@ -100,6 +102,13 @@ public class ServiceActivity extends BaseFragment {
                             break;
                     }
                     if(item != null) {
+
+                        if(item.getEditable()) {
+                            EditText editText = (EditText)view.findViewById(R.id.txtVybavaText);
+                            editText.requestFocusFromTouch();
+                            InputMethodManager lManager = (InputMethodManager)getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                            lManager.showSoftInput(editText, 0);
+                        }
                         item.setChecked(!item.getChecked());
                         b.setChecked(item.getChecked());
                     }

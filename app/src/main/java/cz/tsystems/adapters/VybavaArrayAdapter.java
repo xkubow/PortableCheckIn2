@@ -42,14 +42,14 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> implements Pinned
 		TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
 		text.setText(vybava.text);
 
-        CheckBox vybCheck = (CheckBox)v.findViewById(R.id.checkBox);
+        com.gc.materialdesign.views.CheckBox vybCheck = (com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
         vybCheck.setChecked(vybava.checked);
         vybCheck.setTag(position);
 
         vybCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox chckBtn = (CheckBox)v;
+                com.gc.materialdesign.views.CheckBox chckBtn = (com.gc.materialdesign.views.CheckBox)v;
                 DMVybava vybava = filteredData.get((Integer)chckBtn.getTag());
                 vybava.checked = chckBtn.isChecked();
             }

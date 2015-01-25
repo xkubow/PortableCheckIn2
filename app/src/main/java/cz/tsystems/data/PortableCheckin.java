@@ -672,7 +672,7 @@ public class PortableCheckin extends Application {
 
         for(Iterator<DMService> iterator = serviceList.iterator(); iterator.hasNext();) {
             final DMService service = iterator.next();
-            if(service.eidtable == editable)
+            if(service.editable == editable)
                 filtered.add(service);
         }
         return filtered;

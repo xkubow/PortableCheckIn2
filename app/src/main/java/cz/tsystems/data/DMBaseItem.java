@@ -10,6 +10,7 @@ public abstract class DMBaseItem implements Comparable<DMBaseItem> {
     public abstract void setText(final String text);
     public abstract boolean getChecked();
     public abstract void setChecked(final boolean checked);
+    public boolean getEditable(){return false;};
 
     @Override
     public int compareTo(DMBaseItem another) {

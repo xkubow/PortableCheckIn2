@@ -37,23 +37,30 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
+        final DMService service = data.get(position);
+        Log.d(TAG, String.valueOf(service.editable) + ", " + service.text);
+
         if (v == null) {
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.item_vybava, null);
+            if(service.editable)
+                v = vi.inflate(R.layout.item_free_vybavy, null);
+            else
+                v = vi.inflate(R.layout.item_vybava, null);
         }
-        final DMService service = data.get(position);
 
-        TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
-        text.setText(service.text);
+        if(!service.editable) {
+            TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
+            text.setText(service.text);
+        }
 
-        final CheckBox serCheck = (CheckBox)v.findViewById(R.id.checkBox);
+        final com.gc.materialdesign.views.CheckBox serCheck = (com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
         serCheck.setTag(position);
         serCheck.setChecked(service.checked);
 
         serCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox chkBtn = (CheckBox)v;
+                com.gc.materialdesign.views.CheckBox chkBtn = (com.gc.materialdesign.views.CheckBox)v;
                 DMService serice = data.get((Integer)chkBtn.getTag());
                 service.checked = chkBtn.isChecked();
             }
