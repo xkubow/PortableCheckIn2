@@ -2,4 +2,6 @@
 <resources>
     <item name="ID" type="id"/>
     <item name="listPosition" type="id" />
+    <item name="VievHolder" type="id" />
+    <item name="ViewHolder" type="id" />
 </resources>

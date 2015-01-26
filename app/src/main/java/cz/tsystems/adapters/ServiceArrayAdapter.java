@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.hb.views.PinnedSectionListView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -33,6 +34,13 @@ import cz.tsystems.portablecheckin.R;
  */
 public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements PinnedSectionListView.PinnedSectionListAdapter{
     private final static String TAG = ServiceArrayAdapter.class.getSimpleName();
+
+    private static class ViewHolder {
+        public int typ;
+        public TextView lblService;
+        public EditText txtService, txtPC;
+        public com.gc.materialdesign.views.CheckBox checkBox;
+    }
 
     private Context context;
     private List<DMService> data;
@@ -55,13 +63,10 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
 
             final int pos = (int) selectedText.getTag(R.id.listPosition);
             Log.d(TAG, String.valueOf(pos));
-            if((int) selectedText.getTag(R.id.ID) == R.id.txtVybavaText)
-                getItem(pos).text = s.toString();
-            else if((int) selectedText.getTag(R.id.ID) == R.id.txtPC)
-                getItem(pos).sell_price = Double.parseDouble(s.toString());
-            com.gc.materialdesign.views.CheckBox checkBox = (com.gc.materialdesign.views.CheckBox) selectedText.getTag(R.id.checkBox);
-            checkBox.setChecked((s.length()>0));
-            getItem(pos).setChecked(checkBox.isChecked());
+            getItem(pos).text = s.toString();
+            ViewHolder vh = (ViewHolder) selectedText.getTag(R.id.ViewHolder);
+            vh.checkBox.setChecked((s.length()>0));
+            getItem(pos).setChecked(vh.checkBox.isChecked());
         }
 
         @Override
@@ -69,6 +74,31 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
 
         }
     };
+    TextWatcher textWatcherPC = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if(selectedText == null)
+                return;
+
+            final int pos = (int) selectedText.getTag(R.id.listPosition);
+            Log.d(TAG, String.valueOf(pos));
+            getItem(pos).sell_price = Double.parseDouble(s.toString());
+            ViewHolder vh = (ViewHolder) selectedText.getTag(R.id.ViewHolder);
+            vh.checkBox.setChecked((s.length()>0));
+            getItem(pos).setChecked(vh.checkBox.isChecked());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
 
     View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
@@ -115,83 +145,79 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
+        ViewHolder vh = null;
         final DMService service = getItem(position);//data.get(position);
-        Log.d(TAG, String.valueOf(position ) + ":" + String.valueOf(service.get_id()) + ", " + String.valueOf(service.editable) + ", " + service.text);
-        if(v!= null)
-            Log.d(TAG, "REUSING VIEW :" + String.valueOf(v));
         int type = getItemViewType(position);
         Log.d(TAG, "TYPE :" + String.valueOf(type));
 
         if (v == null) {
+            Log.d(TAG, "View == NULL");
             switch (type) {
                 case FREE:
                     v = layoutInflater.inflate(R.layout.item_free_vybavy, null);
                     break;
                 case STATIC:
                     v = layoutInflater.inflate(R.layout.item_vybava, null);
-                    Log.d(TAG, "FINAL - " + String.valueOf(service.get_id()) + ", " + String.valueOf(service.editable) + ", " + service.text);
                     break;
             }
-        }
-        EditText txtVybavaText = (EditText)v.findViewById(R.id.txtVybavaText);
-        EditText txtPC = (EditText)v.findViewById(R.id.txtPC);
-        switch (type) {
-            case FREE :
-                txtVybavaText.setTag(R.id.listPosition, position);
-                txtVybavaText.setTag(R.id.ID, R.id.txtVybavaText);
-                txtVybavaText.setTag(R.id.checkBox, v.findViewById(R.id.checkBox));
-                txtVybavaText.setOnTouchListener(touchListener);
-                txtVybavaText.addTextChangedListener(textWatcher);
-                txtVybavaText.setOnEditorActionListener(editorActionListener);
-                break;
-            case STATIC :
-                Log.d(TAG, "FINAL - " + String.valueOf(service.get_id()) + ", " + String.valueOf(service.editable) + ", " + service.text);
-                break;
-        }
-        txtPC.setTag(R.id.listPosition, position);
-        txtPC.setTag(R.id.ID, R.id.txtPC);
-        txtPC.setTag(R.id.checkBox, v.findViewById(R.id.checkBox));
 
-        if(!service.editable) {
-            TextView text = (TextView) v.findViewById(R.id.lblVybavaText);
-            text.setText(service.text);
-            txtPC.setEnabled(false);
-        }
-        else {
-            if(service.text != null && service.text.length() > 0) {
-                EditText text = (EditText) v.findViewById(R.id.txtVybavaText);
-                text.setText(service.text.toString());
+            vh = new ViewHolder();
+            vh.typ = type;
+            vh.txtService = (EditText) v.findViewById(R.id.txtVybavaText);
+            vh.lblService = (TextView) v.findViewById(R.id.lblVybavaText);
+            vh.txtPC = (EditText) v.findViewById(R.id.txtPC);
+            vh.checkBox = (com.gc.materialdesign.views.CheckBox) v.findViewById(R.id.checkBox);
+
+            switch (type) {
+                case FREE:
+                    vh.txtService.setTag(R.id.listPosition, position);
+                    vh.txtService.setOnTouchListener(touchListener);
+                    vh.txtService.addTextChangedListener(textWatcher);
+                    vh.txtService.setOnEditorActionListener(editorActionListener);
+                    vh.txtService.setTag(R.id.ViewHolder, vh);
+                    vh.txtPC.setTag(R.id.listPosition, position);
+                    vh.txtPC.setEnabled(true);
+                    vh.txtPC.setVisibility(View.VISIBLE);
+                    vh.txtPC.setOnTouchListener(touchListener);
+                    vh.txtPC.addTextChangedListener(textWatcherPC);
+                    break;
+                case STATIC:
+                    Log.d(TAG, "FINAL - " + String.valueOf(service.get_id()) + ", " + String.valueOf(service.editable) + ", " + service.text);
+                    vh.txtPC.setEnabled(false);
+                    break;
             }
 
-            txtPC.setEnabled(true);
-            txtPC.setVisibility(View.VISIBLE);
+            vh.checkBox.setTag(position);
+            vh.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    com.gc.materialdesign.views.CheckBox chkBtn = (com.gc.materialdesign.views.CheckBox) v;
+                    DMService serice = data.get((Integer) chkBtn.getTag());
+                    service.checked = chkBtn.isChecked();
+                }
+            });
+
+            vh.txtPC.setTag(R.id.ViewHolder, vh);
+            v.setTag(vh);
+        } else {
+            vh = (ViewHolder) v.getTag();
         }
 
-        if(service.sell_price != null) {
-            txtPC.setVisibility(View.VISIBLE);
+        //FREE
+        if (vh.typ == FREE) {
+            if (service.text != null && service.text.length() > 0)
+                vh.txtService.setText(service.text.toString());
+        } else
+            vh.lblService.setText(service.text);
+        ////////////////////
+        vh.checkBox.setChecked(service.checked);
+        if (service.sell_price != null) {
+            vh.txtPC.setVisibility(View.VISIBLE);
             Log.d(TAG, "SETING PC :" + String.valueOf(service.sell_price));
-            txtPC.setText(String.valueOf(service.sell_price));
-            Log.d(TAG, "----------------------------------------------------------");
+            vh.txtPC.setText(String.valueOf(service.sell_price));
         }
-
-        txtPC.setOnTouchListener(touchListener);
-        txtPC.addTextChangedListener(textWatcher);
-
-        final com.gc.materialdesign.views.CheckBox serCheck = (com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
-        serCheck.setTag(position);
-        serCheck.setChecked(service.checked);
-
 
         Log.d(TAG, "================================================================================================");
-
-        serCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                com.gc.materialdesign.views.CheckBox chkBtn = (com.gc.materialdesign.views.CheckBox)v;
-                DMService serice = data.get((Integer)chkBtn.getTag());
-                service.checked = chkBtn.isChecked();
-            }
-        });
 
         return v;
     }

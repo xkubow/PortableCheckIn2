@@ -7,14 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by kubisj on 26.1.2015.
  */
 public class DMServiceFree extends DMBaseItem {
-    public long checkin_service_free_id;
+    public Long checkin_service_free_id;
     public String text;
     public boolean checked;
     public Double sell_price;
 
     @JsonIgnore
     @Override
-    public long get_id() {
+    public Long get_id() {
         return checkin_service_free_id;
     }
 

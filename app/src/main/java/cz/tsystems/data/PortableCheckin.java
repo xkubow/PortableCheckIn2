@@ -579,7 +579,7 @@ public class PortableCheckin extends Application {
 		}
 
         for(int i=0; i< selectedScenar.equipment_free_count; i++)
-            vybavaList.add(new DMVybava(this, 10000+i, "Volna Vybava", false, true));
+            vybavaList.add(new DMVybava(this, 10000+i, null, false, true));
 	}
 
     public void loadServices() {
@@ -604,7 +604,7 @@ public class PortableCheckin extends Application {
         }
 
         for(int i=0; i< selectedScenar.service_free_count; i++)
-            serviceList.add(new DMService(this, 10000+i, null, false, true));
+            serviceList.add(new DMService(this, null, null, false, true));
     }
 
 	public DMVybava getVybava(final int location) {
@@ -714,7 +714,7 @@ public class PortableCheckin extends Application {
                     services.get(i).editable = true;
                     services.get(i).setChecked(true);
                 } else
-                    services.add(i, new DMService(this, 10000 + i, null, false, true));
+                    services.add(i, new DMService(this, null, null, false, true));
             }
             PortableCheckin.serviceList.addAll(services);
         }

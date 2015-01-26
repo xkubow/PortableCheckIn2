@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class DMService extends DMBaseItem {
 
-    public long check_service_id;
+    public Long check_service_id;
     @JsonIgnore
     public String text;
     public boolean checked;
@@ -23,7 +23,7 @@ public class DMService extends DMBaseItem {
     private Context context;
 
     @JsonIgnore
-    public long get_id(){return check_service_id;};
+    public Long get_id(){return check_service_id;};
     @JsonIgnore()
     public void set_id(final long id){ check_service_id = id;};
     @JsonProperty("CHECKIN_SERVICE_FREE_ID")
@@ -47,7 +47,7 @@ public class DMService extends DMBaseItem {
         this.editable = false;
     }
 
-    public DMService(Context context, final long newService_id, final String newTtext, final boolean checked, final boolean newEditable) {
+    public DMService(Context context, final Long newService_id, final String newTtext, final boolean checked, final boolean newEditable) {
         this.check_service_id = newService_id;
         this.text = newTtext;
         this.checked = checked;

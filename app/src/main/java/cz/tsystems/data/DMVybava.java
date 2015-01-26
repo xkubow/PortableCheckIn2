@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DMVybava extends DMBaseItem {
     @JsonIgnore
 	final static String TAG = DMVybava.class.getSimpleName();
-    public long car_equipment_id;
+    public Long car_equipment_id;
     @JsonIgnore
     public String text;
     public boolean checked;
@@ -22,7 +22,7 @@ public class DMVybava extends DMBaseItem {
 	private Context context;
 
     @JsonIgnore
-    public long get_id(){return car_equipment_id;};
+    public Long get_id(){return car_equipment_id;};
     @JsonIgnore
     public void set_id(final long id){
         car_equipment_id = id;};
