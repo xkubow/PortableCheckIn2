@@ -604,7 +604,7 @@ public class PortableCheckin extends Application {
         }
 
         for(int i=0; i< selectedScenar.service_free_count; i++)
-            serviceList.add(new DMService(this, 10000+i, "Volna Vybava", false, true));
+            serviceList.add(new DMService(this, 10000+i, null, false, true));
     }
 
 	public DMVybava getVybava(final int location) {
@@ -664,15 +664,26 @@ public class PortableCheckin extends Application {
         return serviceList.get(location);
     }
 
-    public List<DMService> getEditableService(final boolean editable) {
-        List<DMService> filtered = new ArrayList<DMService>();
-
+    public List<DMServiceFree> getFreeService() {
+        List<DMServiceFree> filtered = new ArrayList<>();
         if(serviceList == null)
-            return new ArrayList<DMService>();
-
+            return new ArrayList<DMServiceFree>();
         for(Iterator<DMService> iterator = serviceList.iterator(); iterator.hasNext();) {
             final DMService service = iterator.next();
-            if(service.editable == editable)
+            if(service.editable == true)
+                filtered.add(new DMServiceFree(service));
+        }
+
+        return filtered;
+    }
+
+    public List<DMService> getStaticService() {
+        List<DMService> filtered = new ArrayList<DMService>();
+        if(serviceList == null)
+            return new ArrayList<DMService>();
+        for(Iterator<DMService> iterator = serviceList.iterator(); iterator.hasNext();) {
+            final DMService service = iterator.next();
+            if(service.editable == false)
                 filtered.add(service);
         }
         return filtered;
@@ -691,6 +702,22 @@ public class PortableCheckin extends Application {
     public void setServiceList(JsonNode serviceNode) {
         if(!serviceNode.isMissingNode())
             PortableCheckin.serviceList = parseJsonArray(serviceNode, DMService.class);
+        else
+            loadServices();
+    }
+
+    public void addFreeServiceList(JsonNode serviceNode) {
+        if(!serviceNode.isMissingNode()) {
+            List<DMService> services = parseJsonArray(serviceNode, DMService.class);
+            for(int i=0; i< selectedScenar.service_free_count; i++) {
+                if(services.size() > i) {
+                    services.get(i).editable = true;
+                    services.get(i).setChecked(true);
+                } else
+                    services.add(i, new DMService(this, 10000 + i, null, false, true));
+            }
+            PortableCheckin.serviceList.addAll(services);
+        }
         else
             loadServices();
     }

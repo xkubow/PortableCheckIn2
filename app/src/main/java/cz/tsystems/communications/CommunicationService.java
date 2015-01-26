@@ -435,6 +435,7 @@ public class CommunicationService extends IntentService {
             app.getSilhouette().setPointsFromJson(root.path("DAMAGE_POINTS"));
             app.setVybavaList(root.path("EQUIPMENT"));
             app.setServiceList(root.path("SERVICE"));
+            app.addFreeServiceList(root.path("SERVICE_FREE"));
 
             int readedLength = 0;
             while(readedLength < response.length()) {
@@ -454,7 +455,13 @@ public class CommunicationService extends IntentService {
 		} else if (data.getString("ACTION").equalsIgnoreCase("GetBanners")) {
 			loadDataDone |= eDone.eBANERSMIME.getValue();
 			Log.v(TAG, String.format("Banners DONE :%d", loadDataDone));
-		}
+		} else if (data.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
+            JsonNode result = mapper.readTree(response).path("RESULT");
+            boolean dms_save_status = result.path("SAVE_DMS_STATUS").booleanValue();
+            boolean save_status = result.path("SAVE_STATUS").booleanValue();
+            app.getCheckin().checkin_id = result.path("CHECKIN_ID").intValue();
+            app.getCheckin().checkin_number = result.path("CHECKIN_NUMBER").intValue();
+        }
 
 		i.putExtra("requestData", data);
 		i.putExtra("loadDataDone", loadDataDone);
@@ -657,13 +664,13 @@ public class CommunicationService extends IntentService {
             JSONArray jsonArray;
             jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
             jsonObject.put("CHECKIN_UNIT", NullNode.getInstance());
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableService(true)));
-            jsonObject.put("CHECKIN_SERVICE_FREE", NullNode.getInstance());
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableService(false)));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getFreeService()));
+            jsonObject.put("CHECKIN_SERVICE_FREE", jsonArray);
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getStaticService()));
             jsonObject.put("CHECKIN_SERVICE", jsonArray);
             jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(true)));
-            jsonObject.put("CHECKIN_EQUIPMENT_FREE", NullNode.getInstance());
+            jsonObject.put("CHECKIN_EQUIPMENT_FREE", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(false)));
             jsonObject.put("CHECKIN_EQUIPMENT", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPointsTo1024()));

@@ -12,9 +12,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="false"
-        android:layout_toLeftOf="@+id/checkBox"
         android:descendantFocusability="blocksDescendants"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/txtPC">
 
     </TextView>
 
@@ -26,7 +26,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:descendantFocusability="blocksDescendants"
-        android:background="#006384"/>
+        android:background="#006384"
+        android:layout_marginLeft="40dp" />
+
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/txtPC"
+        android:layout_marginLeft="10dp"
+        android:singleLine="true"
+        android:minLines="1"
+        android:maxLines="1"
+        android:hint="@string/Cena"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/checkBox"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	List<Fragment> theFragments = new ArrayList<Fragment>(4);
     Button btnBrand;
 	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
+    Menu myMenu;
 
     public void setCheckLogin(Boolean checkLogin) {
         this.checkLogin = checkLogin;
@@ -87,11 +89,17 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
 
             String action = intent.getAction();
-            if(action.equalsIgnoreCase("recivedData")) {
+            if(action.equalsIgnoreCase("recivedData") && intent.getExtras().getBundle("recivedData") != null) {
                 final Bundle b = intent.getExtras().getBundle("recivedData");
-                if(b != null && b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+                if(b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
                     ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(3);
                     serviceFragment.refreshMaster();
+                } else if (b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
+                    MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
+                    Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+                    resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.DST_ATOP);
+                    button.setIcon(resIcon);
+
                 }
             }
 
@@ -277,6 +285,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+        myMenu = menu;
 		getMenuInflater().inflate(R.menu.themenu, menu);
         menu.findItem(R.id.action_note_add).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override

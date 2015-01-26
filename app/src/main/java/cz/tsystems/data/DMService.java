@@ -24,22 +24,25 @@ public class DMService extends DMBaseItem {
 
     @JsonIgnore
     public long get_id(){return check_service_id;};
-    @JsonIgnore
-    public void set_id(final long id){
-        check_service_id = id;};
+    @JsonIgnore()
+    public void set_id(final long id){ check_service_id = id;};
+    @JsonProperty("CHECKIN_SERVICE_FREE_ID")
+    public void set_free_id(final long id){ check_service_id = id;};
     public String getText(){return text;};
     public void setText(final String newText){this.text = newText;};
     @JsonProperty("CHECK_SERVICE_TXT")
     public void setCheck_service_txt(final String newText){this.text = newText;};
+    @JsonProperty("CHECKIN_SERVICE_FREE_TXT")
+    public void setCheck_free_service_txt(final String newText){this.text = newText;};
     public boolean getChecked(){return checked;};
-//    @JsonProperty("CHECKED")
-//    public int getCheckedJson(){return (checked)?1:0;};
     public void setChecked(final boolean newChecked) {this.checked = newChecked;};
 
     public DMService(){};
     public DMService(Cursor c, boolean checked) {
         this.check_service_id = c.getLong(c.getColumnIndex("CHECK_SERVICE_ID"));
         this.text = c.getString(c.getColumnIndex("TEXT"));
+        if(!c.isNull(c.getColumnIndex("SELL_PRICE")))
+            this.sell_price = c.getDouble(c.getColumnIndex("SELL_PRICE"));
         this.checked = checked;
         this.editable = false;
     }
