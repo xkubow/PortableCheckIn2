@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Set;
 
 import javax.mail.BodyPart;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
 import cz.tsystems.base.MyPropertyNameStrategy;
+import cz.tsystems.data.DMServiceFree;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
 import cz.tsystems.portablecheckin.R;
@@ -424,6 +426,7 @@ public class CommunicationService extends IntentService {
 			app.setPlanZakazk(mapper.readTree(response));
 		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
             JsonNode root = mapper.readTree(response);
+            PortableCheckin.deletePackets();
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
@@ -431,11 +434,14 @@ public class CommunicationService extends IntentService {
             app.setOdlozenePolozky(root.path("DEFERRED_SERVICE_DEMANDS"));
             app.setSDA(root.path("RECALLS"));
             app.setCheckin(root.path("CHECKIN"));
+            app.setSelectedScenar(app.checkin.check_scenario_id);
             app.loadSilhouette();
             app.getSilhouette().setPointsFromJson(root.path("DAMAGE_POINTS"));
             app.setVybavaList(root.path("EQUIPMENT"));
+            app.addFreeVybavaList(root.path("EQUIPMENT_FREE"));
             app.setServiceList(root.path("SERVICE"));
             app.addFreeServiceList(root.path("SERVICE_FREE"));
+            app.setUnits(root.path("UNIT"));
 
             int readedLength = 0;
             while(readedLength < response.length()) {
@@ -456,6 +462,7 @@ public class CommunicationService extends IntentService {
 			loadDataDone |= eDone.eBANERSMIME.getValue();
 			Log.v(TAG, String.format("Banners DONE :%d", loadDataDone));
 		} else if (data.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
+            i.putExtra("recivedData", data);
             JsonNode result = mapper.readTree(response).path("RESULT");
             boolean dms_save_status = result.path("SAVE_DMS_STATUS").booleanValue();
             boolean save_status = result.path("SAVE_STATUS").booleanValue();
@@ -663,15 +670,16 @@ public class CommunicationService extends IntentService {
 //            System.out.println(mapper.writeValueAsString(app.getCheckin()));
             JSONArray jsonArray;
             jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
-            jsonObject.put("CHECKIN_UNIT", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(PortableCheckin.getAllUnitList()));
+            jsonObject.put("CHECKIN_UNIT", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getFreeService()));
             jsonObject.put("CHECKIN_SERVICE_FREE", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getStaticService()));
             jsonObject.put("CHECKIN_SERVICE", jsonArray);
             jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(true)));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getFreeVybava()));
             jsonObject.put("CHECKIN_EQUIPMENT_FREE", jsonArray);
-            jsonArray = new JSONArray(mapper.writeValueAsString(app.getEditableVybava(false)));
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getStaticVybava()));
             jsonObject.put("CHECKIN_EQUIPMENT", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getSilhouette().getAllPointsTo1024()));
             jsonObject.put("CHECKIN_DAMAGE_POINT", jsonArray);

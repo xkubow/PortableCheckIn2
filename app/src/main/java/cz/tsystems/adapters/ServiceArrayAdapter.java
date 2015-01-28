@@ -58,7 +58,7 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(selectedText == null)
+            if(selectedText == null || selectedText.getEditableText() != s)
                 return;
 
             final int pos = (int) selectedText.getTag(R.id.listPosition);
@@ -82,7 +82,7 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(selectedText == null)
+            if(selectedText == null || selectedText.getEditableText() != s)
                 return;
 
             final int pos = (int) selectedText.getTag(R.id.listPosition);
@@ -98,7 +98,6 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
 
         }
     };
-
 
     View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
@@ -188,12 +187,11 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
             }
 
             vh.checkBox.setTag(position);
-            vh.checkBox.setOnClickListener(new View.OnClickListener() {
+            vh.checkBox.setOncheckListener(new com.gc.materialdesign.views.CheckBox.OnCheckListener() {
                 @Override
-                public void onClick(View v) {
-                    com.gc.materialdesign.views.CheckBox chkBtn = (com.gc.materialdesign.views.CheckBox) v;
-                    DMService serice = data.get((Integer) chkBtn.getTag());
-                    service.checked = chkBtn.isChecked();
+                public void onCheck(com.gc.materialdesign.views.CheckBox checkBox, boolean isChecked) {
+                    DMService s = data.get((Integer) checkBox.getTag());
+                    s.checked = checkBox.isChecked();
                 }
             });
 
@@ -213,11 +211,8 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
         vh.checkBox.setChecked(service.checked);
         if (service.sell_price != null) {
             vh.txtPC.setVisibility(View.VISIBLE);
-            Log.d(TAG, "SETING PC :" + String.valueOf(service.sell_price));
             vh.txtPC.setText(String.valueOf(service.sell_price));
         }
-
-        Log.d(TAG, "================================================================================================");
 
         return v;
     }

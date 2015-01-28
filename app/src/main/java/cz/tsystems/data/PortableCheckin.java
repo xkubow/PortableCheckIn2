@@ -13,11 +13,13 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.LowerCaseNamingStrategy;
 import cz.tsystems.model.PrehliadkyModel;
 import cz.tsystems.model.UnitsModel;
 import cz.tsystems.portablecheckin.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -31,6 +33,8 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -38,6 +42,7 @@ public class PortableCheckin extends Application {
 		
 	final String TAG = PortableCheckin.class.getSimpleName();	
 	private ProgressDialog pPrograssDialog;
+
     public static enum DialogType {
         SINGLE_BUTTON
     }
@@ -62,8 +67,8 @@ public class PortableCheckin extends Application {
 	private DMScenar selectedScenar;
 	public DMBrand selectedBrand;
 	private List<DMOffers> offers;
-    private List<DMPacket> packets;
-	private List<List<DMUnit>> unitList;
+    public static List<DMPacket> packets;
+	public static List<List<DMUnit>> unitList;
 	static public List<DMVybava> vybavaList = new ArrayList<DMVybava>();
     static public List<DMService> serviceList = new ArrayList<DMService>();
 	private DMSilhouette selectedSilhouette;
@@ -77,7 +82,7 @@ public class PortableCheckin extends Application {
     static public List<DMPlannedActivities>plannedActivitiesList;
     static public List<DMOdlozenePolozky>odlozenePolozky;
     static public List<DMSDA>sda;
-	public DMCheckin checkin;
+	static public DMCheckin checkin;
 	static public DMUser user;
 	static public DMSetting setting;
     static public Size silhuetteSize;
@@ -259,10 +264,6 @@ public class PortableCheckin extends Application {
 	}
 	public void setSelectedScenar(int scenarId) {
 		this.selectedScenar = this.getScenarForId(scenarId);
-		PrehliadkyModel pm = new PrehliadkyModel(this);
-		UnitsModel um = new UnitsModel(this);
-		setUnitList(um.loadUnits(pm.getPrehliadky()));
-
         //TODO vymaz stare volne vybavy a nacitaj nove pre dany scenar
 	}
 
@@ -481,7 +482,25 @@ public class PortableCheckin extends Application {
 		}
 		return this.selectedSilhouette;
 	}
-	
+
+    public void loadUnits() {
+        if(checkin.checkin_id > 0) {
+            ActionBar.Tab tab = this.getActualActivity().getActionBar().getSelectedTab();
+            TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+            txtBadge.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        PrehliadkyModel pm = new PrehliadkyModel(this);
+        UnitsModel um = new UnitsModel(this);
+        setUnitList(um.loadUnits(pm.getPrehliadky()));
+
+        ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
+        TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+        txtBadge.setVisibility(View.VISIBLE);
+        txtBadge.setText("0/" + String.valueOf(um.mandatoryCount));
+    }
+
 	public List<DMUnit> getUnitListByUnitId(final long id) {
 		if(this.unitList == null)
 			this.unitList = new ArrayList<List<DMUnit>>();
@@ -497,6 +516,15 @@ public class PortableCheckin extends Application {
 		return unitList.get(location);
 	}
 
+    public static List<DMUnit> getAllUnitList() {
+        if(unitList == null)
+            return null;
+        List<DMUnit> units = new ArrayList<>();
+        for(List<DMUnit> unit : unitList)
+            units.addAll(unit);
+        return units;
+    }
+
 	public void setUnitList(List<List<DMUnit>> unitList) {
 		this.unitList = unitList;
 	}
@@ -507,6 +535,38 @@ public class PortableCheckin extends Application {
 		this.unitList.add(unitList);
 			
 	}
+
+    public void setUnits(JsonNode unitNode) {
+        if(unitList != null)
+            unitList.clear();
+        if(!unitNode.isMissingNode()) {
+            PrehliadkyModel pm = new PrehliadkyModel(this);
+            List<DMUnit> units = parseJsonArray(unitNode, DMUnit.class);
+            List<DMPrehliadkyMaster> prehliadkyMasters = pm.getPrehliadky();
+
+            for (Iterator<DMPrehliadkyMaster> iterator = prehliadkyMasters.iterator(); iterator.hasNext();) {
+                DMPrehliadkyMaster prehliadkyMaster = iterator.next();
+                final int unitId = prehliadkyMaster.unitId;
+                if (unitId > 0) {
+                    unitList.add(new ArrayList<DMUnit>());
+                    for (DMUnit unit : units) {
+                        if (unit.chck_unit_id == unitId)
+                            unitList.get(unitList.size()-1).add(unit);
+                    }
+                }
+            }
+
+        } else {
+            PrehliadkyModel pm = new PrehliadkyModel(this);
+            UnitsModel um = new UnitsModel(this);
+            setUnitList(um.loadUnits(pm.getPrehliadky()));
+        }
+    }
+
+    public static void deletePackets(){
+        if(packets != null)
+            packets.clear();
+    }
 
     public List<DMPacket> getPackets(){
         return packets;
@@ -579,7 +639,7 @@ public class PortableCheckin extends Application {
 		}
 
         for(int i=0; i< selectedScenar.equipment_free_count; i++)
-            vybavaList.add(new DMVybava(this, 10000+i, null, false, true));
+            vybavaList.add(new DMVybava(this, null, null, false, true));
 	}
 
     public void loadServices() {
@@ -612,8 +672,21 @@ public class PortableCheckin extends Application {
             return null;
         return vybavaList.get(location);
     }
+    public List<DMVybavaFree> getFreeVybava() {
+        List<DMVybavaFree> filtered = new ArrayList<>();
 
-    public List<DMVybava> getEditableVybava(final boolean editable) {
+        if(vybavaList == null)
+            return new ArrayList<DMVybavaFree>();
+
+        for(Iterator<DMVybava> iterator = vybavaList.iterator(); iterator.hasNext();) {
+            final DMVybava vybava = iterator.next();
+            if(vybava.editable)
+                filtered.add(new DMVybavaFree(vybava));
+        }
+        return filtered;
+    }
+
+    public List<DMVybava> getStaticVybava() {
         List<DMVybava> filtered = new ArrayList<DMVybava>();
 
         if(vybavaList == null)
@@ -621,7 +694,7 @@ public class PortableCheckin extends Application {
 
         for(Iterator<DMVybava> iterator = vybavaList.iterator(); iterator.hasNext();) {
             final DMVybava vybava = iterator.next();
-            if(vybava.editable == editable)
+            if(!vybava.editable)
                 filtered.add(vybava);
         }
         return filtered;
@@ -646,6 +719,24 @@ public class PortableCheckin extends Application {
             PortableCheckin.vybavaList = parseJsonArray(vybavaNode, DMVybava.class);
         else
             loadVybavy();
+    }
+
+    public void addFreeVybavaList(JsonNode vybavaNode) {
+        if(!vybavaNode.isMissingNode()) {
+            List<DMVybava> vybavas = parseJsonArray(vybavaNode, DMVybava.class);
+            for(int i=0; i< selectedScenar.service_free_count; i++) {
+                if(vybavas.size() > i) {
+                    vybavas.get(i).editable = true;
+                    vybavas.get(i).setChecked(true);
+                } else
+                    vybavas.add(i, new DMVybava(this, null, null, false, true));
+            }
+            PortableCheckin.vybavaList.addAll(vybavas);
+        } else {
+            for(int i=0; i< selectedScenar.service_free_count; i++)
+                PortableCheckin.vybavaList.add(new DMVybava(this, null, null, false, true));
+        }
+
     }
 
     public void setVybavaList(List<DMVybava> vybavaList) {
@@ -717,9 +808,11 @@ public class PortableCheckin extends Application {
                     services.add(i, new DMService(this, null, null, false, true));
             }
             PortableCheckin.serviceList.addAll(services);
+        } else {
+            for(int i=0; i< selectedScenar.service_free_count; i++)
+                PortableCheckin.serviceList.add(new DMService(this, null, null, false, true));
         }
-        else
-            loadServices();
+
     }
 
     public void addService(DMService service) {

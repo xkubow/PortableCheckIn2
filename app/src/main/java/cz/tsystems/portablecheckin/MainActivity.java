@@ -106,6 +106,7 @@ public class MainActivity extends BaseFragment {
 			Cursor cursor = (Cursor) spScenare.getSelectedItem();
 			app.getCheckin().check_scenario_id = cursor.getInt(cursor.getColumnIndex("CHECK_SCENARIO_ID"));
 			app.setSelectedScenar(app.getCheckin().check_scenario_id);
+            app.loadUnits();
 		}
 
 		@Override
@@ -516,6 +517,7 @@ public class MainActivity extends BaseFragment {
 			checkinData.check_scenario_id = app.getSelectedBrand().check_scenario_id_def;
 		
 		app.setSelectedScenar(checkinData.check_scenario_id);
+        app.loadUnits();
 
         if(checkinData.fuel_id <= 0)
             checkinData.fuel_id = 0;

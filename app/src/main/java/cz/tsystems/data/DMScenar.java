@@ -39,13 +39,13 @@ public class DMScenar {
 		inserted = new Date(cursor.getLong(cursor.getColumnIndex("INSERTED")));
 		last_updated = new Date(cursor.getLong(cursor.getColumnIndex("LAST_UPDATED")));
 		brand_id = cursor.getString(cursor.getColumnIndex("BRAND_ID"));
-		show_scenario = cursor.getInt(cursor.getColumnIndex("SHOW_SCENARIO")) == 1;
-		oblig_equipment_mandat = cursor.getInt(cursor.getColumnIndex("OBLIG_EQUIPMENT_MANDAT")) == 1;
-		equipment_mandat = cursor.getInt(cursor.getColumnIndex("EQUIPMENT_MANDAT")) == 1;
-		services_mandat = cursor.getInt(cursor.getColumnIndex("SERVICES_MANDAT")) == 1;
+		show_scenario = cursor.getString(cursor.getColumnIndex("SHOW_SCENARIO")).equalsIgnoreCase("true");
+		oblig_equipment_mandat = cursor.getString(cursor.getColumnIndex("OBLIG_EQUIPMENT_MANDAT")).equalsIgnoreCase("true");
+		equipment_mandat = cursor.getString(cursor.getColumnIndex("EQUIPMENT_MANDAT")).equalsIgnoreCase("true");
+		services_mandat = cursor.getString(cursor.getColumnIndex("SERVICES_MANDAT")).equalsIgnoreCase("true");
 		service_free_count = cursor.getShort(cursor.getColumnIndex("SERVICE_FREE_COUNT")); 
 		equipment_free_count = cursor.getShort(cursor.getColumnIndex("EQUIPMENT_FREE_COUNT"));
-		scenario_locked = cursor.getInt(cursor.getColumnIndex("SCENARIO_LOCKED")) == 1;
+		scenario_locked = cursor.getString(cursor.getColumnIndex("SCENARIO_LOCKED")).equalsIgnoreCase("true");
 		text = cursor.getString(cursor.getColumnIndex("TEXT"));		
 			
 	}

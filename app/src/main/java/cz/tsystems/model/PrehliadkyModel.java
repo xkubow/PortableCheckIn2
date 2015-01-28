@@ -1,7 +1,6 @@
 package cz.tsystems.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -10,12 +9,9 @@ import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMScenar;
 import cz.tsystems.data.PortableCheckin;
-import cz.tsystems.data.SQLiteDBProvider;
 import cz.tsystems.portablecheckin.R;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -35,9 +31,9 @@ public class PrehliadkyModel extends Model {
         final PortableCheckin app = (PortableCheckin)getContext().getApplicationContext();
         final DMScenar scenar = app.getSelectedScenar();
 
-        prehliadkyMasterList.add(new DMPrehliadkyMaster(eVYBAVY, getContext().getResources().getString(R.string.Vybavy), -1, scenar.equipment_mandat,DMPrehliadkyMaster.eSTATIC));
-        prehliadkyMasterList.add(new DMPrehliadkyMaster(ePOV_VYBAVY, getContext().getResources().getString(R.string.PovinneVybavy), -1, scenar.oblig_equipment_mandat,DMPrehliadkyMaster.eSTATIC));
-        prehliadkyMasterList.add(new DMPrehliadkyMaster(eSERVIS, getContext().getResources().getString(R.string.service), -1, scenar.services_mandat,DMPrehliadkyMaster.eSTATIC));
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(eVYBAVY, getContext().getResources().getString(R.string.Vybavy), -1, scenar.equipment_mandat,DMPrehliadkyMaster.eVYBAVY));
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(ePOV_VYBAVY, getContext().getResources().getString(R.string.PovinneVybavy), -1, scenar.oblig_equipment_mandat,DMPrehliadkyMaster.eVYBAVY));
+        prehliadkyMasterList.add(new DMPrehliadkyMaster(eSERVIS, getContext().getResources().getString(R.string.service), -1, scenar.services_mandat,DMPrehliadkyMaster.eSLUZBY));
 
 		final String query = "SELECT DATA.ROWID AS _id, DATA.TEXT AS TEXT, DATA.CHCK_UNIT_ID AS CHCK_UNIT_ID, SU.MANDATORY AS MANDATORY, -1 AS PACKET_GROUP_NR FROM "
 		       	+ "(SELECT ifnull(UL.CHCK_UNIT_TXT_LOC, U.CHCK_UNIT_TXT_DEF) AS TEXT, U.CHCK_UNIT_ID "
@@ -48,6 +44,8 @@ public class PrehliadkyModel extends Model {
         int lastId = 0;
 
         c.moveToFirst();
+        Log.d(TAG, Locale.getDefault().getLanguage() + ", " + String.valueOf(scenar.check_scenario_id));
+        Log.d(TAG, String.valueOf(c.getCount()));
         while(!c.isAfterLast()&& !c.isBeforeFirst()) {
             prehliadkyMasterList.add(new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), (c.getInt(c.getColumnIndex("MANDATORY"))==1),DMPrehliadkyMaster.eUNIT));
             c.moveToNext();
@@ -59,7 +57,7 @@ public class PrehliadkyModel extends Model {
                 final DMPacket packet = i.next();
                 if (!groupsNr.contains(packet.group_nr)) {
                     groupsNr.add(packet.group_nr);
-                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, packet.group_text, packet.group_nr, false,DMPrehliadkyMaster.eGROUP));
+                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, packet.group_text, packet.group_nr, false,DMPrehliadkyMaster.ePAKETY));
                 }
             }
             groupsNr = null;

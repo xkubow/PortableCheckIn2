@@ -24,9 +24,10 @@ public class DMVybava extends DMBaseItem {
     @JsonIgnore
     public Long get_id(){return car_equipment_id;};
     @JsonIgnore
-    public void set_id(final long id){
-        car_equipment_id = id;};
+    public void set_id(final long id){ car_equipment_id = id;};
     public String getText(){return text;};
+    public void setCheckin_equipment_free_txt(final String text) {this.text = text;};
+    public void setCheckin_equipment_free_id(final Long id) {this.car_equipment_id = id;};
     @JsonProperty("CAR_EQUIPMENT_TXT")
     public void setText(final String newText){this.text = newText;};
 //    @JsonIgnore
@@ -39,7 +40,7 @@ public class DMVybava extends DMBaseItem {
 
     public DMVybava(){};
 
-	public DMVybava(Context context, long id, String text, final boolean checked, final boolean editable) {
+	public DMVybava(Context context, Long id, String text, final boolean checked, final boolean editable) {
 		this.car_equipment_id = id;
 		this.text = text;
 		this.checked = checked;

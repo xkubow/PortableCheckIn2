@@ -9,27 +9,15 @@ import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
-import cz.tsystems.portablecheckin.UnitServiceActivity;
+import cz.tsystems.portablecheckin.UnitServiceDialog;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Filter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.hb.views.PinnedSectionListView;
@@ -39,10 +27,9 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
     private final static String TAG = UnitArrayAdapter.class.getSimpleName();
 	private Context context;
 	private List<DMUnit> data;
-    private List<DMUnit> filteredData;
+//    private List<DMUnit> filteredData;
     private PortableCheckin app;
-    private Button selectedButton;
-	
+
 	public UnitArrayAdapter(Context context, int resource, int textViewResourceId, List<DMUnit> objects) {
 		super(context, resource, textViewResourceId, objects);
 		this.context = context;
@@ -57,7 +44,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
             LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.item_unit, null);
         }
-        DMUnit unit = data.get(position);
+        DMUnit unit = getItem(position);
 
         TextView text = (TextView) v.findViewById(R.id.lblText);
 		text.setText(unit.chck_part_txt);
@@ -66,37 +53,83 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         text.setText(unit.chck_position_abbrev_txt);
 
         text = (TextView) v.findViewById(R.id.lblRequired);
-        text.setText(unit.chck_required_txt);
-
-        text = (TextView) v.findViewById(R.id.lblCena);
-        if(unit.sell_price != null)
-            text.setText(String.valueOf(unit.sell_price) + "Kč");
+        if(unit.chck_required_id != null && unit.chck_required_id != DMUnit.eRequired_odlozit) {
+            text.setText(unit.chck_required_txt);
+//            if(unit.workshop_packet_description != null)
+//                text.append(", " + unit.workshop_packet_description);
+        }
         else
             text.setText("");
 
-        CheckBox chkUnit = (CheckBox)v.findViewById(R.id.checkBox);
-        chkUnit.setChecked((unit.chck_status_id == 1));
+        text = (TextView) v.findViewById(R.id.lblCena);
+        if(unit.sell_price != null)
+            text.setText(unit.getSellPriceAsString(getContext()) +" "+ PortableCheckin.setting.currency_abbrev);
+        else
+            text.setText("");
+
+        com.gc.materialdesign.views.CheckBox chkUnit = ( com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
         chkUnit.setTag(position);
-        chkUnit.setOnClickListener( new View.OnClickListener() {
+        chkUnit.setOncheckListener(new com.gc.materialdesign.views.CheckBox.OnCheckListener() {
             @Override
-            public void onClick(View v) {
-                CheckBox chckBtn = (CheckBox)v;
-                int position = (Integer)chckBtn.getTag();
-                DMUnit unit = data.get(position);
-                unit.chck_status_id = chckBtn.isChecked()?1:0;
-            }
-        });
-        Button b = (Button)v.findViewById(R.id.btnService);
-        b.setTag(position);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                showServiceView((Button)v);
+            public void onCheck(com.gc.materialdesign.views.CheckBox checkBox, boolean isChecked) {
+                int position = (Integer)checkBox.getTag();
+                DMUnit unit = UnitArrayAdapter.this.getItem(position);
+                unit.chck_status_id = checkBox.isChecked()?1:0;
             }
         });
 
+        Button serviseButton = (Button)v.findViewById(R.id.btnService);
+        serviseButton.setTag(position);
+        serviseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                showServiceView((Button) v);
+            }
+        });
+
+        Button odlozButton = (Button)v.findViewById(R.id.btnOdloz);
+        odlozButton.setTag(position);
+        odlozButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Button btnOdloz = (Button) v;
+                DMUnit u = UnitArrayAdapter.this.getItem((int)btnOdloz.getTag());
+                u.chck_status_id = DMUnit.eStatus_problem;
+                u.chck_required_id = DMUnit.eRequired_odlozit;
+                u.sell_price = null;
+                btnOdloz.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni));
+
+                View btnOdlozParent = (View)btnOdloz.getParent();
+                TextView tv = (TextView)btnOdlozParent.findViewById(R.id.lblRequired);
+                tv.setText("");
+                tv = (TextView)btnOdlozParent.findViewById(R.id.lblCena);
+                tv.setText("");
+                u.workshop_packet = null;
+                u.workshop_packet_number = null;
+                u.workshop_packet_description = null;
+                u.spare_part_dispon_id = null;
+                u.economic = null;
+                btnOdlozParent.findViewById(R.id.btnService).setBackground(context.getResources().getDrawable(R.drawable.celky_servis_dis));
+                com.gc.materialdesign.views.CheckBox chkUnit = ( com.gc.materialdesign.views.CheckBox)btnOdlozParent.findViewById(R.id.checkBox);
+                chkUnit.setChecked(false);
+            }
+        });
+
+        serviseButton.setBackground(context.getResources().getDrawable(R.drawable.celky_servis_dis));
+        odlozButton.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni_dis));
+        chkUnit.setStaticChecked(false);
+        if(unit.chck_status_id != null) {
+            if (unit.chck_required_id != null) {
+                if (unit.chck_required_id == DMUnit.eRequired_odlozit)
+                    odlozButton.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni));
+                else if (unit.chck_required_id == DMUnit.eRequired_packet)
+                    serviseButton.setBackground(DMPacket.getPacketIcon(this.getContext(), unit.spare_part_dispon_id, unit.economic));
+                else
+                    serviseButton.setBackground(context.getResources().getDrawable(R.drawable.celky_servis));
+            } else
+                chkUnit.setChecked((unit.chck_status_id == 1));
+        }
 		return v;
 	}
 
@@ -122,27 +155,48 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
 
         packetList.addAll(app.getUnitService(u));
 
-        UnitServiceActivity b = new UnitServiceActivity(getContext(), u, packetList){
+        UnitServiceDialog b = new UnitServiceDialog(getContext(), u, packetList){
             @Override
             public void OnOkClick(final DMPacket selectedPaked, final String cena){
+                if(selectedPaked == null) //Nevybrany paket
+                    return;
+                u.chck_status_id = DMUnit.eStatus_problem;
                 if(selectedPaked.workshop_packet_number != null) {
-                    u.packet = selectedPaked;
+                    u.workshop_packet_number = selectedPaked.workshop_packet_number;
+                    u.workshop_packet_description = selectedPaked.workshop_packet_description;
+                    u.economic = selectedPaked.economic;
+                    u.spare_part_dispon_id = selectedPaked.spare_part_dispon_id;
                     u.chck_required_id = 19;
                     u.chck_required_txt = selectedPaked.workshop_packet_description;
+                    u.sell_price = Double.valueOf(cena);
                     if(selectedPaked.restrictions != null)
                         u.chck_required_txt += " " + selectedPaked.restrictions;
+                    u.updatePacket();
                 } else {
-                    u.packet = null;
+                    u.workshop_packet = null;
+                    u.workshop_packet_number = null;
+                    u.workshop_packet_description = null;
+                    u.spare_part_dispon_id = null;
+                    u.economic = null;
                     u.chck_required_txt = selectedPaked.workshop_packet_description;
                     u.chck_required_id = selectedPaked.chck_required_id;
                 }
                 View v = (View)unitButtonView.getParent();
                 TextView tv = (TextView)v.findViewById(R.id.lblRequired);
                 tv.setText(u.chck_required_txt);
-                tv = (TextView)v.findViewById(R.id.lblCena);
-                u.sell_price = cena;
-                tv.setText(u.sell_price);
-                unitButtonView.setBackground(selectedPaked.getPacketIcon(getContext()));
+                tv = (TextView)v.findViewById(R.id.lblCena); //TODO chack if is corect double
+                if(cena.length() > 0) {
+                    u.sell_price = Double.valueOf(cena);
+                    tv.setText(u.sell_price + " " + PortableCheckin.setting.currency_abbrev);
+                } else {
+                    u.sell_price = null;
+                    tv.setText("");
+                }
+                v.findViewById(R.id.btnOdloz).setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni_dis));
+                com.gc.materialdesign.views.CheckBox chkUnit = ( com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
+                chkUnit.setChecked(false);
+
+                unitButtonView.setBackground(selectedPaked.getCelkyIcon(getContext()));
             }
         };
         b.show();
@@ -155,7 +209,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
     }
 
 
-    private class UnitFilter extends Filter {
+/*    private class UnitFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -206,5 +260,5 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
 
         }
 
-    }
+    }*/
 }

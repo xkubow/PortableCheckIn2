@@ -1,7 +1,6 @@
 package cz.tsystems.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,10 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
             tv.setText(packet.restrictions);
 
             tv = (TextView)v.findViewById(R.id.lblCena);
-            tv.setText(String.valueOf(packet.sell_price));
+            if(packet.sell_price != null)
+                tv.setText(String.valueOf(packet.sell_price));
+            else
+                tv.setText("");
 
             if(!isUnitPaket) {
                 CheckBox chkPaket = (CheckBox) v.findViewById(R.id.chkPaket);
@@ -58,9 +60,7 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
             }
 
             ImageView imgView = (ImageView)v.findViewById(R.id.packetImageView);
-            imgView.setImageDrawable(packet.getPacketIcon(context));
-
-
+            imgView.setImageDrawable(packet.getCelkyIcon(context));
         }
 
         return v;

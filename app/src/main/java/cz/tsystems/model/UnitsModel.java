@@ -16,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class UnitsModel extends Model {
 	private final static String TAG = UnitsModel.class.getSimpleName();
 	private SQLiteDatabase mDb;
+    public int mandatoryCount;
 	
 	public UnitsModel(Context mContext) {
 		super(mContext);
@@ -25,10 +26,13 @@ public class UnitsModel extends Model {
 	public List<List<DMUnit>> loadUnits(List<DMPrehliadkyMaster> prehliadkyMasterList) {
 		
 		List<List<DMUnit>> units = new ArrayList<List<DMUnit>>();
+        mandatoryCount = 0;
 		for (Iterator<DMPrehliadkyMaster> iterator = prehliadkyMasterList.iterator(); iterator.hasNext();) {
-			final int unitId = iterator.next().unitId;
-			if(unitId > 0 )
-				units.add(loadUnit(unitId));
+			DMPrehliadkyMaster prehliadkyMaster = iterator.next();
+            if(prehliadkyMaster.mandatory)
+                mandatoryCount++;
+			if(prehliadkyMaster.unitId > 0 )
+				units.add(loadUnit(prehliadkyMaster.unitId));
 		}
 		return units;
 	}

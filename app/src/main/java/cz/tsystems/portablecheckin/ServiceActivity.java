@@ -8,6 +8,7 @@ import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMBaseItem;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
@@ -16,6 +17,7 @@ import cz.tsystems.data.DMVybava;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.model.PrehliadkyModel;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
+
+import com.gc.materialdesign.views.CheckBox;
 
 import static cz.tsystems.portablecheckin.R.*;
 
@@ -61,36 +65,43 @@ public class ServiceActivity extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(layout.activity_service, container, false);
         app = (PortableCheckin) getActivity().getApplicationContext();
-/*        if (rootView != null && rootView.getParent() != null) {
-        	Log.v(TAG, rootView.getParent().getClass().toString());
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (parent != null)
-                parent.removeView(rootView);
-        	return rootView;
-        }*/
         listMaster = (ListView) rootView.findViewById(id.listMaster);
-//        listMaster.setAdapter(prehliadkyAdapter);
         listDetail = (ListView) rootView.findViewById(id.listDetail);
 
         listMaster.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DMPrehliadkyMaster prehliadkyMaster = masterList.get(position);
-                ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
-				refreshDetail(null);
+                DMPrehliadkyMaster prehliadkyMaster = (DMPrehliadkyMaster) listMaster.getAdapter().getItem(position);//masterList.get(position);
+                if(prehliadkyMaster.type != DMPrehliadkyMaster.eSECTION) {
+                    ((CheckBox)view.findViewById(R.id.chkPrehliadky)).setChecked(true);
+                    ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
+
+                    ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
+                    TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+                    txtBadge.setVisibility(View.VISIBLE);
+                    if(!prehliadkyMaster.opened) {
+                        String[] badgeStr = txtBadge.getText().toString().split("/");
+                        if(!badgeStr[0].equalsIgnoreCase(badgeStr[1])) {
+                            int openedCount = Integer.valueOf(badgeStr[0]) + 1;
+                            txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
+                            prehliadkyMaster.opened = true;
+                        }
+                    }
+
+                    refreshDetail(null);
+                }
 			}
 		});
 
         listDetail.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                final int prehlaidkaId = ServiceActivity.this.selectedPrehliadky;
                 com.gc.materialdesign.views.CheckBox b = (com.gc.materialdesign.views.CheckBox)view.findViewById(R.id.checkBox);
 
                 DMPrehliadkyMaster prehliadkaMaster = ServiceActivity.this.selectedPrehliadky;
 
-                if(prehliadkaMaster.typ == DMPrehliadkyMaster.eSTATIC) {
+                if(prehliadkaMaster.type == DMPrehliadkyMaster.eVYBAVY) {
                     DMBaseItem item = null;
                     switch (prehliadkaMaster.rowId) {
                         case -1:
@@ -112,10 +123,10 @@ public class ServiceActivity extends BaseFragment {
                         item.setChecked(!item.getChecked());
                         b.setChecked(item.getChecked());
                     }
-                } else if(prehliadkaMaster.typ == DMPrehliadkyMaster.eUNIT) {
+                } else if(prehliadkaMaster.type == DMPrehliadkyMaster.eUNIT) {
                     DMUnit item = unitAdapter.getItem(position);
 
-                    if(item != null) {
+                    if(item != null && item.chck_status_id != null) {
                         item.chck_status_id = (item.chck_status_id == 1)?0:1;
                         b.setChecked(item.chck_status_id == 1);
                     }
@@ -157,36 +168,33 @@ public class ServiceActivity extends BaseFragment {
     }
     
     public void refreshDetail(Bundle data) {
-        final long id = selectedPrehliadky.rowId;
+        final long type = selectedPrehliadky.type;
 
-		if (selectedPrehliadky.typ == DMPrehliadkyMaster.eSTATIC) {
-            if(id == prehliadkaModel.eVYBAVY
-                || id == prehliadkaModel.ePOV_VYBAVY)
-            {
-                List<DMVybava> vybava = ((PortableCheckin) getActivity().getApplicationContext()).getVybavaList((id == prehliadkaModel.ePOV_VYBAVY));
-                vybavaAdapter = new VybavaArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, vybava);
-                listDetail.setAdapter(vybavaAdapter);
-                vybavaAdapter.notifyDataSetChanged();
-            } else if(id == prehliadkaModel.eSERVIS)
-            {
-                List<DMService> service = ((PortableCheckin) getActivity().getApplicationContext()).getServiceList();
 
-                if (serviceAdapter == null) {
-                    serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
-                    listDetail.setAdapter(serviceAdapter);
-                } else if (listDetail.getAdapter() != serviceAdapter)
-                    listDetail.setAdapter(serviceAdapter);
-                else
-                    serviceAdapter.notifyDataSetChanged();
-            }
-		} else if(selectedPrehliadky.typ == DMPrehliadkyMaster.eUNIT) {
-			List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
-			listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
-		} else if (selectedPrehliadky.typ == DMPrehliadkyMaster.eGROUP) {
+        if (type == DMPrehliadkyMaster.eVYBAVY) {
+            List<DMVybava> vybava = ((PortableCheckin) getActivity().getApplicationContext()).getVybavaList((selectedPrehliadky.rowId == prehliadkaModel.ePOV_VYBAVY));
+            vybavaAdapter = new VybavaArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, vybava);
+            listDetail.setAdapter(vybavaAdapter);
+            vybavaAdapter.notifyDataSetChanged();
+        } else if (type == DMPrehliadkyMaster.eSLUZBY) {
+            List<DMService> service = ((PortableCheckin) getActivity().getApplicationContext()).getServiceList();
+
+            if (serviceAdapter == null) {
+                serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
+                listDetail.setAdapter(serviceAdapter);
+            } else if (listDetail.getAdapter() != serviceAdapter)
+                listDetail.setAdapter(serviceAdapter);
+            else
+                serviceAdapter.notifyDataSetChanged();
+        } else if (type == DMPrehliadkyMaster.eUNIT) {
+            List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
+            listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
+        } else if (type == DMPrehliadkyMaster.ePAKETY) {
             paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr), false);
             listDetail.setAdapter(paketArrayAdapter);
         }
     }
+
     
 	@Override
 	public void updateData(Intent intent) {

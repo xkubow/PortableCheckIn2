@@ -86,7 +86,7 @@ public class CheckBox extends CustomView {
 					isLastTouch = false;
 					isChecked = !isChecked;
 					if (onCheckListener != null)
-						onCheckListener.onCheck(isChecked);
+						onCheckListener.onCheck(CheckBox.this, isChecked);
 					if (isChecked) {
 						step = 0;
 					}
@@ -182,6 +182,19 @@ public class CheckBox extends CustomView {
 //		changeBackgroundColor(color);
 	}
 
+    public void setStaticChecked(boolean checked) {
+        this.step = (checked)?11:-1;
+        this.isChecked = checked;
+        setPressed(false);
+        changeBackgroundColor(getResources().getColor(android.R.color.transparent));
+        if (checked) {
+            step = 0;
+        }
+        if (checked) {
+            checkView.changeBackground();
+        }
+    }
+
 	public void setChecked(boolean checked) {
 		this.isChecked = checked;
 		setPressed(false);
@@ -207,7 +220,7 @@ public class CheckBox extends CustomView {
 	}
 
 	public interface OnCheckListener {
-		public void onCheck(boolean isChecked);
+		public void onCheck(CheckBox checkBox, boolean isChecked);
 	}
 
 }

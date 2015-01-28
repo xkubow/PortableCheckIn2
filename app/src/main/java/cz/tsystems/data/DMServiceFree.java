@@ -1,11 +1,13 @@
 package cz.tsystems.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by kubisj on 26.1.2015.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DMServiceFree extends DMBaseItem {
     public Long checkin_service_free_id;
     public String text;
@@ -24,25 +26,21 @@ public class DMServiceFree extends DMBaseItem {
         checkin_service_free_id = id;
     }
 
-    @JsonIgnore
     @Override
     public String getText() {
         return text;
     }
 
-    @JsonIgnore
     @Override
     public void setText(String text) {
         this.text = text;
     }
 
-    @JsonIgnore
     @Override
     public boolean getChecked() {
         return checked;
     }
 
-    @JsonIgnore
     @Override
     public void setChecked(boolean checked) {
         this.checked = checked;

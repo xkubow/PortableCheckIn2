@@ -171,8 +171,16 @@
     <string name="Svolavacie_a_dielenske_akcie">Svolávací a dílenské akce</string>
     <string name="vozidlo_nevybrano">Vozidlo nevybráno</string>
     <string name="Sluzby">Služby</string>
-    <string name="celky">Celky</string>
+    <string name="Celky">Celky</string>
     <string name="brands">Značky</string>
     <string name="Volne_vybavy">Volné výbavy</string>
+    <string name="Pakety">Pakety</string>
+
+    <string-array name="Prehliadka">
+        <item>@string/Vybavy</item>
+        <item>@string/Sluzby</item>
+        <item>@string/Celky</item>
+        <item>@string/Pakety</item>
+    </string-array>
 
 </resources>

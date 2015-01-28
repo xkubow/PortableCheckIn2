@@ -60,6 +60,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 //	ViewPager mViewPager;
 //	SectionsPagerAdapter mSectionsPagerAdapter;
+    public static final int eTabVozidlo = 0, eTabPoskodenie = 1, eTabService = 2, eTabNabidka = 3;
     public static int eGRID_RESULT = 2;
 	private Time stopTime;
 	private BaseFragment theFragment;
@@ -89,18 +90,17 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
 
             String action = intent.getAction();
-            if(action.equalsIgnoreCase("recivedData") && intent.getExtras().getBundle("recivedData") != null) {
-                final Bundle b = intent.getExtras().getBundle("recivedData");
-                if(b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
-                    ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(3);
-                    serviceFragment.refreshMaster();
-                } else if (b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
-                    MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
-                    Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
-                    resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.DST_ATOP);
-                    button.setIcon(resIcon);
+            final Bundle b = intent.getExtras().getBundle("requestData");
+            if(b != null && b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+                if(getActionBar().getSelectedTab().getPosition() == 2)
+                    updateServiceFragment(); //TODO dakedy padne kvoli broadcastreciveru
+            }
+            if (b != null && b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
+                MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
+                Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+                resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
+                button.setIcon(resIcon);
 
-                }
             }
 
 
@@ -142,37 +142,43 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		theFragments.add(new ServiceActivity());
 		theFragments.add(new OffersActivity());
 		
-		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, R.string.VOZIDLO)).setTabListener(this));//.setText(R.string.VOZIDLO));//setIcon(R.drawable.car_icon_riadky2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.POSKODENI));//setIcon(R.drawable.car_icon_body2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.PROHLIDKA));//setIcon(R.drawable.car_icon_sipka2));
-		actionBar.addTab(actionBar.newTab().setTabListener(this).setText(R.string.NABIDKA));//setIcon(R.drawable.car_icon_nabidka2));
+		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabVozidlo)).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabPoskodenie)).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabService)).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabNabidka)).setTabListener(this));
 
         app.setActualActivity(this);
 
 	}
 
-    public static View renderTabView(Context context, int titleResource) {
+    public static View renderTabView(Context context, int tabnr) {
         FrameLayout view = (FrameLayout ) LayoutInflater.from(context).inflate(R.layout.textview_tab, null);
-        // We need to manually set the LayoutParams here because we don't have a view root
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        ((TextView) view.findViewById(R.id.tab_text)).setText(titleResource);
-//        view.findViewById(R.id.tab_text).setBackgroundResource(backgroundResource);
-        updateTabBadge((TextView) view.findViewById(R.id.tab_badge), "4/17");
+        TextView txtBadge = (TextView) view.findViewById(R.id.tab_badge);
+        TextView txtTabText = (TextView) view.findViewById(R.id.tab_text);
+
+        switch(tabnr) {
+            case eTabVozidlo:
+                txtTabText.setText(R.string.VOZIDLO);
+                txtBadge.setVisibility(View.VISIBLE);
+                txtBadge.setText("0/6");
+                break;
+            case eTabPoskodenie:
+                txtTabText.setText(R.string.POSKODENI);
+                txtBadge.setVisibility(View.GONE);
+                break;
+            case eTabService:
+                txtTabText.setText(R.string.PROHLIDKA);
+                txtBadge.setVisibility(View.VISIBLE);
+                txtBadge.setText("0/6");
+                break;
+            case eTabNabidka:
+                txtTabText.setText(R.string.NABIDKA);
+                txtBadge.setVisibility(View.VISIBLE);
+                txtBadge.setText("");
+                break;
+        }
         return view;
-    }
-
-    public static void updateTabBadge(ActionBar.Tab tab, final String badgeNumber) {
-        updateTabBadge((TextView) tab.getCustomView().findViewById(R.id.tab_badge), badgeNumber);
-    }
-
-    private static void updateTabBadge(TextView view, final String badgeNumber) {
-        if (badgeNumber.length() > 0) {
-            view.setVisibility(View.VISIBLE);
-            view.setText(badgeNumber);
-        }
-        else {
-            view.setVisibility(View.GONE);
-        }
     }
 
 	private void registerRecaiver() {
@@ -405,6 +411,11 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         }
         else
             lblCheckinNR.setText("");
+    }
+
+    private void updateServiceFragment() {
+        ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(2);
+        serviceFragment.refreshMaster();
     }
 
 

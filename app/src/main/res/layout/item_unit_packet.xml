@@ -31,7 +31,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/packet_green_e" />
+        android:background="@drawable/packet_green_e"
+        android:visibility="gone" />
 
     <TextView
         android:layout_width="wrap_content"
