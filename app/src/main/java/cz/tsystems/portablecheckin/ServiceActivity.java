@@ -8,7 +8,6 @@ import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
-import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMBaseItem;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
@@ -48,7 +47,6 @@ public class ServiceActivity extends BaseFragment {
 	
 //    private static View rootView;
     ListView listMaster, listDetail;
-    private List<DMPrehliadkyMaster> masterList = null;
 	private UnitArrayAdapter unitAdapter;
     private DMPrehliadkyMaster selectedPrehliadky;
     private OnItemClickListener onDetialClickListener = new OnItemClickListener() {
@@ -80,14 +78,14 @@ public class ServiceActivity extends BaseFragment {
                     ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
                     TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
                     txtBadge.setVisibility(View.VISIBLE);
-                    if(!prehliadkyMaster.opened) {
+                    if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
                         String[] badgeStr = txtBadge.getText().toString().split("/");
                         if(!badgeStr[0].equalsIgnoreCase(badgeStr[1])) {
                             int openedCount = Integer.valueOf(badgeStr[0]) + 1;
                             txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
-                            prehliadkyMaster.opened = true;
                         }
                     }
+                    prehliadkyMaster.opened = true;
 
                     refreshDetail(null);
                 }
@@ -151,10 +149,8 @@ public class ServiceActivity extends BaseFragment {
     }
     
     public void refreshMaster() {
-    	if(prehliadkaModel == null)
-    		prehliadkaModel = new PrehliadkyModel(getActivity());
-    	
-    	masterList = prehliadkaModel.getPrehliadky();
+
+    	List<DMPrehliadkyMaster> masterList = app.prehliadkyMasters;
 
 		if (prehliadkyAdapter == null) {
 			prehliadkyAdapter = new PrehliadkyArrayAdapter(getActivity(), 0, layout.item_prehliadky, masterList);

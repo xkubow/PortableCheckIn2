@@ -8,23 +8,42 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+
+@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DMOffers {
 	final String TAG = DMOffers.class.getSimpleName();
 
 
+    public Integer checkin_offer_id;
 	public int check_offer_id;
-	public String text;
+	public String check_offer_txt;
+    @JsonIgnore
 	public short show_txt;
+    @JsonIgnore
 	public Bitmap advert_banner;
-	public double sell_price;
+	public Double sell_price;
+    @JsonIgnore
 	public Date valid_from;
+    @JsonIgnore
 	public Date valid_until;
+    @JsonIgnore
 	public Date inserted;
+    @JsonIgnore
 	public Date last_updated;
+    @JsonIgnore
 	public String brand_id;
+    @JsonIgnore
 	public String hash;
+    @JsonIgnore
 	public boolean show_offer;
+    public boolean checked = false;
 
+    public DMOffers(){}
 	
 	public DMOffers(Cursor cursor) {
 		
@@ -32,7 +51,7 @@ public class DMOffers {
 		if((columnName = cursor.getColumnIndex("CHECK_OFFER_ID")) != -1)
 			check_offer_id = cursor.getShort(columnName);
 		if((columnName = cursor.getColumnIndex("TEXT")) != -1)
-			text = cursor.getString(columnName);
+            check_offer_txt = cursor.getString(columnName);
 		if((columnName = cursor.getColumnIndex("SHOW_TXT")) != -1)
 			show_txt = cursor.getShort(columnName);
 		if((columnName = cursor.getColumnIndex("ADVERT_BANNER")) != -1)

@@ -5,8 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hb.views.PinnedSectionListView;
@@ -14,6 +15,7 @@ import com.hb.views.PinnedSectionListView;
 import java.util.List;
 
 import cz.tsystems.data.DMPacket;
+import cz.tsystems.portablecheckin.PacketDetailDialog;
 import cz.tsystems.portablecheckin.R;
 
 /**
@@ -42,7 +44,7 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
 //        DMCustomerInfo customerInfo = PortableCheckin.custumerInfoList.get(position);
 
         if(packet != null) {
-            TextView tv = (TextView)v.findViewById(R.id.text);
+            TextView tv = (TextView)v.findViewById(R.id.packetText);
             tv.setText(packet.workshop_packet_description);
 
             tv = (TextView)v.findViewById(R.id.detailText);
@@ -54,9 +56,29 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
             else
                 tv.setText("");
 
-            if(!isUnitPaket) {
-                CheckBox chkPaket = (CheckBox) v.findViewById(R.id.chkPaket);
-                chkPaket.setVisibility(View.VISIBLE);
+            if(isUnitPaket) {
+                v.findViewById(R.id.chkPaket).setVisibility(View.GONE);
+                v.findViewById(R.id.btnInfo).setVisibility(View.GONE);
+                ((RelativeLayout.LayoutParams)tv.getLayoutParams()).addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            } else {
+                ImageButton btnInfo = (ImageButton) v.findViewById(R.id.btnInfo);
+                btnInfo.setTag(position);
+                btnInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PacketDetailDialog packetDetailDialog = new PacketDetailDialog(getContext(),getItem((int)v.getTag()).detail_list);
+                        packetDetailDialog.show();
+                    }
+                });
+                com.gc.materialdesign.views.CheckBox chkPaket = (com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.chkPaket);
+                chkPaket.setTag(position);
+                chkPaket.setStaticChecked(packet.checked);
+                chkPaket.setOncheckListener( new com.gc.materialdesign.views.CheckBox.OnCheckListener() {
+                    @Override
+                    public void onCheck(com.gc.materialdesign.views.CheckBox checkBox, boolean isChecked) {
+                        PacketsArrayAdapter.this.getItem((int) checkBox.getTag()).checked = isChecked;
+                    }
+                });
             }
 
             ImageView imgView = (ImageView)v.findViewById(R.id.packetImageView);

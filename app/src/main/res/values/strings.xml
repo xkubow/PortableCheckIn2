@@ -175,6 +175,7 @@
     <string name="brands">Značky</string>
     <string name="Volne_vybavy">Volné výbavy</string>
     <string name="Pakety">Pakety</string>
+    <string name="All_packets">Všechny pakety</string>
 
     <string-array name="Prehliadka">
         <item>@string/Vybavy</item>

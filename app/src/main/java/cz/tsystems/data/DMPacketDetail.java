@@ -12,7 +12,7 @@ public class DMPacketDetail {
     public int capaket_item_enum_number;
     public String capaket_item_number;
     public boolean economic;
-    public double sell_price;
+    public Double sell_price;
     public int spare_part_dispon_id;
     public String vin;
     public  String workshop_packet_number;

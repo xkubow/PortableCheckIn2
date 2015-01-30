@@ -442,6 +442,8 @@ public class CommunicationService extends IntentService {
             app.setServiceList(root.path("SERVICE"));
             app.addFreeServiceList(root.path("SERVICE_FREE"));
             app.setUnits(root.path("UNIT"));
+            app.setCheckedPackets(root.path("WORKSHOP_PACKET"));
+            app.setOffers(root.path("OFFER"));
 
             int readedLength = 0;
             while(readedLength < response.length()) {
@@ -667,16 +669,18 @@ public class CommunicationService extends IntentService {
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
         app.getCheckin().personal_id = app.user.personal_id;
         try {
-//            System.out.println(mapper.writeValueAsString(app.getCheckin()));
+//            System.out.println(mapper.writeValueAsString(app.getCheckin())); 1948, 4587
             JSONArray jsonArray;
-            jsonObject.put("CHECKIN_WORKSHOP_PACKET", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getCheckedPackets()));
+            jsonObject.put("CHECKIN_WORKSHOP_PACKET", jsonArray );
             jsonArray = new JSONArray(mapper.writeValueAsString(PortableCheckin.getAllUnitList()));
             jsonObject.put("CHECKIN_UNIT", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getFreeService()));
             jsonObject.put("CHECKIN_SERVICE_FREE", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getStaticService()));
             jsonObject.put("CHECKIN_SERVICE", jsonArray);
-            jsonObject.put("CHECKIN_OFFER", NullNode.getInstance());
+            jsonArray = new JSONArray(mapper.writeValueAsString(app.getOffers()));
+            jsonObject.put("CHECKIN_OFFER", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getFreeVybava()));
             jsonObject.put("CHECKIN_EQUIPMENT_FREE", jsonArray);
             jsonArray = new JSONArray(mapper.writeValueAsString(app.getStaticVybava()));

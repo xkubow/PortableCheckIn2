@@ -18,6 +18,7 @@ import cz.tsystems.base.LowerCaseNamingStrategy;
 import cz.tsystems.model.PrehliadkyModel;
 import cz.tsystems.model.UnitsModel;
 import cz.tsystems.portablecheckin.R;
+import cz.tsystems.portablecheckin.ServiceActivity;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -63,11 +64,12 @@ public class PortableCheckin extends Application {
             Size.widthFrom1024 = width/1024.0;
         }
     }
-	
-	private DMScenar selectedScenar;
+
+	public static DMScenar selectedScenar;
 	public DMBrand selectedBrand;
-	private List<DMOffers> offers;
+	public static List<DMOffers> offers;
     public static List<DMPacket> packets;
+    public static List<DMPrehliadkyMaster> prehliadkyMasters;
 	public static List<List<DMUnit>> unitList;
 	static public List<DMVybava> vybavaList = new ArrayList<DMVybava>();
     static public List<DMService> serviceList = new ArrayList<DMService>();
@@ -253,6 +255,7 @@ public class PortableCheckin extends Application {
         setSelectedBrand(brandId);
 		setOffers(this.getOffers(brandId));
 		this.loadSilhouette();
+        loadUnits();
 	}
 	
 
@@ -281,6 +284,7 @@ public class PortableCheckin extends Application {
 		checkin.brand_id = brandId;
 		loadVybavy();
         loadServices();
+        setOffers(this.getOffers(brandId));
 	}	
 	
 	public Cursor getPaliva() {
@@ -307,17 +311,31 @@ public class PortableCheckin extends Application {
 				+ "WHERE ifnull(BRAND_ID, ?) = ? ",
 				new String[] { Locale.getDefault().getLanguage(), brandId, brandId });		
 	}
+
+    public Bitmap getOffersBanner(final int offerId) {
+        Cursor cursor =  theDBProvider.executeQuery("SELECT ADVERT_BANNER " +
+                "FROM CHECK_OFFER " +
+                "WHERE CHECK_OFFER_ID = ?", new String[] { String.valueOf(offerId)});
+
+        cursor.moveToFirst();
+        if(cursor.getCount() >0)
+            return BitmapFactory.decodeStream(new ByteArrayInputStream(cursor.getBlob(cursor.getColumnIndex("ADVERT_BANNER")))) ;
+        else
+            return null;
+    }
 	
 	public List<DMOffers> getOffers(final String brandId) {
 		List<DMOffers> offersList = new ArrayList<DMOffers>();
-		Cursor cursor =  theDBProvider.executeQuery("SELECT CO.ROWID AS _id, CO.ADVERT_BANNER, CO.BRAND_ID, CO.CHECK_OFFER_ID, "
-				+ "ifnull(COL.CHECK_OFFER_TXT_LOC, CO.CHECK_OFFER_TXT_DEF) AS TEXT, strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.INSERTED, 'unixepoch')) AS INSERTED_UTC, "
-				+ "strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.LAST_UPDATED, 'unixepoch')) AS LAST_UPDATED_UTC, CO.SELL_PRICE, CO.SHOW_TXT, "
-				+ "strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.VALID_FROM, 'unixepoch')) AS VALID_FROM_UTC, "
-				+ "strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.VALID_UNTIL, 'unixepoch')) AS VALID_UNTIL_UTC "
-				+ "FROM CHECK_OFFER CO LEFT OUTER JOIN CHECK_OFFER_LOC COL ON COL.CHECK_OFFER_ID = CO.CHECK_OFFER_ID "
-				+ "AND CO.VALID_FROM < datetime('NOW') AND CO.VALID_UNTIL > datetime('NOW') AND COL.LANG_ENUM = ? " + "AND ifnull(CO.BRAND_ID, ?) = ? ", new String[] {
-				Locale.getDefault().getLanguage(), brandId, brandId });
+		Cursor cursor =  theDBProvider.executeQuery("SELECT * FROM " +
+                "(SELECT CO.ROWID AS _id, CO.BRAND_ID, CO.CHECK_OFFER_ID, CO.SHOW_OFFER, " +
+				"ifnull(COL.CHECK_OFFER_TXT_LOC, CO.CHECK_OFFER_TXT_DEF) AS TEXT, " +
+                "strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.INSERTED, 'unixepoch')) AS INSERTED_UTC, " +
+				"strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.LAST_UPDATED, 'unixepoch')) AS LAST_UPDATED_UTC, CO.SELL_PRICE, CO.SHOW_TXT, " +
+				"strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.VALID_FROM, 'unixepoch')) AS VALID_FROM_UTC, " +
+				"strftime('%%Y-%%m-%%dT%%H:%%M:%%S', DATETIME(CO.VALID_UNTIL, 'unixepoch')) AS VALID_UNTIL_UTC " +
+				"FROM CHECK_OFFER CO LEFT OUTER JOIN CHECK_OFFER_LOC COL ON COL.CHECK_OFFER_ID = CO.CHECK_OFFER_ID " +
+				"AND CO.VALID_FROM < datetime('NOW') AND CO.VALID_UNTIL > datetime('NOW') AND COL.LANG_ENUM = ? )" +
+                " WHERE ifnull(BRAND_ID, ?) = ? AND SHOW_OFFER = 'true'", new String[] { Locale.getDefault().getLanguage(), brandId, brandId });
 
 		cursor.moveToFirst();
 		while(!cursor.isAfterLast()) {
@@ -475,6 +493,15 @@ public class PortableCheckin extends Application {
 	public void setOffers(List<DMOffers> offers) {
 		this.offers = offers;
 	}
+
+    public void setOffers(JsonNode jsonOffers) {
+        if(!jsonOffers.isMissingNode()) {
+            offers = parseJsonArray(jsonOffers, DMOffers.class);
+        }
+        else
+            checkin.workshop_pakets = null;
+    }
+
 	public DMSilhouette getSilhouette() {
 		if(selectedSilhouette == null) {
 			Toast.makeText(getApplicationContext(), "Silhouettes havent bean loaded", Toast.LENGTH_SHORT).show();
@@ -485,7 +512,7 @@ public class PortableCheckin extends Application {
 
     public void loadUnits() {
         if(checkin.checkin_id > 0) {
-            ActionBar.Tab tab = this.getActualActivity().getActionBar().getSelectedTab();
+            ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
             txtBadge.setVisibility(View.INVISIBLE);
             return;
@@ -493,12 +520,14 @@ public class PortableCheckin extends Application {
 
         PrehliadkyModel pm = new PrehliadkyModel(this);
         UnitsModel um = new UnitsModel(this);
-        setUnitList(um.loadUnits(pm.getPrehliadky()));
-
-        ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
-        TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-        txtBadge.setVisibility(View.VISIBLE);
-        txtBadge.setText("0/" + String.valueOf(um.mandatoryCount));
+        prehliadkyMasters = pm.getPrehliadky();
+        setUnitList(um.loadUnits(prehliadkyMasters));
+        if(this.getActualActivity() != null) {
+            ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
+            TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+            txtBadge.setVisibility(View.VISIBLE);
+            txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
+        }
     }
 
 	public List<DMUnit> getUnitListByUnitId(final long id) {
@@ -559,7 +588,8 @@ public class PortableCheckin extends Application {
         } else {
             PrehliadkyModel pm = new PrehliadkyModel(this);
             UnitsModel um = new UnitsModel(this);
-            setUnitList(um.loadUnits(pm.getPrehliadky()));
+            this.prehliadkyMasters = pm.getPrehliadky();
+            setUnitList(um.loadUnits(this.prehliadkyMasters));
         }
     }
 
@@ -568,18 +598,45 @@ public class PortableCheckin extends Application {
             packets.clear();
     }
 
+    public void setCheckedPackets(JsonNode checkedPackets) {
+        if(!checkedPackets.isMissingNode())
+            checkin.workshop_pakets = parseJsonArray(checkedPackets, String.class);
+        else
+            checkin.workshop_pakets = null;
+    }
+
+    public List<DMPacket> getCheckedPackets() {
+        List<DMPacket> checkedPackets = new ArrayList<>();
+        for (DMPacket packet : packets) {
+            if(packet.checked)
+                checkedPackets.add(packet);
+        }
+
+        return checkedPackets;
+    }
+
     public List<DMPacket> getPackets(){
         return packets;
     }
 
     public void setPackets(JsonNode newPackets) {
-        if(!newPackets.isMissingNode())
+        if(!newPackets.isMissingNode()) {
             packets = parseJsonArray(newPackets, DMPacket.class);
+            if(checkin.workshop_pakets != null) {
+                for (DMPacket paket : packets) {
+                    if (checkin.workshop_pakets.contains(paket.workshop_packet_number))
+                        paket.checked = true;
+                }
+            }
+            PrehliadkyModel.setPackets(getApplicationContext(), this.prehliadkyMasters);
+        }
         else
             packets = null;
     }
 
-    public List<DMPacket> getPaket(final int groupNr) {
+    static public List<DMPacket> getPaket(final int groupNr) {
+        if(groupNr == -1)
+            return packets;
         List<DMPacket> filtered = new ArrayList<DMPacket>();
         for(Iterator<DMPacket> iterator = packets.iterator(); iterator.hasNext();) {
             DMPacket paket = iterator.next();

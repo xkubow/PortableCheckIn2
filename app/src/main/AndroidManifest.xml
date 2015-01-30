@@ -21,7 +21,7 @@
 
     <application
         android:name="cz.tsystems.data.PortableCheckin"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_pchi_512"
         android:label="@string/app_name" >
         <service android:name="cz.tsystems.communications.CommunicationService" />
 

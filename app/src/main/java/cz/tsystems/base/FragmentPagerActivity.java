@@ -136,7 +136,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		fm = getFragmentManager();
-		
+        setBrand(app.getSelectedBrand().brand_id);
+
 		theFragments.add(new MainActivity());
 		theFragments.add(new BodyActivity());
 		theFragments.add(new ServiceActivity());
@@ -170,7 +171,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             case eTabService:
                 txtTabText.setText(R.string.PROHLIDKA);
                 txtBadge.setVisibility(View.VISIBLE);
-                txtBadge.setText("0/6");
+                txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
                 break;
             case eTabNabidka:
                 txtTabText.setText(R.string.NABIDKA);
@@ -195,7 +196,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		}
 
         lblVehicleCaption.setText(app.getCheckin().vehicle_description);
-        setBrand(app.getCheckin());
+        setBrand(app.getCheckin().brand_id);
         setCheckinNr();
 	}
 
@@ -385,13 +386,13 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         b.show();
     }
 
-    public void setBrand(DMCheckin checkinData) {
-        if(checkinData.brand_id != null && checkinData.brand_id.length() > 0) {
+    public void setBrand(final String brandId) {
+        if(brandId != null && brandId.length() > 0) {
             btnBrand.setEnabled(false);
             if(app.getCheckin().checkin_id > 0)
                 app.selectedBrand = app.getBrand(app.getCheckin().brand_id); // vybavy aj servisi uz existuju zo serveru
             else
-                app.setSelectedBrand(checkinData.brand_id); // nastavuju sa aj vybavy aj servisi
+                app.setSelectedBrand(brandId); // nastavuju sa aj vybavy aj servisi
             setBrandImage();
         } else {
             btnBrand.setEnabled(true);

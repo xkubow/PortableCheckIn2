@@ -23,6 +23,7 @@ public class DMScenar {
 	public short equipment_free_count;
 	public boolean scenario_locked;
 	public String text;
+    public int mandatoryCount = 0;
 	
 	
 	public DMScenar(Cursor cursor) {

@@ -33,6 +33,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseFragment {
     ButtonFloat fbtPZ, fbtMajak, fbtMegafon;
     Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
+    private boolean scenarClicked = false;
 
     TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -97,16 +99,18 @@ public class MainActivity extends BaseFragment {
             textView.setText(String.valueOf(povinneNevyplnene) + "/6");
         }
     };
-	
 
 	OnItemSelectedListener scenarSelectedListener =  new OnItemSelectedListener() {
 
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			Cursor cursor = (Cursor) spScenare.getSelectedItem();
-			app.getCheckin().check_scenario_id = cursor.getInt(cursor.getColumnIndex("CHECK_SCENARIO_ID"));
-			app.setSelectedScenar(app.getCheckin().check_scenario_id);
-            app.loadUnits();
+            if(scenarClicked) {
+                Cursor cursor = (Cursor) spScenare.getSelectedItem();
+                app.getCheckin().check_scenario_id = cursor.getInt(cursor.getColumnIndex("CHECK_SCENARIO_ID"));
+                app.setSelectedScenar(app.getCheckin().check_scenario_id);
+                app.loadUnits();
+                scenarClicked = false;
+            }
 		}
 
 		@Override
@@ -224,6 +228,14 @@ public class MainActivity extends BaseFragment {
 		}
 	};
 
+    private View.OnTouchListener scenarOnTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            scenarClicked = true;
+            return false;
+        }
+    };
+
     public MainActivity() {
 		setRetainInstance(true);				
 	}
@@ -259,9 +271,11 @@ public class MainActivity extends BaseFragment {
         txtStavTachometru.addTextChangedListener(textWatcher);
         txtSTKDate.addTextChangedListener(textWatcher);
         txtEmiseDate.addTextChangedListener(textWatcher);
-		
+
+        scenarClicked = false;
 		spScenare.setOnItemSelectedListener(scenarSelectedListener);
-				
+        spScenare.setOnTouchListener(scenarOnTouchListener);
+
 		btnSPZ = (Button) values1.findViewById(R.id.btnSPZ);
 		btnSTK = (Button) values1.findViewById(R.id.btnSTK);
 		btnEmise = (Button) values2.findViewById(R.id.btnEmise);
@@ -316,7 +330,7 @@ public class MainActivity extends BaseFragment {
 		
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, cursor, new String[] { "TEXT" }, new int[] { android.R.id.text1 }, 0); 
 		spScenare.setAdapter(adapter);
-		spScenare.setSelection(pos, true);
+//		spScenare.setSelection(pos, true);
 	}
 
     private void setPalivoSpinner() {

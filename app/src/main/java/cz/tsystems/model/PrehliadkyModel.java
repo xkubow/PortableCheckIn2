@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.tsystems.data.DMPacket;
+import cz.tsystems.data.DMPrehliadky;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMScenar;
 import cz.tsystems.data.PortableCheckin;
@@ -27,6 +28,7 @@ public class PrehliadkyModel extends Model {
 	}
 	
 	public List<DMPrehliadkyMaster> getPrehliadky() {
+        PortableCheckin.selectedScenar.mandatoryCount = 0;
         List<DMPrehliadkyMaster> prehliadkyMasterList = new ArrayList<DMPrehliadkyMaster>();
         final PortableCheckin app = (PortableCheckin)getContext().getApplicationContext();
         final DMScenar scenar = app.getSelectedScenar();
@@ -34,6 +36,10 @@ public class PrehliadkyModel extends Model {
         prehliadkyMasterList.add(new DMPrehliadkyMaster(eVYBAVY, getContext().getResources().getString(R.string.Vybavy), -1, scenar.equipment_mandat,DMPrehliadkyMaster.eVYBAVY));
         prehliadkyMasterList.add(new DMPrehliadkyMaster(ePOV_VYBAVY, getContext().getResources().getString(R.string.PovinneVybavy), -1, scenar.oblig_equipment_mandat,DMPrehliadkyMaster.eVYBAVY));
         prehliadkyMasterList.add(new DMPrehliadkyMaster(eSERVIS, getContext().getResources().getString(R.string.service), -1, scenar.services_mandat,DMPrehliadkyMaster.eSLUZBY));
+
+        for(DMPrehliadkyMaster prehliadkyMaster : prehliadkyMasterList)
+            if(prehliadkyMaster.mandatory)
+                PortableCheckin.selectedScenar.mandatoryCount++;
 
 		final String query = "SELECT DATA.ROWID AS _id, DATA.TEXT AS TEXT, DATA.CHCK_UNIT_ID AS CHCK_UNIT_ID, SU.MANDATORY AS MANDATORY, -1 AS PACKET_GROUP_NR FROM "
 		       	+ "(SELECT ifnull(UL.CHCK_UNIT_TXT_LOC, U.CHCK_UNIT_TXT_DEF) AS TEXT, U.CHCK_UNIT_ID "
@@ -47,11 +53,17 @@ public class PrehliadkyModel extends Model {
         Log.d(TAG, Locale.getDefault().getLanguage() + ", " + String.valueOf(scenar.check_scenario_id));
         Log.d(TAG, String.valueOf(c.getCount()));
         while(!c.isAfterLast()&& !c.isBeforeFirst()) {
-            prehliadkyMasterList.add(new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), (c.getInt(c.getColumnIndex("MANDATORY"))==1),DMPrehliadkyMaster.eUNIT));
+            DMPrehliadkyMaster prehliadkyMaster = new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), (c.getInt(c.getColumnIndex("MANDATORY"))==1),DMPrehliadkyMaster.eUNIT);
+            if(prehliadkyMaster.mandatory)
+                PortableCheckin.selectedScenar.mandatoryCount++;
+            prehliadkyMasterList.add(prehliadkyMaster);
             c.moveToNext();
         }
 
-        if(app.getPackets() != null) {
+        setPackets(getContext(), prehliadkyMasterList);
+
+/*        if(app.getPackets() != null) {
+            prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, "all", -1, false,DMPrehliadkyMaster.ePAKETY));
             List<Integer> groupsNr = new ArrayList<Integer>();
             for (Iterator<DMPacket> i = app.getPackets().iterator(); i.hasNext(); ) {
                 final DMPacket packet = i.next();
@@ -60,10 +72,27 @@ public class PrehliadkyModel extends Model {
                     prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, packet.group_text, packet.group_nr, false,DMPrehliadkyMaster.ePAKETY));
                 }
             }
-            groupsNr = null;
-        }
+        }*/
 
     	return prehliadkyMasterList;
 	}
+
+    public static void setPackets(Context context, List<DMPrehliadkyMaster> prehliadkyMasterList) {
+        if(prehliadkyMasterList == null)
+            prehliadkyMasterList = new ArrayList<>();
+
+        int lastId = prehliadkyMasterList.size() -1;
+        if(PortableCheckin.packets != null) {
+            prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, String.format("%s [%d]", context.getResources().getString(R.string.All_packets), PortableCheckin.packets.size()), -1, false,DMPrehliadkyMaster.ePAKETY));
+            List<Integer> groupsNr = new ArrayList<Integer>();
+            for (Iterator<DMPacket> i = PortableCheckin.packets.iterator(); i.hasNext(); ) {
+                final DMPacket packet = i.next();
+                if (!groupsNr.contains(packet.group_nr)) {
+                    groupsNr.add(packet.group_nr);
+                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, String.format("%s [%d]", packet.group_text, PortableCheckin.getPaket(packet.group_nr).size()), packet.group_nr, false,DMPrehliadkyMaster.ePAKETY));
+                }
+            }
+        }
+    }
 
 }

@@ -55,8 +55,6 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         text = (TextView) v.findViewById(R.id.lblRequired);
         if(unit.chck_required_id != null && unit.chck_required_id != DMUnit.eRequired_odlozit) {
             text.setText(unit.chck_required_txt);
-//            if(unit.workshop_packet_description != null)
-//                text.append(", " + unit.workshop_packet_description);
         }
         else
             text.setText("");
@@ -98,7 +96,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 u.chck_status_id = DMUnit.eStatus_problem;
                 u.chck_required_id = DMUnit.eRequired_odlozit;
                 u.sell_price = null;
-                btnOdloz.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni));
+                btnOdloz.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_petrol));
 
                 View btnOdlozParent = (View)btnOdloz.getParent();
                 TextView tv = (TextView)btnOdlozParent.findViewById(R.id.lblRequired);
@@ -110,23 +108,23 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 u.workshop_packet_description = null;
                 u.spare_part_dispon_id = null;
                 u.economic = null;
-                btnOdlozParent.findViewById(R.id.btnService).setBackground(context.getResources().getDrawable(R.drawable.celky_servis_dis));
+                btnOdlozParent.findViewById(R.id.btnService).setBackground(context.getResources().getDrawable(R.drawable.ic_tools_grey));
                 com.gc.materialdesign.views.CheckBox chkUnit = ( com.gc.materialdesign.views.CheckBox)btnOdlozParent.findViewById(R.id.checkBox);
                 chkUnit.setChecked(false);
             }
         });
 
-        serviseButton.setBackground(context.getResources().getDrawable(R.drawable.celky_servis_dis));
-        odlozButton.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni_dis));
+        serviseButton.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_grey));
+        odlozButton.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
         chkUnit.setStaticChecked(false);
         if(unit.chck_status_id != null) {
             if (unit.chck_required_id != null) {
                 if (unit.chck_required_id == DMUnit.eRequired_odlozit)
-                    odlozButton.setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni));
+                    odlozButton.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_petrol));
                 else if (unit.chck_required_id == DMUnit.eRequired_packet)
                     serviseButton.setBackground(DMPacket.getPacketIcon(this.getContext(), unit.spare_part_dispon_id, unit.economic));
                 else
-                    serviseButton.setBackground(context.getResources().getDrawable(R.drawable.celky_servis));
+                    serviseButton.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_petrol));
             } else
                 chkUnit.setChecked((unit.chck_status_id == 1));
         }
@@ -155,7 +153,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
 
         packetList.addAll(app.getUnitService(u));
 
-        UnitServiceDialog b = new UnitServiceDialog(getContext(), u, packetList){
+        UnitServiceDialog unitServiceDialog = new UnitServiceDialog(getContext(), u, packetList){
             @Override
             public void OnOkClick(final DMPacket selectedPaked, final String cena){
                 if(selectedPaked == null) //Nevybrany paket
@@ -192,14 +190,14 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                     u.sell_price = null;
                     tv.setText("");
                 }
-                v.findViewById(R.id.btnOdloz).setBackground(context.getResources().getDrawable(R.drawable.celky_odlozeni_dis));
+                v.findViewById(R.id.btnOdloz).setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
                 com.gc.materialdesign.views.CheckBox chkUnit = ( com.gc.materialdesign.views.CheckBox)v.findViewById(R.id.checkBox);
                 chkUnit.setChecked(false);
 
                 unitButtonView.setBackground(selectedPaked.getCelkyIcon(getContext()));
             }
         };
-        b.show();
+        unitServiceDialog.show();
 
     }
 

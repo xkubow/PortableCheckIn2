@@ -41,6 +41,7 @@ public class DMPacket implements Comparable<DMPacket> {
     public Double sell_price;
     public int spare_part_dispon_id;
     public String spare_part_dispon_txt;
+    public boolean checked = false;
 
     public DMPacket(){}
 
@@ -71,7 +72,7 @@ public class DMPacket implements Comparable<DMPacket> {
 
     public Drawable getCelkyIcon(Context context) {
         if(workshop_packet_number == null)
-            return context.getResources().getDrawable(R.drawable.celky_servis);
+            return context.getResources().getDrawable(R.drawable.ic_tools_petrol);
         else
             return getPacketIcon(context, this.spare_part_dispon_id, this.economic);
     }
