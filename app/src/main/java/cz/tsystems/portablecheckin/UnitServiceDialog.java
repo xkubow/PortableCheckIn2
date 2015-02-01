@@ -17,6 +17,7 @@ import java.util.List;
 import cz.tsystems.adapters.PacketsArrayAdapter;
 import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
+import cz.tsystems.data.PortableCheckin;
 
 
 public class UnitServiceDialog extends Dialog {
@@ -57,6 +58,8 @@ public class UnitServiceDialog extends Dialog {
                 UnitServiceDialog.this.dismiss();
             }
         });
+
+        ((TextView)view.findViewById(R.id.lblMena)).setText(PortableCheckin.setting.currency_abbrev);
 
         txtCena.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

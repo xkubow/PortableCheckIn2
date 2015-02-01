@@ -36,6 +36,11 @@ public class PacketDetailDialog extends Dialog{
         packetDetailList = packetDetails;
         LayoutInflater li = LayoutInflater.from(context);
         View view = li.inflate(R.layout.activity_packet_info, null);
+        double cenaCelk=0.0, cenaPraca=0.0, cenaDiely=0.0;
+
+        for(DMPacketDetail paket : packetDetails) {
+            cenaCelk += paket.sell_price;
+        }
 
         packetDetailArrayAdapter = new PacketDetailArrayAdapter(getContext(), packetDetailList);
         listView = (ListView) view.findViewById(R.id.packetDetailList);

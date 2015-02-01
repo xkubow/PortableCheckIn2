@@ -3,4 +3,5 @@
     <item name="ID" type="id"/>
     <item name="listPosition" type="id" />
     <item name="ViewHolder" type="id" />
+    <item name="ListLine" type="id" />
 </resources>

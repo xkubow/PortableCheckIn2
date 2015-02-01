@@ -424,7 +424,8 @@ public class CommunicationService extends IntentService {
 		} else if (data.getString("ACTION")
 				.equalsIgnoreCase("CheckinOrderList"))
 			app.setPlanZakazk(mapper.readTree(response));
-		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
+		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")
+                && response.length()>0) {
             JsonNode root = mapper.readTree(response);
             PortableCheckin.deletePackets();
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));

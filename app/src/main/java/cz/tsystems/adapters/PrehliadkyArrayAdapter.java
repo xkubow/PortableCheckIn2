@@ -3,6 +3,9 @@ package cz.tsystems.adapters;
 import cz.tsystems.data.DMPrehliadky;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.portablecheckin.R;
+import cz.tsystems.portablecheckin.ServiceActivity;
+
+import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.ResourceCursorAdapter;
@@ -21,10 +24,12 @@ import java.util.List;
 
 public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> implements PinnedSectionListView.PinnedSectionListAdapter{
     private Context context;
+    ServiceActivity serviceActivity;
 
-	public PrehliadkyArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPrehliadkyMaster> objects) {
+	public PrehliadkyArrayAdapter(Fragment owner, Context context, int resource, int textViewResourceId, List<DMPrehliadkyMaster> objects) {
         super(context, resource, textViewResourceId);// objects);
         this.context = context;
+        this.serviceActivity = (ServiceActivity) owner;
         setObjets(objects);
 	}
 
@@ -57,13 +62,22 @@ public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> imp
             v.findViewById(R.id.chkPrehliadky).setVisibility(View.GONE);
         } else {
             TextView text = (TextView) v.findViewById(R.id.lblPrehliadka);
+            CheckBox checkBox = (CheckBox)v.findViewById(R.id.chkPrehliadky);
             text.setText(prehliadka.text);
             if(!prehliadka.mandatory) {
                 v.findViewById(R.id.chkPrehliadky).setVisibility(View.INVISIBLE);
             } else {
                 v.findViewById(R.id.chkPrehliadky).setVisibility(View.VISIBLE);
-                ((CheckBox)v.findViewById(R.id.chkPrehliadky)).setStaticChecked(prehliadka.opened);
+                checkBox.setStaticChecked(prehliadka.opened);
             }
+            checkBox.setTag(R.id.ListLine, v);
+            checkBox.setTag(R.id.listPosition, position);
+            checkBox.setOncheckListener(new CheckBox.OnCheckListener() {
+                @Override
+                public void onCheck(CheckBox checkBox, boolean isChecked) {
+                    serviceActivity.masterClicked((View) checkBox.getTag(R.id.ListLine), (int) checkBox.getTag(R.id.listPosition));
+                }
+            });
         }
 
         return v;

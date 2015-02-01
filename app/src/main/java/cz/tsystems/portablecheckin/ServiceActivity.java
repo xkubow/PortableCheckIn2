@@ -46,7 +46,7 @@ public class ServiceActivity extends BaseFragment {
     private PortableCheckin app;
 	
 //    private static View rootView;
-    ListView listMaster, listDetail;
+    public ListView listMaster, listDetail;
 	private UnitArrayAdapter unitAdapter;
     private DMPrehliadkyMaster selectedPrehliadky;
     private OnItemClickListener onDetialClickListener = new OnItemClickListener() {
@@ -70,25 +70,7 @@ public class ServiceActivity extends BaseFragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DMPrehliadkyMaster prehliadkyMaster = (DMPrehliadkyMaster) listMaster.getAdapter().getItem(position);//masterList.get(position);
-                if(prehliadkyMaster.type != DMPrehliadkyMaster.eSECTION) {
-                    ((CheckBox)view.findViewById(R.id.chkPrehliadky)).setChecked(true);
-                    ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
-
-                    ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
-                    TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-                    txtBadge.setVisibility(View.VISIBLE);
-                    if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
-                        String[] badgeStr = txtBadge.getText().toString().split("/");
-                        if(!badgeStr[0].equalsIgnoreCase(badgeStr[1])) {
-                            int openedCount = Integer.valueOf(badgeStr[0]) + 1;
-                            txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
-                        }
-                    }
-                    prehliadkyMaster.opened = true;
-
-                    refreshDetail(null);
-                }
+                masterClicked(view, position);
 			}
 		});
 
@@ -99,7 +81,8 @@ public class ServiceActivity extends BaseFragment {
 
                 DMPrehliadkyMaster prehliadkaMaster = ServiceActivity.this.selectedPrehliadky;
 
-                if(prehliadkaMaster.type == DMPrehliadkyMaster.eVYBAVY) {
+                if(prehliadkaMaster.type == DMPrehliadkyMaster.eVYBAVY
+                        || prehliadkaMaster.type == DMPrehliadkyMaster.eSLUZBY) {
                     DMBaseItem item = null;
                     switch (prehliadkaMaster.rowId) {
                         case -1:
@@ -137,6 +120,28 @@ public class ServiceActivity extends BaseFragment {
         return rootView;
     }
 
+    public void masterClicked(View view, int position) {
+        DMPrehliadkyMaster prehliadkyMaster = (DMPrehliadkyMaster) listMaster.getAdapter().getItem(position);//masterList.get(position);
+        if(prehliadkyMaster.type != DMPrehliadkyMaster.eSECTION) {
+            ((CheckBox)view.findViewById(R.id.chkPrehliadky)).setChecked(true);
+            ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
+
+            ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
+            TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+            txtBadge.setVisibility(View.VISIBLE);
+            if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
+                String[] badgeStr = txtBadge.getText().toString().split("/");
+                if(!badgeStr[0].equalsIgnoreCase(badgeStr[1])) {
+                    int openedCount = Integer.valueOf(badgeStr[0]) + 1;
+                    txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
+                }
+            }
+            prehliadkyMaster.opened = true;
+
+            refreshDetail(null);
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -153,7 +158,7 @@ public class ServiceActivity extends BaseFragment {
     	List<DMPrehliadkyMaster> masterList = app.prehliadkyMasters;
 
 		if (prehliadkyAdapter == null) {
-			prehliadkyAdapter = new PrehliadkyArrayAdapter(getActivity(), 0, layout.item_prehliadky, masterList);
+			prehliadkyAdapter = new PrehliadkyArrayAdapter(ServiceActivity.this, getActivity(), 0, layout.item_prehliadky, masterList);
 			listMaster.setAdapter(prehliadkyAdapter);
 		} else {
             prehliadkyAdapter.clear();
