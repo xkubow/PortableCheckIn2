@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import cz.tsystems.base.BaseEditText;
 import cz.tsystems.base.BaseFragment;
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.vinEditText;
@@ -30,6 +31,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.style.TtsSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -63,7 +65,7 @@ public class MainActivity extends BaseFragment {
 	private DatePicker theDatePicker;
 	private final SimpleDateFormat sdfrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private final SimpleDateFormat sdto = new SimpleDateFormat("MM.yyyy");
-	EditText txtSTKDate, txtEmiseDate, txtScenar, txtRZV, txtZakaznik, txtStavTachometru;
+    BaseEditText txtRZV, txtSTKDate, txtEmiseDate, txtScenar, txtZakaznik, txtStavTachometru, txtVozPristavil;
 	Spinner spScenare, spTypPaliva;
 	vinEditText txtVIN;
 	Button btnSPZ, btnSTK, btnEmise;// btnPalivo;// btnScenare;
@@ -72,6 +74,35 @@ public class MainActivity extends BaseFragment {
     Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
     private boolean scenarClicked = false;
+
+    View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            EditText et = (EditText) v;
+
+            try {
+                if(txtRZV == et)
+                    app.getCheckin().license_tag = et.getText().toString();
+                else if(txtVIN == et)
+                    app.getCheckin().vin = et.getText().toString();
+                else if(txtZakaznik == et)
+                    app.getCheckin().customer_label = et.getText().toString();
+                else if(txtVozPristavil == et)
+                    app.getCheckin().driver_name_surn = et.getText().toString();
+                else if(txtStavTachometru == et)
+                    app.getCheckin().odometer = Double.valueOf(et.getText().toString());
+                else if(txtSTKDate == et)
+                    app.getCheckin().ti_valid_until =  sdfrom.parse(et.getText().toString());
+                else if(txtEmiseDate == et)
+                    app.getCheckin().ec_valid_until =  sdfrom.parse(et.getText().toString());
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
 
     TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -252,25 +283,35 @@ public class MainActivity extends BaseFragment {
 		values2 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout2);
 
 		theDatePicker = new DatePicker(getActivity());
-		txtRZV = (EditText) values1.findViewById(R.id.txtSPZ);
+		txtRZV = (BaseEditText) values1.findViewById(R.id.txtSPZ);
 		txtRZV.setOnEditorActionListener(rzvOnEditorActionListener);
         EditText edtTmp = (EditText) values2.findViewById(R.id.txtVIN);
 		txtVIN = (vinEditText) edtTmp;
 		txtVIN.setOnEditorActionListener(vinEditorActionListener);
 
-        txtZakaznik = (EditText) values2.findViewById(R.id.txtZakaznik);
-        txtStavTachometru = (EditText) values2.findViewById(R.id.txtStavTachomeru);
-		txtSTKDate = (EditText)values1.findViewById(R.id.txtSTK);
-		txtEmiseDate = (EditText)values2.findViewById(R.id.txtEmise);
+        txtZakaznik = (BaseEditText) values2.findViewById(R.id.txtZakaznik);
+        txtVozPristavil = (BaseEditText)values2.findViewById(R.id.txtVozPristavil);
+        txtStavTachometru = (BaseEditText) values2.findViewById(R.id.txtStavTachomeru);
+		txtSTKDate = (BaseEditText)values1.findViewById(R.id.txtSTK);
+		txtEmiseDate = (BaseEditText)values2.findViewById(R.id.txtEmise);
 		spScenare = (Spinner)values1.findViewById(R.id.spScenar);
         spTypPaliva = (Spinner)values1.findViewById(R.id.spTypPaliva);
 
         txtRZV.addTextChangedListener(textWatcher);
         txtVIN.addTextChangedListener(textWatcher);
         txtZakaznik.addTextChangedListener(textWatcher);
+        txtVozPristavil.addTextChangedListener(textWatcher);
         txtStavTachometru.addTextChangedListener(textWatcher);
         txtSTKDate.addTextChangedListener(textWatcher);
         txtEmiseDate.addTextChangedListener(textWatcher);
+
+        txtRZV.setOnFocusChangeListener(onFocusChangeListener);
+        txtVIN.setOnFocusChangeListener(onFocusChangeListener);
+        txtZakaznik.setOnFocusChangeListener(onFocusChangeListener);
+        txtVozPristavil.setOnFocusChangeListener(onFocusChangeListener);
+        txtStavTachometru.setOnFocusChangeListener(onFocusChangeListener);
+        txtSTKDate.setOnFocusChangeListener(onFocusChangeListener);
+        txtEmiseDate.setOnFocusChangeListener(onFocusChangeListener);
 
         scenarClicked = false;
 		spScenare.setOnItemSelectedListener(scenarSelectedListener);
@@ -345,9 +386,21 @@ public class MainActivity extends BaseFragment {
             cursor.moveToNext();
         }
 
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, cursor, new String[] { "TEXT" }, new int[] { android.R.id.text1 }, 0);
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, cursor, new String[] { "TEXT" }, new int[] { android.R.id.text1 }, 0);
         spTypPaliva.setAdapter(adapter);
         spTypPaliva.setSelection(pos, true);
+        spTypPaliva.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Cursor c = (Cursor)spTypPaliva.getSelectedItem();
+                app.getCheckin().fuel_id = c.getShort(c.getColumnIndex("FUEL_ID"));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 	@Override
@@ -595,13 +648,15 @@ public class MainActivity extends BaseFragment {
 			Log.v(TAG, fieldName.toLowerCase(Locale.ENGLISH));
 
 			try {
-				if(field.get(checkinData) == null)
-					continue;				
 
-				if (c == EditText.class || c == vinEditText.class) {
+				if (c == EditText.class || c == vinEditText.class || c == BaseEditText.class) {
 
                     EditText editText = (EditText) v;
                     editText.setText("");
+
+                    if(field.get(checkinData) == null)
+                        continue;
+
 					if (field.getType() == String.class)// jnCheckin.hasNonNull(fieldName))
                         editText.setText((String) field.get(checkinData));
 					else if (field.getType() == int.class)
@@ -609,7 +664,9 @@ public class MainActivity extends BaseFragment {
 					else if (field.getType() == short.class)
                         editText.setText(String.valueOf(field.getShort(checkinData)));
 					else if (field.getType() == double.class)
-                        editText.setText(String.valueOf((int)field.getDouble(checkinData)));
+                        editText.setText(String.valueOf(field.getDouble(checkinData)));
+                    else if (field.getType() == Double.class)
+                        editText.setText(String.valueOf((Double)field.get(checkinData)));
 					else if (field.getType() == Date.class)
                         editText.setText(sdto.format((Date) field.get(checkinData)));
 
@@ -629,8 +686,11 @@ public class MainActivity extends BaseFragment {
 
 	@Override
 	public void updateData(Intent intent) {
-		// TODO Auto-generated method stub
-		
-	}
+        try {
+            populateView();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -42,7 +42,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtSPZ"
             android:layout_width="350dp"
             android:layout_height="50dp"
@@ -91,7 +91,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtPredajDat"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -120,7 +120,7 @@
             android:layout_marginBottom="10dp"
             android:background="#006384"/>
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtSTK"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -192,8 +192,8 @@
             android:minWidth="32dip"
             android:tag="FUEL_ID" />
 
-        <EditText
-            android:id="@+id/EditText01"
+        <cz.tsystems.base.BaseEditText
+            android:id="@+id/txtModelYear"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignBaseline="@+id/txtPredajDat"
@@ -357,7 +357,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtZakaznik"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -372,7 +372,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtVozPristavil"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -385,7 +385,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtStavTachomeru"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -400,7 +400,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp" />
 
-        <EditText
+        <cz.tsystems.base.BaseEditText
             android:id="@+id/txtEmise"
             android:layout_width="match_parent"
             android:layout_height="50dp"

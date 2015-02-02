@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 public class DMCheckin {
 
     public int silhouette_id;
-    public double odometer;
+    public Double odometer;
     public short fuel_level;
     public Date inserted;
     public Date last_updated;

@@ -60,11 +60,11 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if(selectedText == null || selectedText.getEditableText() != s)
                 return;
-
-            final int pos = (int) selectedText.getTag(R.id.listPosition);
-            Log.d(TAG, String.valueOf(pos));
-            getItem(pos).text = s.toString();
             ViewHolder vh = (ViewHolder) selectedText.getTag(R.id.ViewHolder);
+            final int pos = (int) selectedText.getTag(R.id.listPosition);
+            Log.d(TAG, "--------------------------------------------------------------------");
+            Log.d(TAG, String.valueOf(pos) + ", " + selectedText.toString() + ", " + vh.txtService.toString());
+            getItem(pos).text = s.toString();
             vh.checkBox.setChecked((s.length()>0));
             getItem(pos).setChecked(vh.checkBox.isChecked());
         }
@@ -147,10 +147,9 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
         ViewHolder vh = null;
         final DMService service = getItem(position);//data.get(position);
         int type = getItemViewType(position);
-        Log.d(TAG, "TYPE :" + String.valueOf(type));
 
         if (v == null) {
-            Log.d(TAG, "View == NULL");
+            Log.d(TAG, "View == NULL, " + String.valueOf(position));
             switch (type) {
                 case FREE:
                     v = layoutInflater.inflate(R.layout.item_free_vybavy, null);
@@ -205,6 +204,8 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
         if (vh.typ == FREE) {
             if (service.text != null && service.text.length() > 0)
                 vh.txtService.setText(service.text.toString());
+            else
+                vh.txtService.setText("");
         } else
             vh.lblService.setText(service.text);
         ////////////////////
@@ -212,7 +213,8 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
         if (service.sell_price != null) {
             vh.txtPC.setVisibility(View.VISIBLE);
             vh.txtPC.setText(String.valueOf(service.sell_price));
-        }
+        }else
+            vh.txtPC.setText("");
 
         return v;
     }

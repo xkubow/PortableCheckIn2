@@ -254,8 +254,10 @@ public class PortableCheckin extends Application {
         checkin.fuel_id = 1;
         setSelectedBrand(brandId);
 		setOffers(this.getOffers(brandId));
-		this.loadSilhouette();
+		loadSilhouette();
         loadUnits();
+        deletePackets();
+        setSelectedScenar(checkin.check_scenario_id);
 	}
 	
 
@@ -607,6 +609,8 @@ public class PortableCheckin extends Application {
 
     public List<DMPacket> getCheckedPackets() {
         List<DMPacket> checkedPackets = new ArrayList<>();
+        if(packets == null)
+            return checkedPackets;
         for (DMPacket packet : packets) {
             if(packet.checked)
                 checkedPackets.add(packet);

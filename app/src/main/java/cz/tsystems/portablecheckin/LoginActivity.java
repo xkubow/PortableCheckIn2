@@ -116,7 +116,7 @@ public class LoginActivity extends Activity {
 		SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);        
 		SharedPreferences.Editor spe= sp.edit();
 		spe.putInt("GENERATION_VER", 3);
-		spe.putInt("MAJOR_VER", 0);
+		spe.putInt("MAJOR_VER", 2);
 		spe.putInt("COMMUNICATION_VER", 0);
 		spe.commit();
 

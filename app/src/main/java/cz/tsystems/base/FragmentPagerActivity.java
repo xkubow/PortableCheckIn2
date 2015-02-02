@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -41,6 +42,7 @@ import android.text.Spanned;
 import android.text.format.Time;
 import android.util.AttributeSet;
 import android.view.InflateException;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,6 +73,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     Button btnBrand;
 	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
     Menu myMenu;
+    private int largestHeight;
 
     public void setCheckLogin(Boolean checkLogin) {
         this.checkLogin = checkLogin;
@@ -188,12 +191,15 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		filterSend.addAction("grdResponse");
 		registerReceiver(receiver, filterSend);
 	}
+
+    public void updateFragments() {
+        theFragment = (BaseFragment) theFragments.get(0);
+        if(theFragment != null) {
+            theFragment.updateData(null);
+        }
+    }
 	
 	public void updateData() {
-		theFragment = (BaseFragment) theFragments.get(0);
-		if(theFragment != null) {
-			theFragment.updateData(null);
-		}
 
         lblVehicleCaption.setText(app.getCheckin().vehicle_description);
         setBrand(app.getCheckin().brand_id);
@@ -286,7 +292,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		BaseMenu.show(item, this);
+		BaseMenu.show(getApplicationContext(), item, this);
 		return super.onOptionsItemSelected(item);
 	}
 

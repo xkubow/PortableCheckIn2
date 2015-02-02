@@ -3,6 +3,7 @@ package cz.tsystems.base;
 import android.content.Context;
 //import android.support.v7.internal.widget.TintEditText;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.widget.EditText;
 
 import java.util.Locale;
@@ -56,5 +57,13 @@ public class vinEditText extends EditText {
 		offTextChange = false;
 		super.onTextChanged(text, start, lengthBefore, lengthAfter);
 	}
+
+    @Override
+    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+            this.clearFocus();
+        }
+        return super.dispatchKeyEvent(event);
+    }
 
 }
