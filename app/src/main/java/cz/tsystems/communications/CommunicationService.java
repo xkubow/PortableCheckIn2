@@ -1,12 +1,15 @@
 package cz.tsystems.communications;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
@@ -232,25 +235,40 @@ public class CommunicationService extends IntentService {
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
         HttpResponse response;
         String valSeparator = "?";
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+
+        String theUrl = URL + "/" + data.getString("ACTIONURL");
+        Log.d("Message type", data.getString("ACTION"));
+        Set<String> keys = data.keySet();
+
+        for (String key : keys) {
+            if (key.equalsIgnoreCase("ACTION")
+                    || key.equalsIgnoreCase("ACTIONURL"))
+                continue;
+            theUrl += valSeparator + key + ":" + data.getString(key);
+            valSeparator = "&";
+        }
 
         try {
-            String theUrl = URL + "/" + data.getString("ACTIONURL");
-            Log.d("Message type", data.getString("ACTION"));
-            Set<String> keys = data.keySet();
-
-            for (String key : keys) {
-                if (key.equalsIgnoreCase("ACTION")
-                        || key.equalsIgnoreCase("ACTIONURL"))
-                    continue;
-                theUrl += valSeparator + key + ":" + data.getString(key);
-                valSeparator = "&";
-            }
-
-            HttpPost post = new HttpPost(theUrl);
-            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
-            post.addHeader("PCHI-DEVICE-NAME", app.getLocalHostName());
-            post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
-            post.addHeader(
+            java.net.URL connectURL = new URL(theUrl);
+            // Open a HTTP connection to the URL
+            HttpURLConnection conn = (HttpURLConnection)connectURL.openConnection();
+            // Allow Inputs
+            conn.setDoInput(true);
+            // Allow Outputs
+            conn.setDoOutput(true);
+            // Don't use a cached copy.
+            conn.setUseCaches(false);
+            // Use a post method.
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary="+boundary);
+            conn.setReadTimeout(50000);
+            conn.setRequestProperty("PCHI-DEVICE-NAME", app.getLocalHostName());
+            conn.setRequestProperty("PCHI-DEVICE-ID", app.getDeviceID());
+            conn.setRequestProperty(
                     "PCHI-DEVICE-VERSION",
                     String.valueOf(getSharedPreferences(
                             "cz.tsystems.portablecheckin", 0).getInt(
@@ -263,12 +281,50 @@ public class CommunicationService extends IntentService {
                             + String.valueOf(getSharedPreferences(
                             "cz.tsystems.portablecheckin", 0).getInt(
                             "COMMUNICATION_VER", -1)));
-            post.addHeader("Authorization", "basic " + app.getLogin());
-            post.addHeader("accept-language", "cz");
-
-//            post.setEntity();
+            conn.setRequestProperty("Authorization", "basic " + app.getLogin());
+            conn.setRequestProperty("accept-language", "cz");
 
             showNotification(data);
+
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"title\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(Title);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+
+            dos.writeBytes("Content-Disposition: form-data; name=\"description\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(Description);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + iFileName +"\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+
+            Log.e(Tag,"Headers are written");
+
+            // create a buffer of maximum size
+            int bytesAvailable = fileInputStream.available();
+
+            int maxBufferSize = 1024;
+            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            byte[ ] buffer = new byte[bufferSize];
+
+            // read file and write it into form...
+            int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+            while (bytesRead > 0)
+            {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable,maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0,bufferSize);
+            }
+            dos.writeBytes(lineEnd);
+
             response = client.execute(post);
 
             if (response != null) {
