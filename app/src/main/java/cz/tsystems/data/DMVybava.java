@@ -49,11 +49,11 @@ public class DMVybava extends DMBaseItem {
         this.editable = editable;
     }
 	
-	public DMVybava(Cursor c, boolean checked) {
+	public DMVybava(Cursor c) {
 		this.car_equipment_id = c.getLong(c.getColumnIndex("CAR_EQUIPMENT_ID"));
 		this.text = c.getString(c.getColumnIndex("TEXT"));
 		this.obligatory_equipment = Boolean.valueOf( c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT")));
-		this.checked = checked;
+		this.checked = (this.obligatory_equipment)?PortableCheckin.setting.obligatory_equipment_checked:false;
 	}
 
 }

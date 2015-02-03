@@ -73,7 +73,7 @@ public class PortableCheckin extends Application {
 	public static List<List<DMUnit>> unitList;
 	static public List<DMVybava> vybavaList = new ArrayList<DMVybava>();
     static public List<DMService> serviceList = new ArrayList<DMService>();
-	private DMSilhouette selectedSilhouette;
+	static public DMSilhouette selectedSilhouette;
 	private String login;
 	private String deviceID;
 	private String localHostName;
@@ -695,7 +695,7 @@ public class PortableCheckin extends Application {
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
 			Log.v(TAG, String.valueOf(c.getInt(c.getColumnIndex("CAR_EQUIPMENT_ID"))) + " :" + String.valueOf(c.getString(c.getColumnIndex("OBLIGATORY_EQUIPMENT"))));
-			vybavaList.add(new DMVybava(c, true));
+			vybavaList.add(new DMVybava(c));
 			c.moveToNext();
 		}
 

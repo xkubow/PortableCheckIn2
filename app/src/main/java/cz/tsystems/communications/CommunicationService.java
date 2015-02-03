@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
@@ -25,11 +27,16 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 import javax.mail.util.ByteArrayDataSource;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -219,6 +226,65 @@ public class CommunicationService extends IntentService {
 			e.printStackTrace();
 		}
 	}
+
+    public void sendMime(Bundle data) {
+        HttpClient client = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        HttpResponse response;
+        String valSeparator = "?";
+
+        try {
+            String theUrl = URL + "/" + data.getString("ACTIONURL");
+            Log.d("Message type", data.getString("ACTION"));
+            Set<String> keys = data.keySet();
+
+            for (String key : keys) {
+                if (key.equalsIgnoreCase("ACTION")
+                        || key.equalsIgnoreCase("ACTIONURL"))
+                    continue;
+                theUrl += valSeparator + key + ":" + data.getString(key);
+                valSeparator = "&";
+            }
+
+            HttpPost post = new HttpPost(theUrl);
+            post.addHeader(HTTP.CONTENT_TYPE, "application/json");
+            post.addHeader("PCHI-DEVICE-NAME", app.getLocalHostName());
+            post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
+            post.addHeader(
+                    "PCHI-DEVICE-VERSION",
+                    String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "GENERATION_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "MAJOR_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "COMMUNICATION_VER", -1)));
+            post.addHeader("Authorization", "basic " + app.getLogin());
+            post.addHeader("accept-language", "cz");
+
+//            post.setEntity();
+
+            showNotification(data);
+            response = client.execute(post);
+
+            if (response != null) {
+
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    decodeError(response);
+                    return;
+                }
+
+                parseMIME(data, response);
+            }
+        } catch (Exception e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        }
+    }
 
 	public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
@@ -455,7 +521,7 @@ public class CommunicationService extends IntentService {
             }
 
         } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
-Log.v(TAG, response);
+            Log.v(TAG, response);
             JsonNode root = mapper.readTree(response);
             app.setPackets(root.path("WORKSHOP_PACKET_DMS"));
 		} else if (data.getString("ACTION").equalsIgnoreCase("GetSilhouette")) {
@@ -575,6 +641,46 @@ Log.v(TAG, response);
 		}
 	}
 
+    MimeMultipart createImageMIME() throws IOException {
+        try {
+            File myDir = getApplicationContext().getDir("thumbnails", Context.MODE_PRIVATE);
+
+            MimeMultipart multipart = new MimeMultipart("mixed");
+
+            List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short)0);
+            int i = 0;
+//            MultipartEntity multipartEntity = new MultipartEntity();
+//            FormBodyPart formBodyPart = new FormBodyPart();
+//            multipartEntity.addPart();
+            for(String imgFileName : images) {
+                MimeBodyPart mimeBodyPart = new MimeBodyPart();
+                mimeBodyPart.addHeader("OBR_ENUM", "0");
+                mimeBodyPart.addHeader("OBR_SORT_IDX", String.valueOf(i++));
+                mimeBodyPart.setFileName(imgFileName);
+                File file = new File(myDir + File.separator + imgFileName);
+                if(!file.exists())
+                    Log.e(TAG, "File not exists : " + file.getAbsolutePath());
+                mimeBodyPart.setContent(file, "image/png");
+
+                Bitmap imageBitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                multipart.addBodyPart(mimeBodyPart);
+            }
+
+            return multipart;
+        } catch (IllegalStateException e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        } catch (IOException e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 	void parseMIME(Bundle data, HttpResponse response)
 			throws JsonProcessingException, IOException {
 		try {
@@ -606,8 +712,8 @@ Log.v(TAG, response);
 				parseBanners(multipart, app.getTheDBProvider());
 
 			fin.close();
-			if (file.exists())
-				file.delete();
+//			if (file.exists())
+//				file.delete();
 
 		} catch (IllegalStateException e) {
 			sendErrorMsg(e.getLocalizedMessage() );
