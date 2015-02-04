@@ -24,7 +24,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
@@ -32,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -238,6 +242,81 @@ public class CommunicationService extends IntentService {
 	}
 
     public void sendMime(Bundle data) {
+
+        HttpClient client = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        HttpResponse response;
+        String valSeparator = "?";
+        StringBuilder total;
+        final String boundary = "--234t2f3452435gf2ewq";
+        String line;
+
+        try {
+            String theUrl = URL + "/" + data.getString("ACTIONURL");
+
+            Set<String> keys = data.keySet();
+            for (String key : keys) {
+                final Object value = data.get(key);
+                if (key.equalsIgnoreCase("ACTION")
+                        || key.equalsIgnoreCase("ACTIONURL"))
+                    continue;
+                theUrl += valSeparator + key + "="
+                        + URLEncoder.encode(value.toString(), "UTF-8");
+                valSeparator = "&";
+            }
+
+            Log.d("Message type", data.getString("ACTION") + ", " + theUrl);
+            HttpPost post = new HttpPost(theUrl);
+            MultipartEntity multipartEntity = createImageMIME(boundary);
+
+            post.addHeader(HTTP.CONTENT_TYPE, "multipart/mixed; boundary=" + boundary);
+            post.addHeader("PCHI-DEVICE-NAME", app.getLocalHostName());
+            Log.d("DEVICEID", app.getDeviceID());
+            post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
+            post.addHeader("Authorization", "basic " + app.getLogin());
+            post.addHeader("accept-language", "cz");
+
+            if(data.getString("ACTION").equals("SavePhotos")) {
+
+                post.setEntity(multipartEntity);
+            }
+
+            showNotification(data);
+            response = client.execute(post);
+
+			/* Checking response */
+            if (response != null) {
+
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    decodeError(response);
+                    return;
+                }
+
+                InputStream in = response.getEntity().getContent();
+                InputStreamReader is = new InputStreamReader(in, "UTF-8");
+                BufferedReader r = new BufferedReader(is);
+                total = new StringBuilder();
+                while ((line = r.readLine()) != null)
+                    total.append(line);
+
+                try {
+                    decodeMessage(data, total.toString());
+                } catch (JsonProcessingException e) {
+                    sendErrorMsg(e.getLocalizedMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    sendErrorMsg(e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+
+            }
+        } catch (Exception e) {
+            sendErrorMsg(e.getLocalizedMessage() );
+            e.printStackTrace();
+        }
+    }
+
+  /*  public void sendMime(Bundle data) {
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
         String valSeparator = "?";
@@ -281,7 +360,7 @@ public class CommunicationService extends IntentService {
             // Use a post method.
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary=" + boundary + twoHyphens);
+            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary=" + boundary);
             conn.setReadTimeout(50000);
             conn.setRequestProperty("PCHI-DEVICE-NAME", app.getLocalHostName());
             conn.setRequestProperty("PCHI-DEVICE-ID", app.getDeviceID());
@@ -310,7 +389,7 @@ public class CommunicationService extends IntentService {
             File logFile = new File(logDir, "log.txt");
             FileOutputStream logFileoutputStream = openFileOutput("log.txt", getApplicationContext().MODE_WORLD_READABLE);
 
-            DataOutputStream dos = /*new DataOutputStream(logFileoutputStream);*/new DataOutputStream(conn.getOutputStream());
+            DataOutputStream dos = *//*new DataOutputStream(logFileoutputStream);*//*new DataOutputStream(conn.getOutputStream());
             List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short) 0);
             images.add("CheckinPhoto_1_0.jpg");
             images.add("CheckinPhoto_1_1.jpg");
@@ -398,7 +477,7 @@ public class CommunicationService extends IntentService {
             e.printStackTrace();
         }
     }
-
+*/
     public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
@@ -757,42 +836,36 @@ public class CommunicationService extends IntentService {
 		}
 	}
 
-    MultipartEntity createImageMIME() throws IOException {
+    MultipartEntity createImageMIME(final String boundary) throws IOException {
         try {
-            File myDir = getApplicationContext().getDir("thumbnails", Context.MODE_PRIVATE);
+            File storageDir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES);
+            File myDir = new File(storageDir, "CheckInPhotos");
+            FileInputStream fileInputStream = null;
 
-            MimeMultipart multipart = new MimeMultipart("mixed");
+            MultipartEntity mimeBodyPart = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, boundary, Charset.defaultCharset());
 
             List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short)0);
+            images.add("Skull_Sketch_by_Jerner.jpg");
+            images.add("Vampire_Skull_by_maxromaine.jpg");
             int i = 0;
-//            MultipartEntity multipartEntity = new MultipartEntity();
-//            FormBodyPart formBodyPart = new FormBodyPart();
-//            multipartEntity.addPart();
             for(String imgFileName : images) {
-                MimeBodyPart mimeBodyPart = new MimeBodyPart();
-                mimeBodyPart.addHeader("OBR_ENUM", "0");
-                mimeBodyPart.addHeader("OBR_SORT_IDX", String.valueOf(i++));
-                mimeBodyPart.setFileName(imgFileName);
-                File file = new File(myDir + File.separator + imgFileName);
-                if(!file.exists())
-                    Log.e(TAG, "File not exists : " + file.getAbsolutePath());
-                mimeBodyPart.setContent(file, "image/png");
-
-                Bitmap imageBitmap = BitmapFactory.decodeStream(new FileInputStream(file));
-                multipart.addBodyPart(mimeBodyPart);
+                File imgFile = new File(myDir, imgFileName);
+                FileBody fileBody = new FileBody(imgFile, "image/jpeg");
+                FormBodyPart fbp = new FormBodyPart("file", fileBody);
+                fbp.addField("OBR_ENUM", "0");
+                fbp.addField("OBR_SORT_IDX", String.valueOf(i++));
+                fbp.addField("filename", "\"" + imgFileName + "\"");
+                fbp.addField("Content-Type", "image/jpeg");
+                mimeBodyPart.addPart(fbp);
             }
 
-            return multipart;
+            return mimeBodyPart;
         } catch (IllegalStateException e) {
             sendErrorMsg(e.getLocalizedMessage() );
             e.printStackTrace();
-        } catch (IOException e) {
-            sendErrorMsg(e.getLocalizedMessage() );
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            sendErrorMsg(e.getLocalizedMessage() );
-            e.printStackTrace();
         }
+
         return null;
     }
 
