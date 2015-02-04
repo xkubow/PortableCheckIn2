@@ -99,11 +99,20 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                     updateServiceFragment(); //TODO dakedy padne kvoli broadcastreciveru
             }
             if (b != null && b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
-                MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
-                Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
-                resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
-                button.setIcon(resIcon);
 
+//                if(PortableCheckin.selectedSilhouette.getPhotosCount() > 0) {
+                    Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+                    msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
+                    msgIntent.putExtra("ACTIONURL", "pchi/SavePhotos/");
+                    msgIntent.putExtra("ACTION", "SavePhotos");
+                    msgIntent.putExtra("checkinID", String.valueOf(app.getCheckin().checkin_id));
+                    app.showProgrssDialog(FragmentPagerActivity.this);
+                    FragmentPagerActivity.this.startService(msgIntent);
+                    return;
+//                } else
+//                    saveCheckingDone();
+            } else if(b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
+                    saveCheckingDone();
             }
 
 
@@ -113,7 +122,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		}
 	};
 
-	@Override
+    private void saveCheckingDone() {
+        MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
+        Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+        resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
+        button.setIcon(resIcon);
+    }
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fragment_pager);

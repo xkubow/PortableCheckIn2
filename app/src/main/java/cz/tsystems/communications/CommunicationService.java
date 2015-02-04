@@ -4,16 +4,20 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -29,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -127,7 +132,9 @@ public class CommunicationService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		Log.d("SERVICE", intent.getStringExtra("ACTION"));
-		if (intent.getStringExtra("ACTION").equalsIgnoreCase("GetSilhouette")
+        if(intent.getStringExtra("ACTION").equalsIgnoreCase("SavePhotos"))
+            sendMime(intent.getExtras());
+		else if (intent.getStringExtra("ACTION").equalsIgnoreCase("GetSilhouette")
 				|| intent.getStringExtra("ACTION").equalsIgnoreCase(
 						"GetBanners"))
 			sendGetMime(intent.getExtras());
@@ -233,38 +240,48 @@ public class CommunicationService extends IntentService {
     public void sendMime(Bundle data) {
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-        HttpResponse response;
         String valSeparator = "?";
         String lineEnd = "\r\n";
         String twoHyphens = "--";
-        String boundary = "*****";
+        String response;
+        String boundary = "-------------8d20eb554e17a56";
+        HttpURLConnection conn = null;
 
         String theUrl = URL + "/" + data.getString("ACTIONURL");
         Log.d("Message type", data.getString("ACTION"));
         Set<String> keys = data.keySet();
 
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File myDir = new File(storageDir, "CheckInPhotos");
+        FileInputStream fileInputStream = null;
+
         for (String key : keys) {
             if (key.equalsIgnoreCase("ACTION")
                     || key.equalsIgnoreCase("ACTIONURL"))
                 continue;
-            theUrl += valSeparator + key + ":" + data.getString(key);
+            theUrl += valSeparator + key + "=" + data.getString(key);
             valSeparator = "&";
         }
 
         try {
             java.net.URL connectURL = new URL(theUrl);
             // Open a HTTP connection to the URL
-            HttpURLConnection conn = (HttpURLConnection)connectURL.openConnection();
+            conn = (HttpURLConnection) connectURL.openConnection();
+            conn.setConnectTimeout(50000);
             // Allow Inputs
-            conn.setDoInput(true);
+            if(!conn.getDoInput())
+                conn.setDoInput(true);
             // Allow Outputs
-            conn.setDoOutput(true);
+            if(!conn.getDoOutput())
+                conn.setDoOutput(true);
             // Don't use a cached copy.
-            conn.setUseCaches(false);
+            if(!conn.getUseCaches())
+                conn.setUseCaches(false);
             // Use a post method.
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary="+boundary);
+            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary=" + boundary + twoHyphens);
             conn.setReadTimeout(50000);
             conn.setRequestProperty("PCHI-DEVICE-NAME", app.getLocalHostName());
             conn.setRequestProperty("PCHI-DEVICE-ID", app.getDeviceID());
@@ -286,63 +303,103 @@ public class CommunicationService extends IntentService {
 
             showNotification(data);
 
-            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+            //Loging
+            String root = Environment.getExternalStorageDirectory().toString();
+            File logDir = new File(root + "/saved_images");
+            myDir.mkdirs();
+            File logFile = new File(logDir, "log.txt");
+            FileOutputStream logFileoutputStream = openFileOutput("log.txt", getApplicationContext().MODE_WORLD_READABLE);
 
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"title\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(Title);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            DataOutputStream dos = /*new DataOutputStream(logFileoutputStream);*/new DataOutputStream(conn.getOutputStream());
+            List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short) 0);
+            images.add("CheckinPhoto_1_0.jpg");
+            images.add("CheckinPhoto_1_1.jpg");
 
-            dos.writeBytes("Content-Disposition: form-data; name=\"description\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(Description);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
 
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + iFileName +"\"" + lineEnd);
-            dos.writeBytes(lineEnd);
+            int imageIndex = 1;
+            for (String imageFileName : images) {
 
-            Log.e(Tag,"Headers are written");
+                File file = new File(myDir + File.separator + imageFileName);
+                if (!file.exists()) {
+                    Log.e(TAG, "Image file not exists : " + file.getAbsolutePath());
+                    continue;
+                }
 
-            // create a buffer of maximum size
-            int bytesAvailable = fileInputStream.available();
+                fileInputStream = new FileInputStream(file);
+                int bytesAvailable = fileInputStream.available();
 
-            int maxBufferSize = 1024;
-            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
-            byte[ ] buffer = new byte[bufferSize];
+                dos.writeBytes( boundary + lineEnd +
+                                "OBR_ENUM: 0" + lineEnd +
+                                "OBR_SORT_IDX: " + String.valueOf(imageIndex++) + lineEnd +
+                                "Content-Type: image/png" + lineEnd +
+                                "Content-Length: " + String.valueOf(file.length()) + lineEnd +
+                                "Content-Disposition: attachment; filename=" + imageFileName + lineEnd +
+                                lineEnd);
 
-            // read file and write it into form...
-            int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                int maxBufferSize = 1024;
+                int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                byte[] buffer = new byte[bufferSize];
 
-            while (bytesRead > 0)
-            {
-                dos.write(buffer, 0, bufferSize);
-                bytesAvailable = fileInputStream.available();
-                bufferSize = Math.min(bytesAvailable,maxBufferSize);
-                bytesRead = fileInputStream.read(buffer, 0,bufferSize);
+                // read file and write it into form...
+                int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                while (bytesRead > 0) {
+                    dos.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                }
+                dos.writeBytes(lineEnd);
             }
-            dos.writeBytes(lineEnd);
+            dos.writeBytes(boundary + lineEnd);
 
-            response = client.execute(post);
+            dos.flush();
+            fileInputStream.close();
+            logFileoutputStream.close();
+
+            response = conn.getResponseMessage();
+            Log.i("Response",response);
+            dos.close();
 
             if (response != null) {
 
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    decodeError(response);
+                if (conn.getResponseCode() != 200) {
+                    Log.e(TAG, response);
+                    sendErrorMsg(response);
                     return;
                 }
-
-                parseMIME(data, response);
             }
-        } catch (Exception e) {
-            sendErrorMsg(e.getLocalizedMessage() );
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            sendErrorMsg(e.getLocalizedMessage());
+        } finally {
+            conn.disconnect();
+        }
+
+        try {
+            decodeMessage(data,"");
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-	public void sendGetJson(Bundle data) {
+    public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 		HttpResponse response;
@@ -593,6 +650,9 @@ public class CommunicationService extends IntentService {
             boolean save_status = result.path("SAVE_STATUS").booleanValue();
             app.getCheckin().checkin_id = result.path("CHECKIN_ID").intValue();
             app.getCheckin().checkin_number = result.path("CHECKIN_NUMBER").intValue();
+
+        } else if(data.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
+            Log.d(TAG, "Photos has been saved");
         }
 
 		i.putExtra("requestData", data);
@@ -697,7 +757,7 @@ public class CommunicationService extends IntentService {
 		}
 	}
 
-    MimeMultipart createImageMIME() throws IOException {
+    MultipartEntity createImageMIME() throws IOException {
         try {
             File myDir = getApplicationContext().getDir("thumbnails", Context.MODE_PRIVATE);
 

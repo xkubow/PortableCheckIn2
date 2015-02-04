@@ -114,4 +114,14 @@ public class DMSilhouette extends Object {
 		silImageData[location].photoFileName.remove(index);
 	}
 
+    public int getPhotosCount() {
+        int photosCound = 0;
+        for (SilhouetteImage silhouetteImage:silImageData) {
+            if(silhouetteImage.photoFileName != null)
+                photosCound += silhouetteImage.photoFileName.size();
+        }
+
+        return photosCound;
+    }
+
 }
