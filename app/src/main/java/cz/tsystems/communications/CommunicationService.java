@@ -9,12 +9,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -24,6 +26,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.Header;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -36,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.Charset;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -241,7 +245,7 @@ public class CommunicationService extends IntentService {
 		}
 	}
 
-    public void sendMime(Bundle data) {
+  /*  public void sendMime(Bundle data) {
 
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
@@ -277,14 +281,13 @@ public class CommunicationService extends IntentService {
             post.addHeader("accept-language", "cz");
 
             if(data.getString("ACTION").equals("SavePhotos")) {
-
                 post.setEntity(multipartEntity);
             }
 
             showNotification(data);
             response = client.execute(post);
 
-			/* Checking response */
+			*//* Checking response *//*
             if (response != null) {
 
                 if (response.getStatusLine().getStatusCode() != 200) {
@@ -314,9 +317,9 @@ public class CommunicationService extends IntentService {
             sendErrorMsg(e.getLocalizedMessage() );
             e.printStackTrace();
         }
-    }
+    }*/
 
-  /*  public void sendMime(Bundle data) {
+    public void sendMime(Bundle data) {
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
         String valSeparator = "?";
@@ -360,7 +363,7 @@ public class CommunicationService extends IntentService {
             // Use a post method.
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary=" + boundary);
+            conn.setRequestProperty("Content-Type", "multipart/mixed;boundary=\"" + boundary+"\"");
             conn.setReadTimeout(50000);
             conn.setRequestProperty("PCHI-DEVICE-NAME", app.getLocalHostName());
             conn.setRequestProperty("PCHI-DEVICE-ID", app.getDeviceID());
@@ -382,20 +385,13 @@ public class CommunicationService extends IntentService {
 
             showNotification(data);
 
-            //Loging
-            String root = Environment.getExternalStorageDirectory().toString();
-            File logDir = new File(root + "/saved_images");
-            myDir.mkdirs();
-            File logFile = new File(logDir, "log.txt");
-            FileOutputStream logFileoutputStream = openFileOutput("log.txt", getApplicationContext().MODE_WORLD_READABLE);
-
-            DataOutputStream dos = *//*new DataOutputStream(logFileoutputStream);*//*new DataOutputStream(conn.getOutputStream());
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
             List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short) 0);
-            images.add("CheckinPhoto_1_0.jpg");
-            images.add("CheckinPhoto_1_1.jpg");
+//            images.add("CheckinPhoto_1_0.jpg");
+//            images.add("CheckinPhoto_1_1.jpg");
 
 
-            int imageIndex = 1;
+            int imageIndex = 0;
             for (String imageFileName : images) {
 
                 File file = new File(myDir + File.separator + imageFileName);
@@ -407,10 +403,10 @@ public class CommunicationService extends IntentService {
                 fileInputStream = new FileInputStream(file);
                 int bytesAvailable = fileInputStream.available();
 
-                dos.writeBytes( boundary + lineEnd +
-                                "OBR_ENUM: 0" + lineEnd +
+                dos.writeBytes( twoHyphens + boundary + lineEnd +
+                                "OBR_ENUM: 1" + lineEnd +
                                 "OBR_SORT_IDX: " + String.valueOf(imageIndex++) + lineEnd +
-                                "Content-Type: image/png" + lineEnd +
+                                "Content-Type: image/jpg" + lineEnd +
                                 "Content-Length: " + String.valueOf(file.length()) + lineEnd +
                                 "Content-Disposition: attachment; filename=" + imageFileName + lineEnd +
                                 lineEnd);
@@ -430,11 +426,10 @@ public class CommunicationService extends IntentService {
                 }
                 dos.writeBytes(lineEnd);
             }
-            dos.writeBytes(boundary + lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             dos.flush();
             fileInputStream.close();
-            logFileoutputStream.close();
 
             response = conn.getResponseMessage();
             Log.i("Response",response);
@@ -477,7 +472,8 @@ public class CommunicationService extends IntentService {
             e.printStackTrace();
         }
     }
-*/
+
+
     public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
@@ -846,8 +842,8 @@ public class CommunicationService extends IntentService {
             MultipartEntity mimeBodyPart = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, boundary, Charset.defaultCharset());
 
             List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short)0);
-            images.add("Skull_Sketch_by_Jerner.jpg");
-            images.add("Vampire_Skull_by_maxromaine.jpg");
+            images.add("CheckinPhoto_1_0.jpg");//"Skull_Sketch_by_Jerner.jpg");
+            images.add("CheckinPhoto_1_1.jpg");//"Vampire_Skull_by_maxromaine.jpg");
             int i = 0;
             for(String imgFileName : images) {
                 File imgFile = new File(myDir, imgFileName);
@@ -855,8 +851,8 @@ public class CommunicationService extends IntentService {
                 FormBodyPart fbp = new FormBodyPart("file", fileBody);
                 fbp.addField("OBR_ENUM", "0");
                 fbp.addField("OBR_SORT_IDX", String.valueOf(i++));
-                fbp.addField("filename", "\"" + imgFileName + "\"");
-                fbp.addField("Content-Type", "image/jpeg");
+//                fbp.addField("filename", "\"" + imgFileName + "\"");
+//                fbp.addField("Content-Type", "image/jpeg");
                 mimeBodyPart.addPart(fbp);
             }
 
