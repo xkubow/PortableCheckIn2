@@ -127,6 +127,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
         resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
         button.setIcon(resIcon);
+        app.dismisProgressDialog();
     }
 
     @Override

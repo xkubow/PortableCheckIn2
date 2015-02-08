@@ -172,20 +172,21 @@ public class CommunicationService extends IntentService {
 				.getActivity(context, 0, intent, 0);
 
 		// generate notification
-		myNotification = new NotificationCompat.Builder(getApplicationContext())
-				.setContentTitle("Progress")
-				.setContentText(data.getString("ACTION"))
-				.setContentInfo("content info")
-				.setTicker("Notification!")
-				.setWhen(System.currentTimeMillis())
-				// .setDefaults(Notification.DEFAULT_SOUND)
-				// .setAutoCancel(true)
-				.setSmallIcon(android.R.drawable.ic_notification_overlay)
-				.setProgress(100, incr, false)
-				// .addAction(android.R.drawable.btn_minus, "-", pIntent)
-				.setContentIntent(pIntent).build();
-
-		mNM.notify(MY_NOTIFICATION_ID, myNotification);
+        if(myNotification == null) {
+            myNotification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("Progress")
+                    .setContentText(data.getString("ACTION"))
+                    .setContentInfo("content info")
+                    .setTicker("Notification!")
+                    .setWhen(System.currentTimeMillis())
+                            // .setDefaults(Notification.DEFAULT_SOUND)
+                            // .setAutoCancel(true)
+                    .setSmallIcon(android.R.drawable.ic_notification_overlay)
+                    .setProgress(100, incr, false)
+                            // .addAction(android.R.drawable.btn_minus, "-", pIntent)
+                    .setContentIntent(pIntent).build();
+            mNM.notify(MY_NOTIFICATION_ID, myNotification);
+        }
 	}
 
 	public void sendGetMime(Bundle data) {
@@ -386,54 +387,66 @@ public class CommunicationService extends IntentService {
             showNotification(data);
 
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-            List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames((short) 0);
+
 //            images.add("CheckinPhoto_1_0.jpg");
 //            images.add("CheckinPhoto_1_1.jpg");
 
 
-            int imageIndex = 0;
-            for (String imageFileName : images) {
+            for(short i=0; i< 5; i++) {
+                final int imageIndex = i+1;
+                List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames(i);
+                for (String imageFileName : images) {
 
-                File file = new File(myDir + File.separator + imageFileName);
-                if (!file.exists()) {
-                    Log.e(TAG, "Image file not exists : " + file.getAbsolutePath());
-                    continue;
+                    File file = new File(myDir + File.separator + imageFileName);
+                    if (!file.exists()) {
+                        Log.e(TAG, "Image file not exists : " + file.getAbsolutePath());
+                        continue;
+                    }
+
+                    fileInputStream = new FileInputStream(file);
+                    int bytesAvailable = fileInputStream.available();
+
+                    dos.writeBytes(twoHyphens + boundary + lineEnd +
+                            "OBR_ENUM: " + String.valueOf(imageIndex) + lineEnd +
+                            "OBR_SORT_IDX: " + String.valueOf(imageIndex) + lineEnd +
+                            "Content-Type: image/jpg" + lineEnd +
+                            "Content-Length: " + String.valueOf(file.length()) + lineEnd +
+                            "Content-Disposition: attachment; filename=" + imageFileName + lineEnd +
+                            lineEnd);
+
+                    int maxBufferSize = 1024;
+                    int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    byte[] buffer = new byte[bufferSize];
+
+                    // read file and write it into form...
+                    int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                    while (bytesRead > 0) {
+                        dos.write(buffer, 0, bufferSize);
+                        bytesAvailable = fileInputStream.available();
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    }
+                    dos.writeBytes(lineEnd);
                 }
-
-                fileInputStream = new FileInputStream(file);
-                int bytesAvailable = fileInputStream.available();
-
-                dos.writeBytes( twoHyphens + boundary + lineEnd +
-                                "OBR_ENUM: 1" + lineEnd +
-                                "OBR_SORT_IDX: " + String.valueOf(imageIndex++) + lineEnd +
-                                "Content-Type: image/jpg" + lineEnd +
-                                "Content-Length: " + String.valueOf(file.length()) + lineEnd +
-                                "Content-Disposition: attachment; filename=" + imageFileName + lineEnd +
-                                lineEnd);
-
-                int maxBufferSize = 1024;
-                int bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                byte[] buffer = new byte[bufferSize];
-
-                // read file and write it into form...
-                int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-                while (bytesRead > 0) {
-                    dos.write(buffer, 0, bufferSize);
-                    bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-                }
-                dos.writeBytes(lineEnd);
             }
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             dos.flush();
-            fileInputStream.close();
+            if(fileInputStream != null)
+                fileInputStream.close();
+            dos.close();
+
+            if(PortableCheckin.selectedSilhouette.getPhotosCount() == 0) {
+                Intent i = new Intent();
+                i.putExtra("requestData", data);
+                i.putExtra("loadDataDone", loadDataDone);
+                sendBroadcast(i);
+                return;
+            }
 
             response = conn.getResponseMessage();
             Log.i("Response",response);
-            dos.close();
 
             if (response != null) {
 

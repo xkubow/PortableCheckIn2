@@ -101,6 +101,10 @@ public class DMSilhouette extends Object {
 	public String getPhotoPath(final short location, final int index) {
 		return silImageData[location].photoFileName.get(index);
 	}
+
+    public SilhouetteImage[] getImages() {
+        return silImageData;
+    }
 	
 	public List<String> getPhotoNames(final short location) {
 		return silImageData[location].photoFileName;

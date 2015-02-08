@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\classes.jar"
+        jar="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="90a2a4d7f08c1a0a32b96dc3f55772f89cb1e088">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-cf259d9092dda6db18b6832397da6fd99713b2f9.jar" />
+        sha1="13177c1d87492d5b1c5ff31d4f8e58519809fef8">
+        <dex dex="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-d10f2e66fdb7faa20aaa54959a4ebeba3e067327.jar" />
     </item>
 
 </items>
