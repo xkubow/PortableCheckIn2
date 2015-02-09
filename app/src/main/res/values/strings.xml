@@ -184,4 +184,14 @@
         <item>@string/Pakety</item>
     </string-array>
 
+    <string name="Nahradni_dily">Náhradní díly</string>
+    <string name="Pracovni_pozice">Pracovní pozice</string>
+    <string-array name="DetailPaketuList">
+        <item>@string/Pracovni_pozice</item>
+        <item>@string/Nahradni_dily</item>
+    </string-array>
+
+    <string name="Nahled">Náhled</string>
+    <string name="Smazat_foto">Smazat foto</string>
+
 </resources>

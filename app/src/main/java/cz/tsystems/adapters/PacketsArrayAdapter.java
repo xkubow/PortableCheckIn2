@@ -66,7 +66,9 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
                 btnInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PacketDetailDialog packetDetailDialog = new PacketDetailDialog(getContext(),getItem((int)v.getTag()).detail_list);
+                        DMPacket packet1 = getItem((int)v.getTag());
+                        PacketDetailDialog packetDetailDialog = new PacketDetailDialog(getContext(),packet1.detail_list);
+                        packetDetailDialog.setTitle(packet1.workshop_packet_number + " - " + packet1.workshop_packet_description);
                         packetDetailDialog.show();
                     }
                 });

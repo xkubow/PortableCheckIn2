@@ -47,7 +47,7 @@ public class BaseGridActivity extends Activity {
         else
             lblLoggetUser.setText(poradce + ": ");
 
-        if(app.getCheckin().checkin_number > 0)
+        if(app.getCheckin().checkin_number != null)
             lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
         else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
             final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);

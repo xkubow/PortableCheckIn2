@@ -128,16 +128,15 @@ public class ServiceActivity extends BaseFragment {
 
             ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-            txtBadge.setVisibility(View.VISIBLE);
-            if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
-                String[] badgeStr = txtBadge.getText().toString().split("/");
-                if(!badgeStr[0].equalsIgnoreCase(badgeStr[1])) {
-                    int openedCount = Integer.valueOf(badgeStr[0]) + 1;
-                    txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
-                }
+            String[] badgeStr = txtBadge.getText().toString().split("/");
+
+            if(txtBadge.getVisibility() == View.VISIBLE && badgeStr[0].equalsIgnoreCase(badgeStr[1]))
+                txtBadge.setVisibility(View.INVISIBLE);
+            else if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
+                int openedCount = Integer.valueOf(badgeStr[0]) + 1;
+                txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
             }
             prehliadkyMaster.opened = true;
-
             refreshDetail(null);
         }
     }
@@ -180,13 +179,15 @@ public class ServiceActivity extends BaseFragment {
         } else if (type == DMPrehliadkyMaster.eSLUZBY) {
             List<DMService> service = ((PortableCheckin) getActivity().getApplicationContext()).getServiceList();
 
-            if (serviceAdapter == null) {
+//            if (serviceAdapter == null) {
+//                serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
+//                listDetail.setAdapter(serviceAdapter);
+//            } else
+            if (serviceAdapter == null || listDetail.getAdapter() != serviceAdapter) {
                 serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
                 listDetail.setAdapter(serviceAdapter);
-            } else if (listDetail.getAdapter() != serviceAdapter)
-                listDetail.setAdapter(serviceAdapter);
-            else
-                serviceAdapter.notifyDataSetChanged();
+//                serviceAdapter.notifyDataSetChanged();
+            }
         } else if (type == DMPrehliadkyMaster.eUNIT) {
             List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
             listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));

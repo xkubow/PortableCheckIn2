@@ -2,6 +2,7 @@ package cz.tsystems.adapters;
 
 import cz.tsystems.data.DMPrehliadky;
 import cz.tsystems.data.DMPrehliadkyMaster;
+import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 import cz.tsystems.portablecheckin.ServiceActivity;
 

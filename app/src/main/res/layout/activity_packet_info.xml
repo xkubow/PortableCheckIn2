@@ -7,7 +7,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/textView"
+        android:id="@+id/cenaND"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/textView2"
+        android:id="@+id/cenaPP"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp" />
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/textView3"
+        android:id="@+id/cenaCelk"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
@@ -39,6 +39,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/packetDetailList"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/cenaND"
         android:layout_marginTop="16dp" />
 </RelativeLayout>

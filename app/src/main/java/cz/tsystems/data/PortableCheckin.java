@@ -247,9 +247,12 @@ public class PortableCheckin extends Application {
 			return;
 		final String brandId = user.brand_id;
 		checkin = new DMCheckin();
+        checkin.checkin_id = null;
 		checkin.brand_id = brandId;
         selectedBrand = this.getBrand(brandId);
         selectedScenar = this.getScenarForId(selectedBrand.check_scenario_id_def);
+        selectedSilhouette = null;
+        serviceList.clear();
         checkin.check_scenario_id = selectedScenar.check_scenario_id;
         checkin.fuel_id = 1;
         setSelectedBrand(brandId);
@@ -455,8 +458,8 @@ public class PortableCheckin extends Application {
 	public void loadSilhouette() {
 		
 		Log.v(TAG, "loadSilhouette()");
-		if(selectedSilhouette == null)
-			selectedSilhouette = new DMSilhouette();
+        if(selectedSilhouette == null)
+		    selectedSilhouette = new DMSilhouette();
 		
 		if(checkin.silhouette_id > 0) {
 			this.loadSilhouetteData(checkin.silhouette_id);
@@ -501,7 +504,7 @@ public class PortableCheckin extends Application {
             offers = parseJsonArray(jsonOffers, DMOffers.class);
         }
         else
-            checkin.workshop_pakets = null;
+            offers = this.getOffers(checkin.brand_id);
     }
 
 	public DMSilhouette getSilhouette() {
@@ -513,7 +516,7 @@ public class PortableCheckin extends Application {
 	}
 
     public void loadUnits() {
-        if(checkin.checkin_id > 0) {
+        if(checkin.checkin_id != null) {
             ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
             txtBadge.setVisibility(View.INVISIBLE);
@@ -570,8 +573,9 @@ public class PortableCheckin extends Application {
     public void setUnits(JsonNode unitNode) {
         if(unitList != null)
             unitList.clear();
+        PrehliadkyModel pm = new PrehliadkyModel(this);
+        prehliadkyMasters = pm.getPrehliadky();
         if(!unitNode.isMissingNode()) {
-            PrehliadkyModel pm = new PrehliadkyModel(this);
             List<DMUnit> units = parseJsonArray(unitNode, DMUnit.class);
             List<DMPrehliadkyMaster> prehliadkyMasters = pm.getPrehliadky();
 
@@ -588,7 +592,6 @@ public class PortableCheckin extends Application {
             }
 
         } else {
-            PrehliadkyModel pm = new PrehliadkyModel(this);
             UnitsModel um = new UnitsModel(this);
             this.prehliadkyMasters = pm.getPrehliadky();
             setUnitList(um.loadUnits(this.prehliadkyMasters));

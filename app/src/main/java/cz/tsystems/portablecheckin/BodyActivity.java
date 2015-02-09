@@ -31,7 +31,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,6 +47,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 public class BodyActivity extends BaseFragment {
 	final String TAG = "BodyActivity";
@@ -56,6 +59,8 @@ public class BodyActivity extends BaseFragment {
 	Button selectedPoint, btnSiluets;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
     com.gc.materialdesign.views.Switch chkPointType;
+    ImageView imgPreview;
+    View rootView;
     boolean isTakeImage;
 
 	private OnClickListener btnPhotoClickLisener = new OnClickListener() {
@@ -151,7 +156,7 @@ public class BodyActivity extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		app = (PortableCheckin)getActivity().getApplicationContext();
-		View rootView = inflater.inflate(R.layout.activity_body, container, false);
+		rootView = inflater.inflate(R.layout.activity_body, container, false);
 		
 //		View layout = rootView.findViewById(R.id.llRootLayout);
 		values1 = (RelativeLayout) rootView.findViewById(R.id.rlTopControls);
@@ -190,6 +195,7 @@ public class BodyActivity extends BaseFragment {
                 startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
             }
         });
+
 		return rootView;
 	}
 	
@@ -221,6 +227,7 @@ public class BodyActivity extends BaseFragment {
 	
 	public void changeSiluet() {
 		final short checkedRadioButton = (short) getRbtnSilueteIndex();
+//        removePhotosAsyncTasks();
 
 		imageLayout.removeAllViews();
 		imgView.setImageBitmap(app.getSilhouette().getImage(checkedRadioButton));
@@ -232,6 +239,20 @@ public class BodyActivity extends BaseFragment {
 			addImageView(photoPath);
 
 	}
+
+    private void removePhotosAsyncTasks() {
+        for( int i = 0; i < imageLayout.getChildCount(); i++) {
+            final Object child = imageLayout.getChildAt(i);
+            if(child.getClass().equals(ProgressBar.class)) {
+                final ProgressBar progressBar = (ProgressBar) child;
+                ImageOperations imageOperations = (ImageOperations) progressBar.getTag();
+                if(imageOperations != null && !imageOperations.isCancelled())
+                    imageOperations.cancel(true);
+            }
+        }
+    }
+
+
 	@Override
 	public void showData(Intent intent)
 	{
@@ -306,6 +327,9 @@ public class BodyActivity extends BaseFragment {
         if(getActivity() == null)
             return;
 
+        if(!app.getSilhouette().getPhotoNames(getRbtnSilueteIndex()).contains(thefileName))
+            return;
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.setMargins(0, 5, 0, 0);
 
@@ -325,9 +349,14 @@ public class BodyActivity extends BaseFragment {
                 parent.removeView(progressView);
             }
 
+
             View imgView = new View(getActivity());
+            imgView.setId(View.generateViewId());
             imgView.setTag(thefileName);
             imgView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
+
+            registerForContextMenu(imgView);
+
             if (index != -1) {
                 imageLayout.addView(imgView, index, params);
             } else
@@ -385,7 +414,7 @@ public class BodyActivity extends BaseFragment {
 
             imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), m, true);
             FileOutputStream out = new FileOutputStream(path);
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             exif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
             exif.saveAttributes();
         }
@@ -411,10 +440,52 @@ public class BodyActivity extends BaseFragment {
             imageLayout.addView(progressBar);
 
             File myDir = getActivity().getDir("thumbnails", Context.MODE_PRIVATE);
-            new ImageOperations().execute(mCurrentPhotoPath.replaceFirst("file:", ""), myDir.getAbsolutePath());
+            ImageOperations io = new ImageOperations();
+            io.execute(mCurrentPhotoPath.replaceFirst("file:", ""), myDir.getAbsolutePath());
+//            progressBar.setTag(io);
 
 	    }
 	}
+
+    public void deleteImage(int id){
+        View imageView = imageLayout.findViewById(id);
+        String imageName = (String)imageView.getTag();
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File checkinPhotoDir = new File(storageDir, "CheckInPhotos");
+        File imgFile = new File(checkinPhotoDir, imageName);
+        if(imgFile.exists()) {
+            app.getSilhouette().getPhotoNames(getRbtnSilueteIndex()).remove(imageName);
+            imgFile.delete();
+            ((ViewGroup)imageView.getParent()).removeView(imageView);
+        }
+    }
+    public void showImage(int id){
+        View imageView = imageLayout.findViewById(id);
+        String imageName = (String)imageView.getTag();
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File checkinPhotoDir = new File(storageDir, "CheckInPhotos");
+        File imgFile = new File(checkinPhotoDir, imageName);
+        if(imgFile.exists()) {
+            if(imgPreview != null)
+                ((ViewGroup) rootView.getParent()).removeView(imgPreview);
+
+            imgPreview = new ImageView(getActivity());
+            ((ViewGroup) rootView.getParent()).addView(imgPreview, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+            imgPreview.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    v.setVisibility(View.GONE);
+//                        v.invalidate();
+//                        ((ViewGroup)rootView.getParent()).removeView(v);
+                    return false;
+                }
+            });
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            imgPreview.setImageBitmap(bitmap);
+        }
+    }
 
 
     private class ImageOperations extends AsyncTask<String, Void, String> {

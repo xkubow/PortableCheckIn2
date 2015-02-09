@@ -21,7 +21,7 @@ public class DMPrehliadkyMaster {
     public int unitId = -1;
     public int groupNr = -1;
     public boolean mandatory = false;
-    public boolean opened = false;
+    public boolean opened;
     public int type;
     public int viewType;
 
@@ -34,16 +34,18 @@ public class DMPrehliadkyMaster {
 
     public DMPrehliadkyMaster( int newRowId, String newText, int newTheId, boolean newMandatory, int newTyp) {
 
-        sectionCaption = null;
-        rowId = newRowId;
-        text = newText;
-        mandatory = newMandatory;
-        type = newTyp;
-        viewType = eNOSECTION;
-        if(type == eUNIT)
-            unitId = newTheId;
-        else if(type == ePAKETY)
-            groupNr = newTheId;
+        this.sectionCaption = null;
+        final boolean isCheckin = (PortableCheckin.checkin.checkin_id != null && PortableCheckin.checkin.checkin_id > 0);
+        this.opened = isCheckin;
+        this.rowId = newRowId;
+        this.text = newText;
+        this.mandatory = newMandatory;
+        this.type = newTyp;
+        this.viewType = eNOSECTION;
+        if(this.type == eUNIT)
+            this.unitId = newTheId;
+        else if(this.type == ePAKETY)
+            this.groupNr = newTheId;
     }
 
 }

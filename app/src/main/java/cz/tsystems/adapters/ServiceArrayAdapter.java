@@ -206,15 +206,18 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
                 vh.txtService.setText(service.text.toString());
             else
                 vh.txtService.setText("");
-        } else
+        } else {
+            vh.txtPC.setHint("");
             vh.lblService.setText(service.text);
+        }
         ////////////////////
         vh.checkBox.setChecked(service.checked);
         if (service.sell_price != null) {
             vh.txtPC.setVisibility(View.VISIBLE);
             vh.txtPC.setText(String.valueOf(service.sell_price));
-        }else
+        }else {
             vh.txtPC.setText("");
+        }
 
         return v;
     }

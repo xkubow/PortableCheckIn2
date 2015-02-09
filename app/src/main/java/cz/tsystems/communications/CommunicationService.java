@@ -63,6 +63,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
 import cz.tsystems.base.MyPropertyNameStrategy;
+import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.DMServiceFree;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.data.SQLiteDBProvider;
@@ -393,7 +394,7 @@ public class CommunicationService extends IntentService {
 
 
             for(short i=0; i< 5; i++) {
-                final int imageIndex = i+1;
+                int imageIndex = 0;
                 List<String> images = PortableCheckin.selectedSilhouette.getPhotoNames(i);
                 for (String imageFileName : images) {
 
@@ -407,8 +408,8 @@ public class CommunicationService extends IntentService {
                     int bytesAvailable = fileInputStream.available();
 
                     dos.writeBytes(twoHyphens + boundary + lineEnd +
-                            "OBR_ENUM: " + String.valueOf(imageIndex) + lineEnd +
-                            "OBR_SORT_IDX: " + String.valueOf(imageIndex) + lineEnd +
+                            "OBR_ENUM: " + String.valueOf(i+1) + lineEnd +
+                            "OBR_SORT_IDX: " + String.valueOf(imageIndex++) + lineEnd +
                             "Content-Type: image/jpg" + lineEnd +
                             "Content-Length: " + String.valueOf(file.length()) + lineEnd +
                             "Content-Disposition: attachment; filename=" + imageFileName + lineEnd +
@@ -436,14 +437,6 @@ public class CommunicationService extends IntentService {
             if(fileInputStream != null)
                 fileInputStream.close();
             dos.close();
-
-            if(PortableCheckin.selectedSilhouette.getPhotosCount() == 0) {
-                Intent i = new Intent();
-                i.putExtra("requestData", data);
-                i.putExtra("loadDataDone", loadDataDone);
-                sendBroadcast(i);
-                return;
-            }
 
             response = conn.getResponseMessage();
             Log.i("Response",response);
@@ -558,12 +551,10 @@ public class CommunicationService extends IntentService {
 			}
 		}
         catch (HttpHostConnectException e) {
-            sendErrorMsg(e.getLocalizedMessage() );
             e.printStackTrace();
             sendErrorMsg(e.getLocalizedMessage());
         }
         catch (Exception e) {
-			sendErrorMsg(e.getLocalizedMessage() );
 			e.printStackTrace();
             sendErrorMsg(e.getLocalizedMessage());
 		}
@@ -695,6 +686,7 @@ public class CommunicationService extends IntentService {
                 && response.length()>0) {
             JsonNode root = mapper.readTree(response);
             PortableCheckin.deletePackets();
+            app.checkin = new DMCheckin();
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
             app.setZakInfo(root.path("BUSINESS_PARTNER_INFO"));
             app.setVozHistory(root.path("VEHICLE_HISTORY"));
@@ -702,6 +694,10 @@ public class CommunicationService extends IntentService {
             app.setOdlozenePolozky(root.path("DEFERRED_SERVICE_DEMANDS"));
             app.setSDA(root.path("RECALLS"));
             app.setCheckin(root.path("CHECKIN"));
+            app.selectedSilhouette = null;
+            app.prehliadkyMasters = null;
+            app.offers = null;
+            app.serviceList.clear();
             app.setSelectedScenar(app.checkin.check_scenario_id);
             app.loadSilhouette();
             app.getSilhouette().setPointsFromJson(root.path("DAMAGE_POINTS"));

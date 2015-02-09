@@ -46,9 +46,9 @@ public class DMCheckin {
     public String colour_description;
     public String customer_label;
     public Date sended;
-    public int checkin_id;
-    public int checkin_number;
-    public int customer_category_id;
+    public Integer checkin_id;
+    public Integer checkin_number;
+    public Integer customer_category_id;
     public String customer_city;
     public String customer_zip;
     public String customer_address;

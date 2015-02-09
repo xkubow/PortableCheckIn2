@@ -1,14 +1,13 @@
 package cz.tsystems.base;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.DMBrand;
-import cz.tsystems.data.DMCheckin;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.grids.BaseGridActivity;
-import cz.tsystems.grids.History;
 import cz.tsystems.portablecheckin.*;
 
 import android.annotation.TargetApi;
@@ -16,6 +15,7 @@ import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,24 +25,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Bundle;
+import android.os.*;
 //import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentActivity;
 //import android.support.v4.app.FragmentManager;
 //import android.support.v4.content.LocalBroadcastManager;
-import android.os.Handler;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.Time;
-import android.util.AttributeSet;
-import android.view.InflateException;
-import android.view.KeyEvent;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,12 +45,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.widget.Toast;
 
 public class FragmentPagerActivity extends Activity implements TabListener {
 
@@ -66,7 +55,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     public static int eGRID_RESULT = 2;
 	private Time stopTime;
 	private BaseFragment theFragment;
-    private Boolean checkLogin = true;
+    private Boolean checkLogin = true, newCheckin = false;
 	FragmentManager fm;
 	PortableCheckin app;
 	List<Fragment> theFragments = new ArrayList<Fragment>(4);
@@ -100,7 +89,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
             if (b != null && b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
 
-//                if(PortableCheckin.selectedSilhouette.getPhotosCount() > 0) {
+                if(PortableCheckin.selectedSilhouette.getPhotosCount() > 0) {
                     Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
                     msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
                     msgIntent.putExtra("ACTIONURL", "pchi/SavePhotos/");
@@ -109,10 +98,16 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                     app.showProgrssDialog(FragmentPagerActivity.this);
                     FragmentPagerActivity.this.startService(msgIntent);
                     return;
-//                } else
-//                    saveCheckingDone();
+                } else
+                    saveCheckingDone();
             } else if(b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
                     saveCheckingDone();
+            } else if (b.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
+                MenuItem button = myMenu.findItem(R.id.action_send);
+                Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+                button.setIcon(resIcon);
+                ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
+                tab.getCustomView().findViewById(R.id.tab_badge).setVisibility((PortableCheckin.checkin.checkin_id != null)?View.INVISIBLE:View.VISIBLE);
             }
 
 
@@ -123,7 +118,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	};
 
     private void saveCheckingDone() {
-        MenuItem button = (MenuItem) myMenu.findItem(R.id.action_send);
+        MenuItem button = myMenu.findItem(R.id.action_send);
         Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
         resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
         button.setIcon(resIcon);
@@ -210,14 +205,31 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	}
 
     public void updateFragments() {
-        theFragment = (BaseFragment) theFragments.get(0);
-        if(theFragment != null) {
-            theFragment.updateData(null);
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+        Iterator<ActivityManager.RunningAppProcessInfo> iter = runningAppProcesses.iterator();
+
+        while(iter.hasNext()){
+            ActivityManager.RunningAppProcessInfo next = iter.next();
+
+            String pricessName = getPackageName() + ":service";
+            pricessName = "cz.tsystems.communications.CommunicationService";
+
+            if(next.processName.equals(pricessName)){
+                android.os.Process.killProcess(next.pid);
+                break;
+            }
         }
+
+        MainActivity mainActivity = (MainActivity) theFragments.get(0);
+        mainActivity.isNewCheckin = true;
+        if(this.getActionBar().getSelectedTab().getPosition() == eTabVozidlo)
+            mainActivity.loadDefaultCheckIn();
+        else
+            this.getActionBar().setSelectedNavigationItem(eTabVozidlo);
     }
 	
 	public void updateData() {
-
         lblVehicleCaption.setText(app.getCheckin().vehicle_description);
         setBrand(app.getCheckin().brand_id);
         setCheckinNr();
@@ -227,6 +239,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 		if (requestCode == 2) {
 			if (resultCode == RESULT_OK) {
+                if(data.getExtras() == null)
+                    return;
 
 				switch (data.getExtras().getInt("type")) {
 				case BaseGridActivity.eGRDPLANZAK:
@@ -261,7 +275,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         else
             lblLoggetUser.setText(poradce + ": ");
 
-        if(app.getCheckin().checkin_number <= 0)
+        if(app.getCheckin().checkin_number == null)
             lblCheckinNR.setText("");
 
         if(checkLogin) {
@@ -338,11 +352,19 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         menu.findItem(R.id.action_send).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                app.showProgrssDialog(FragmentPagerActivity.this);
-                Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
-                msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
-                msgIntent.putExtra("ACTION", "SaveCheckin");
-                startService(msgIntent);
+                boolean doSave = true;
+                doSave &= getActionBar().getTabAt(eTabVozidlo).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+                doSave &= getActionBar().getTabAt(eTabService).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+                doSave &= getActionBar().getTabAt(eTabNabidka).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+
+                if(doSave) {
+                    app.showProgrssDialog(FragmentPagerActivity.this);
+                    Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+                    msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
+                    msgIntent.putExtra("ACTION", "SaveCheckin");
+                    startService(msgIntent);
+                }
+
                 return false;
             }
         });
@@ -362,7 +384,11 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     	transaction.replace(R.id.TheFragment, f);
 //    	transaction.addToBackStack(null); //nechcem fungujuce Back tlacitko
 
-	   	transaction.commit();			    
+	   	transaction.commit();
+
+        if(pos == eTabNabidka) {
+            tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+        }
 	}
 
 	@Override
@@ -412,7 +438,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     public void setBrand(final String brandId) {
         if(brandId != null && brandId.length() > 0) {
             btnBrand.setEnabled(false);
-            if(app.getCheckin().checkin_id > 0)
+            if(app.getCheckin().checkin_id != null)
                 app.selectedBrand = app.getBrand(app.getCheckin().brand_id); // vybavy aj servisi uz existuju zo serveru
             else
                 app.setSelectedBrand(brandId); // nastavuju sa aj vybavy aj servisi
@@ -423,7 +449,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     }
 
     public void setCheckinNr() {
-        if(app.getCheckin().checkin_number > 0) {
+        if(app.getCheckin().checkin_number != null && app.getCheckin().checkin_number > 0) {
             final String planZakPrefix = getResources().getString(R.string.CisloCheckinu);
             final Spanned theNR = Html.fromHtml(planZakPrefix + ": <b>"+String.valueOf(app.getCheckin().checkin_number)+"</b>");
             lblCheckinNR.setText(theNR);
@@ -438,9 +464,25 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     }
 
     private void updateServiceFragment() {
-        ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(2);
+        ServiceActivity serviceFragment = (ServiceActivity) theFragments.get(eTabService);
         serviceFragment.refreshMaster();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Context Menu");
+        menu.add(0, v.getId(), 0, getResources().getString(R.string.Smazat_foto));
+        menu.add(0, v.getId(), 1, getResources().getString(R.string.Nahled));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        BodyActivity bodyActivity = (BodyActivity) theFragments.get(eTabPoskodenie);
+        if(item.getOrder() == 0){bodyActivity.deleteImage(item.getItemId());}
+        else if(item.getOrder() == 1){bodyActivity.showImage(item.getItemId());}
+        else {return false;}
+        return true;
+    }
 
 }

@@ -60,6 +60,7 @@ public class MainActivity extends BaseFragment {
 	 * The fragment argument representing the section number for this fragment.
 	 */
 	public static final String ARG_SECTION_NUMBER = "section_number";
+    public boolean isNewCheckin = false;
 	final String TAG = MainActivity.class.getSimpleName();	
 	private RelativeLayout values1, values2;
 	private DatePicker theDatePicker;
@@ -90,7 +91,7 @@ public class MainActivity extends BaseFragment {
                 else if(txtVozPristavil == et)
                     app.getCheckin().driver_name_surn = et.getText().toString();
                 else if(txtStavTachometru == et)
-                    app.getCheckin().odometer = Double.valueOf(et.getText().toString());
+                    app.getCheckin().odometer = (et.getText().length()>0)?Double.valueOf(et.getText().toString()):null;
                 else if(txtSTKDate == et)
                     app.getCheckin().ti_valid_until =  sdfrom.parse(et.getText().toString());
                 else if(txtEmiseDate == et)
@@ -117,6 +118,10 @@ public class MainActivity extends BaseFragment {
 
         @Override
         public void afterTextChanged(Editable s) {
+
+            if(getActivity() == null)
+                return;
+
             int povinneNevyplnene = 0;
             povinneNevyplnene += (txtRZV.length() > 0)?1:0;
             povinneNevyplnene += (txtVIN.length() > 0)?1:0;
@@ -127,7 +132,9 @@ public class MainActivity extends BaseFragment {
 
             ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
             TextView textView = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+
             textView.setText(String.valueOf(povinneNevyplnene) + "/6");
+            textView.setVisibility((povinneNevyplnene == 6)?View.INVISIBLE:View.VISIBLE);
         }
     };
 
@@ -419,9 +426,20 @@ public class MainActivity extends BaseFragment {
 	public void onStart() {
 		super.onStart();
         getActivity().getActionBar().setTitle(R.string.Informace_o_Vozidle);
+        if(isNewCheckin)
+            loadDefaultCheckIn();
 	}
-	
-	private void setClickLiseners() {
+
+    public void loadDefaultCheckIn() {
+        try {
+            isNewCheckin = false;
+            populateView();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setClickLiseners() {
 		btnSPZ.setOnClickListener(theButtonClickLisener);
 		btnSTK.setOnClickListener(theButtonClickLisener);
 		btnEmise.setOnClickListener(theButtonClickLisener);	

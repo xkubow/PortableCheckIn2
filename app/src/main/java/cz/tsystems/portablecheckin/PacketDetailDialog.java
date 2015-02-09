@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import cz.tsystems.adapters.PacketDetailArrayAdapter;
 import cz.tsystems.adapters.PacketsArrayAdapter;
 import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMPacketDetail;
+import cz.tsystems.data.PortableCheckin;
 
 /**
  * Created by kubisj on 29.1.2015.
@@ -36,13 +38,15 @@ public class PacketDetailDialog extends Dialog{
         packetDetailList = packetDetails;
         LayoutInflater li = LayoutInflater.from(context);
         View view = li.inflate(R.layout.activity_packet_info, null);
-        double cenaCelk=0.0, cenaPraca=0.0, cenaDiely=0.0;
-
-        for(DMPacketDetail paket : packetDetails) {
-            cenaCelk += paket.sell_price;
-        }
-
         packetDetailArrayAdapter = new PacketDetailArrayAdapter(getContext(), packetDetailList);
+
+        TextView cena = (TextView) view.findViewById(R.id.cenaND);
+        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaND) + " " + PortableCheckin.setting.currency_abbrev);
+        cena = (TextView) view.findViewById(R.id.cenaPP);
+        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaPP) + " " + PortableCheckin.setting.currency_abbrev);
+        cena = (TextView) view.findViewById(R.id.cenaCelk);
+        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaCelek) + " " + PortableCheckin.setting.currency_abbrev);
+
         listView = (ListView) view.findViewById(R.id.packetDetailList);
         listView.setAdapter(packetDetailArrayAdapter);
 
