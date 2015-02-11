@@ -38,6 +38,12 @@
         android:title="@string/Informace_o_zakaznikovi"
         />
     <item
+        android:id="@+id/action_Setting"
+        android:orderInCategory="6"
+        android:showAsAction="never"
+        android:title="@string/action_settings"
+        />
+    <item
         android:id="@+id/action_note_add"
         android:orderInCategory="100"
         android:showAsAction="always"
@@ -55,5 +61,10 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_content_paste_white_36dp"
         />
+    <item android:id="@+id/search"
+        android:title="@string/search_packets"
+        android:icon="@drawable/ic_search_white_36dp"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:actionViewClass="android.widget.SearchView" />
 
 </menu>

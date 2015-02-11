@@ -516,12 +516,12 @@ public class PortableCheckin extends Application {
 	}
 
     public void loadUnits() {
-        if(checkin.checkin_id != null) {
-            ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
-            TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-            txtBadge.setVisibility(View.INVISIBLE);
-            return;
-        }
+//        if(checkin.checkin_id != null && ) {
+//            ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
+//            TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+//            txtBadge.setVisibility(View.INVISIBLE);
+//            return;
+//        }
 
         PrehliadkyModel pm = new PrehliadkyModel(this);
         UnitsModel um = new UnitsModel(this);
@@ -530,7 +530,6 @@ public class PortableCheckin extends Application {
         if(this.getActualActivity() != null) {
             ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
-            txtBadge.setVisibility(View.VISIBLE);
             txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
         }
     }

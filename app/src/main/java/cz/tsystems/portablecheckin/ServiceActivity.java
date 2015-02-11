@@ -130,12 +130,17 @@ public class ServiceActivity extends BaseFragment {
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
             String[] badgeStr = txtBadge.getText().toString().split("/");
 
-            if(txtBadge.getVisibility() == View.VISIBLE && badgeStr[0].equalsIgnoreCase(badgeStr[1]))
-                txtBadge.setVisibility(View.INVISIBLE);
-            else if(prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
-                int openedCount = Integer.valueOf(badgeStr[0]) + 1;
-                txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
+
+            if(txtBadge.getVisibility() == View.VISIBLE ) {
+                if (prehliadkyMaster.mandatory && !prehliadkyMaster.opened) {
+                    int openedCount = Integer.valueOf(badgeStr[0]) + 1;
+                    txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
+                }
+
+                if (badgeStr[0].equalsIgnoreCase(badgeStr[1]))
+                    txtBadge.setVisibility(View.INVISIBLE);
             }
+
             prehliadkyMaster.opened = true;
             refreshDetail(null);
         }

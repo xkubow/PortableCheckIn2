@@ -193,5 +193,13 @@
 
     <string name="Nahled">Náhled</string>
     <string name="Smazat_foto">Smazat foto</string>
+    <string name="PozadPoleNevypl">Jedno nebo více poZˇadovaných polí není vyplněno</string>
+    <string name="Subject">Předmět</string>
+    <string name="Message">Správa</string>
+    <string name="Send">Odeslat</string>
+    <string name="Mail">Odeslání protokolu E-mailem</string>
+    <string name="XyzmoURI">SIGNificant server URL</string>
+    <string name="XyzmoExterUse">Použití exetrní SIGNificant aplikace</string>
+    <string name="search_packets">Vyhledávaní paketů</string>
 
 </resources>

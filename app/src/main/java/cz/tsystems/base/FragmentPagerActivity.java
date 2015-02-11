@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.*;
 //import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentActivity;
@@ -44,8 +46,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class FragmentPagerActivity extends Activity implements TabListener {
 
@@ -103,11 +105,32 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             } else if(b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
                     saveCheckingDone();
             } else if (b.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
+
+                final boolean isCheckin = (PortableCheckin.checkin.checkin_id != null && PortableCheckin.checkin.checkin_id > 0);
+
                 MenuItem button = myMenu.findItem(R.id.action_send);
                 Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
                 button.setIcon(resIcon);
-                ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
-                tab.getCustomView().findViewById(R.id.tab_badge).setVisibility((PortableCheckin.checkin.checkin_id != null)?View.INVISIBLE:View.VISIBLE);
+
+                if(!isCheckin) {
+                    ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                    tab = getActionBar().getTabAt(eTabService);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                    tab = getActionBar().getTabAt(eTabNabidka);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                } else {
+                    ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                    tab = getActionBar().getTabAt(eTabService);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                    tab = getActionBar().getTabAt(eTabNabidka);
+                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                }
+
+
+            } else if(b.getString("ACTION").equalsIgnoreCase("XyzmoResponse")) {
+                getProtokol();
             }
 
 
@@ -301,6 +324,18 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	protected void onResume() {
+        Intent intent = getIntent();
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            Uri uri = intent.getData();
+            String workstepId = uri.getQueryParameter("WorkstepId");
+            Intent msgIntent = new Intent(this, CommunicationService.class);
+            msgIntent.putExtra("ACTIONURL", "Signing/XyzmoResponse");
+            msgIntent.putExtra("ACTION", "XyzmoResponse");
+            msgIntent.putExtra("WorkstepId", workstepId);
+            this.startService(msgIntent);
+        }
+
+
 		registerRecaiver();
 		super.onResume();
 	}
@@ -327,6 +362,12 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		return super.onOptionsItemSelected(item);
 	}
 
+    void getProtokol() {
+        checkLogin = false;
+        Intent myIntent = new Intent(FragmentPagerActivity.this, Protocol.class);
+        startActivity(myIntent);
+    }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
         myMenu = menu;
@@ -343,9 +384,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         menu.findItem(R.id.action_Protokol).setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                checkLogin = false;
-                Intent myIntent = new Intent(FragmentPagerActivity.this, Protocol.class);
-                startActivity(myIntent);
+                getProtokol();
                 return  false;
             }
         });
@@ -363,11 +402,21 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                     msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
                     msgIntent.putExtra("ACTION", "SaveCheckin");
                     startService(msgIntent);
-                }
+                } else
+                    app.getDialog(FragmentPagerActivity.this, "", getResources().getString(R.string.PozadPoleNevypl), PortableCheckin.DialogType.SINGLE_BUTTON).show();
 
                 return false;
             }
         });
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
         return super.onCreateOptionsMenu(menu);
 	}
 

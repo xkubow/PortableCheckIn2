@@ -4,6 +4,8 @@ import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.grids.History;
 import cz.tsystems.grids.VozidloInfo;
 import cz.tsystems.grids.ZakaznikInfo;
+import cz.tsystems.portablecheckin.R;
+import cz.tsystems.portablecheckin.SettingAppDialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,10 +33,19 @@ public final class BaseMenu extends Object {
 				break;
 			case 5:
 				showZkaznikInfo(activity);
-				break;				
+				break;
+            case 6:
+                showSetting(activity);
+                break;
 			default:
 		}
 	}
+
+    private static void showSetting(Activity activity) {
+        SettingAppDialog settingAppDialog = new SettingAppDialog(activity);
+        settingAppDialog.setTitle(activity.getResources().getString(R.string.action_settings));
+        settingAppDialog.show();
+    }
 
     private static void setDefaultValues(Context context) {
         PortableCheckin app = (PortableCheckin)context;

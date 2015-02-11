@@ -1,26 +1,41 @@
 package cz.tsystems.portablecheckin;
+/**
+// significant://workstep?WorkstepId=<WorkstepId>&server=<server>&protocol=<http|https>&port=<port>&path=<path>
+// "<http|https>://<server>:<port>/<path>/WorkstepController.Process.asmx" is the link to the Workstep Controller Process web service
+// example: http://beta2.testlab.xyzmo.com:57003/WorkstepController.Process.asmx
+// This web service should be reachable from the Android device
+// Example of a Workstep Link created on the xyzmo beta2 testlab server:
+// http://launch.xyzmo.com/SignificantAndroidAppLauncher.aspx?WorkstepId=3BFACA02133062BA56C8B6B76D8DC6919F0206C73BE2928762CFFDDA3F830BA1C5F38E7F9414ABA0BF530531AEF8BF31&server=beta2.testlab.xyzmo.com&port=57003&protocol=http
+**/
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.Serializable;
 
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.PortableCheckin;
@@ -34,17 +49,20 @@ public class Protocol extends Activity implements View.OnTouchListener {
     PortableCheckin app;
     ProgressBar progressBar;
     Bitmap protokol_bmp;
+    String fileNamePDF;
 
     @SuppressWarnings("unused")
     private static final float MIN_ZOOM = 1f,MAX_ZOOM = 1f;
 
     // These matrices will be used to scale points of the image
     Matrix matrix = new Matrix();
+    Matrix imgMatrix = new Matrix();
     Matrix savedMatrix = new Matrix();
 
     private float dx; // postTranslate X distance
     private float dy; // postTranslate Y distance
     private float[] matrixValues = new float[9];
+    private float[] theMatrix = new float[9];
     float matrixX = 0; // X coordinate of matrix inside the ImageView
     float matrixY = 0; // Y coordinate of matrix inside the ImageView
     float width = 0; // width of drawable
@@ -61,6 +79,8 @@ public class Protocol extends Activity implements View.OnTouchListener {
     PointF start = new PointF();
     PointF mid = new PointF();
     float oldDist = 1f;
+    float endY, endX;
+    String workstepId;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -70,10 +90,12 @@ public class Protocol extends Activity implements View.OnTouchListener {
                 final Bundle b = intent.getBundleExtra("requestData");
                 if(b != null && b.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
                     Protocol.this.setProtocolImg(intent.getStringExtra("pdfFileName"));
-                } else if(b != null && b.getString("ACTION").equalsIgnoreCase("ChiReport")) {
                     requestReportPDF();
-                    Protocol.this.progressBar.setVisibility(View.GONE);
-                    final String tmpFileName = intent.getStringExtra("pdfFileName");
+                } else if(b != null && b.getString("ACTION").equalsIgnoreCase("ChiReport")) {
+                    fileNamePDF = intent.getStringExtra("pdfFileName");
+                } else if(b != null && b.getString("ACTION").equalsIgnoreCase("GetWorkstepId")) {
+                    workstepId = intent.getStringExtra("WorkstepId");
+                    openXyzmo();
                 }
             }
         }
@@ -153,7 +175,6 @@ public class Protocol extends Activity implements View.OnTouchListener {
         //http://stackoverflow.com/questions/3466297/how-to-display-a-part-of-an-image
         //http://stackoverflow.com/questions/15698621/how-to-scale-and-save-view-to-sdcard
         try {
-            Protocol.this.progressBar.setVisibility(View.GONE);
             FileInputStream fileInputStream = null;
 
             final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -172,6 +193,9 @@ public class Protocol extends Activity implements View.OnTouchListener {
             imgProtocol.setImageMatrix(matrix);
             base.set(0,0);
 
+            endY = findViewById(R.id.contetView).getMeasuredHeight() - imgProtocol.getDrawable().getIntrinsicHeight();
+            endX = findViewById(R.id.contetView).getMeasuredWidth() - imgProtocol.getDrawable().getIntrinsicWidth();
+            Protocol.this.progressBar.setVisibility(View.GONE);
 /*        try {
             fileInputStream = new FileInputStream(new File(filename));
             Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream);
@@ -259,16 +283,40 @@ public class Protocol extends Activity implements View.OnTouchListener {
 
                     dx = event.getX() - start.x;
                     dy = event.getY() - start.y;
+                    Log.d(TAG, "-----------------------------------------------------------------------------");
+                    Log.d(TAG, String.valueOf(dx) +","+ String.valueOf(dy));
+                    matrix.getValues(theMatrix);
 
-                    if((matrixValues[Matrix.MTRANS_X] + dx) < 0
-                            || (matrixValues[Matrix.MTRANS_X] + dx) > imgProtocol.getDrawable().getIntrinsicWidth())
+                    if((matrixValues[Matrix.MTRANS_X] + dx) < 0) {
+                        Log.d(TAG, "DX:0 <- " + dx + "+" +matrixValues[Matrix.MTRANS_X]);
+                        theMatrix[Matrix.MTRANS_X] = 0;
+                        matrix.setValues(theMatrix);
                         dx = 0;
-                    if((dy + matrixValues[Matrix.MTRANS_Y]) < -(imgProtocol.getDrawable().getIntrinsicHeight() /*- imgProtocol.getHeight()/2*/))
+                    }
+                    if((matrixValues[Matrix.MTRANS_X] + dx) > endX){//imgProtocol.getDrawable().getIntrinsicWidth()) {
+                        Log.d(TAG, "DX:0 <- " + dx + "+" +matrixValues[Matrix.MTRANS_X]);
+                        theMatrix[Matrix.MTRANS_X] = endX;
+                        matrix.setValues(theMatrix);
+                        dx = 0;
+                    }
+                    if((dy + matrixValues[Matrix.MTRANS_Y]) < endY) {//-(imgProtocol.getDrawable().getIntrinsicHeight() /*- imgProtocol.getHeight()/2*/)) {
+                        Log.d(TAG, "DY:0 <- " + dy + "+" + matrixValues[Matrix.MTRANS_Y]);
+                        theMatrix[Matrix.MTRANS_Y] = endY;
+                        matrix.setValues(theMatrix);
                         dy = 0;
-                    else if((dy + matrixValues[Matrix.MTRANS_Y]) > 0)
-                        dy = dy - matrixValues[Matrix.MTRANS_Y];
+                    }
+                    else if((dy + matrixValues[Matrix.MTRANS_Y]) > 0) {
+                        Log.d(TAG, "DY 2:0 <- " + dy + "+" + matrixValues[Matrix.MTRANS_Y]);
+                        theMatrix[Matrix.MTRANS_Y] = 0;
+                        matrix.setValues(theMatrix);
+                        dy = 0;
+                    }
+
+                    Log.d(TAG, String.valueOf(dx) + "," + String.valueOf(dy) + " : "
+                            + String.valueOf(matrixValues[Matrix.MTRANS_X]) + "," + String.valueOf(matrixValues[Matrix.MTRANS_Y]));
 
                     matrix.postTranslate(dx, dy); // create the transformation in the matrix  of points
+                    Log.d(TAG, String.valueOf(theMatrix[Matrix.MTRANS_X]) +","+ String.valueOf(theMatrix[Matrix.MTRANS_Y]) );
                 }
                 else if (mode == ZOOM)
                 {
@@ -289,7 +337,6 @@ public class Protocol extends Activity implements View.OnTouchListener {
         }
 
         view.setImageMatrix(matrix); // display the transformation on screen
-
         return true; // indicate event was handled
     }
 
@@ -349,5 +396,95 @@ public class Protocol extends Activity implements View.OnTouchListener {
 
         sb.append("]");
         Log.d("Touch Events ---------", sb.toString());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.protocol_menu, menu);
+        menu.findItem(R.id.actin_share).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                sharePDF();
+                return false;
+            }
+        });
+        menu.findItem(R.id.actin_mail).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent myIntent = new Intent(Protocol.this, MailActivity.class);
+                startActivity(myIntent);
+                return false;
+            }
+        });
+        menu.findItem(R.id.actin_sign).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                getWorkstepId();
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    void sharePDF() {
+        File file = new File(fileNamePDF);
+
+        if (file.exists()) {
+            Uri path = Uri.fromFile(file);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(path, "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(Protocol.this,
+                        "No Application Available to View PDF",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void getWorkstepId() {
+        Intent msgIntent = new Intent(this, CommunicationService.class);
+        msgIntent.putExtra("ACTIONURL", "Signing/getWorkstepId");
+        msgIntent.putExtra("ACTION", "GetWorkstepId");
+        msgIntent.putExtra("checkinid", app.getCheckin().checkin_id);
+        this.startService(msgIntent);
+    }
+
+    void nastavPodpisovanie() {
+        final SettingAppDialog settingAppDialog = new SettingAppDialog(this);
+        settingAppDialog.setTitle(this.getResources().getString(R.string.action_settings));
+        settingAppDialog.show();
+        settingAppDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                settingAppDialog.setSharetPreferences();
+                openXyzmo();
+            }
+        });
+    }
+
+    void openXyzmo() {
+        Log.d(TAG, workstepId);
+        SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+        String xyzmoUriStr = sp.getString("XyzmoURI",null);
+//                    if(BuildConfig.DEBUG)
+//                        xyzmoUriStr = "https://sign01.xyzmo.designplus.cz:47003";
+        if(xyzmoUriStr == null) {
+            nastavPodpisovanie();
+            return;
+        }
+        Uri uri = Uri.parse(xyzmoUriStr);
+        xyzmoUriStr = "significant://workstep?" + //"http://launch.xyzmo.com/SignificantAndroidAppLauncher.aspx?" +
+                "WorkstepId=" + workstepId +//7722DBC1986DF5A22D63BEF578FFFE7B122FD0A50DA5030B18001E26F676B85F1A9988007265309474F1B936DDA0D6DE" +
+                "&server="+uri.getHost() +//beta2.testlab.xyzmo.com" +
+                "&port="+String.valueOf(uri.getPort())+
+                "&protocol="+uri.getScheme();
+        uri = Uri.parse(xyzmoUriStr);
+        Intent signIntent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(signIntent);
     }
 }

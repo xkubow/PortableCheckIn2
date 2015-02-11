@@ -657,6 +657,7 @@ public class CommunicationService extends IntentService {
             tempFile = File.createTempFile("protokol", "png");
         } else if (data.getString("ACTION").equalsIgnoreCase("ChiReport")) {
             tempFile = File.createTempFile("protokol", "pdf");
+            tempFile.setReadable(true,false);
             Log.v(TAG, String.format("ChiReport DONE :%d", loadDataDone));
         }
         FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
@@ -737,6 +738,12 @@ public class CommunicationService extends IntentService {
 
         } else if(data.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
             Log.d(TAG, "Photos has been saved");
+        } else if(data.getString("ACTION").equalsIgnoreCase("GetWorkstepId")) {
+            JsonNode result = mapper.readTree(response);
+            i.putExtra("WorkstepId", result.path("WorkstepId").textValue());
+            Log.d(TAG, "got workstepId :" + response);
+        } else if(data.getString("ACTION").equalsIgnoreCase("XyzmoResponse")) {
+            Log.d(TAG, "Signing sinchronized");
         }
 
 		i.putExtra("requestData", data);
