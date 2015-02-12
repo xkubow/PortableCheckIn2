@@ -38,6 +38,7 @@ import android.os.*;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -53,6 +55,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 //	ViewPager mViewPager;
 //	SectionsPagerAdapter mSectionsPagerAdapter;
+    final String TAG = FragmentPagerActivity.class.getSimpleName();
     public static final int eTabVozidlo = 0, eTabPoskodenie = 1, eTabService = 2, eTabNabidka = 3;
     public static int eGRID_RESULT = 2;
 	private Time stopTime;
@@ -369,7 +372,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     }
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
         myMenu = menu;
 		getMenuInflater().inflate(R.menu.themenu, menu);
         menu.findItem(R.id.action_note_add).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -412,10 +415,46 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
+        final SearchView searchView =
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ServiceActivity serviceActivity = (ServiceActivity) theFragments.get(eTabService);
+                serviceActivity.packetQuery = query;
+                if(getActionBar().getSelectedTab().getPosition() == eTabService)
+                    serviceActivity.filterPackets(query);
+                else {
+                    getActionBar().setSelectedNavigationItem(eTabService);
+                }
+
+                menu.findItem(R.id.search).collapseActionView();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return false;
+            }
+        });
 
         return super.onCreateOptionsMenu(menu);
 	}
@@ -443,6 +482,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 	}
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search your data somehow
+        }
+    }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     protected void setBrandImage()

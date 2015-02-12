@@ -26,6 +26,7 @@ import java.util.List;
 public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> implements PinnedSectionListView.PinnedSectionListAdapter{
     private Context context;
     ServiceActivity serviceActivity;
+    int allPacketsPos;
 
 	public PrehliadkyArrayAdapter(Fragment owner, Context context, int resource, int textViewResourceId, List<DMPrehliadkyMaster> objects) {
         super(context, resource, textViewResourceId);// objects);
@@ -33,6 +34,10 @@ public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> imp
         this.serviceActivity = (ServiceActivity) owner;
         setObjets(objects);
 	}
+
+    public final int getAllPacketsPos() {
+        return allPacketsPos;
+    }
 
     @Override public int getViewTypeCount() {
         return 2;
@@ -93,6 +98,7 @@ public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> imp
         int listPosition = 0;
         int sectionPosition = 0;
         int lastType = -1;
+        allPacketsPos = -1;
         String[] prehliadkaCaptions = context.getResources().getStringArray(R.array.Prehliadka);
         for (DMPrehliadkyMaster item : objects) {
             if(item.type != lastType) {
@@ -102,6 +108,9 @@ public class PrehliadkyArrayAdapter extends ArrayAdapter<DMPrehliadkyMaster> imp
                 section.listPosition = listPosition++;
                 add(section);
             }
+            if(item.type == DMPrehliadkyMaster.ePAKETY && item.groupNr == -1)
+                allPacketsPos = listPosition;
+
             item.listPosition = listPosition++;
             item.sectionPosition = sectionPosition;
             add(item);

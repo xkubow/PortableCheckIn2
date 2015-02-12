@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,6 +45,8 @@ public class ServiceActivity extends BaseFragment {
     private ServiceArrayAdapter serviceAdapter;
     private PacketsArrayAdapter paketArrayAdapter;
     private PortableCheckin app;
+    public String packetQuery;
+    private boolean doFilter = false;
 	
 //    private static View rootView;
     public ListView listMaster, listDetail;
@@ -123,7 +126,8 @@ public class ServiceActivity extends BaseFragment {
     public void masterClicked(View view, int position) {
         DMPrehliadkyMaster prehliadkyMaster = (DMPrehliadkyMaster) listMaster.getAdapter().getItem(position);//masterList.get(position);
         if(prehliadkyMaster.type != DMPrehliadkyMaster.eSECTION) {
-            ((CheckBox)view.findViewById(R.id.chkPrehliadky)).setChecked(true);
+            if(view != null)
+                ((CheckBox)view.findViewById(R.id.chkPrehliadky)).setChecked(true);
             ServiceActivity.this.selectedPrehliadky = prehliadkyMaster;
 
             ActionBar.Tab tab = getActivity().getActionBar().getSelectedTab();
@@ -201,7 +205,6 @@ public class ServiceActivity extends BaseFragment {
             listDetail.setAdapter(paketArrayAdapter);
         }
     }
-
     
 	@Override
 	public void updateData(Intent intent) {
@@ -230,4 +233,21 @@ public class ServiceActivity extends BaseFragment {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public void filterPackets(final String query) {
+        int pos = -1;
+
+        if(selectedPrehliadky == null || selectedPrehliadky.type != DMPrehliadkyMaster.ePAKETY && selectedPrehliadky.groupNr != -1) {
+            pos = prehliadkyAdapter.getAllPacketsPos();
+//            selectedPrehliadky = prehliadkyAdapter.getItem(pos);
+            doFilter = true;
+            listMaster.smoothScrollToPosition(pos);
+//            listMaster.setSelection(pos);
+//            listMaster.getChildAt(pos).setSelected(true);
+            masterClicked(null, pos);
+        }
+
+
+        paketArrayAdapter.getFilter().filter(query);
+    }
 }

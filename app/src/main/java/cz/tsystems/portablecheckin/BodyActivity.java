@@ -50,7 +50,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 public class BodyActivity extends BaseFragment {
-	final String TAG = "BodyActivity";
+    final String TAG = BodyActivity.class.getSimpleName();
 	PortableCheckin app;
 	RelativeLayout values1, pointsLayout;
 	RadioGroup rbtnSilouettes;
