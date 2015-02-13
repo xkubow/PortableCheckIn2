@@ -1,5 +1,6 @@
 package cz.tsystems.portablecheckin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.adapters.PacketsArrayAdapter;
@@ -46,7 +47,6 @@ public class ServiceActivity extends BaseFragment {
     private PacketsArrayAdapter paketArrayAdapter;
     private PortableCheckin app;
     public String packetQuery;
-    private boolean doFilter = false;
 	
 //    private static View rootView;
     public ListView listMaster, listDetail;
@@ -158,6 +158,9 @@ public class ServiceActivity extends BaseFragment {
     @Override
     public void onResume() {
     	refreshMaster();
+        if(selectedPrehliadky != null)
+            refreshDetail(null);
+        filterPackets();
     	super.onResume();
     }
     
@@ -201,7 +204,8 @@ public class ServiceActivity extends BaseFragment {
             List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);
             listDetail.setAdapter(new UnitArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, unit));
         } else if (type == DMPrehliadkyMaster.ePAKETY) {
-            paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr), false);
+            paketArrayAdapter = new PacketsArrayAdapter(getActivity(), 0, layout.item_unit_packet, app.getPaket(selectedPrehliadky.groupNr, packetQuery), false);
+            packetQuery = "";
             listDetail.setAdapter(paketArrayAdapter);
         }
     }
@@ -234,20 +238,14 @@ public class ServiceActivity extends BaseFragment {
 		
 	}
 
-    public void filterPackets(final String query) {
-        int pos = -1;
+    public void filterPackets() {
+        if(packetQuery == null || packetQuery.length() == 0)
+            return;
 
-        if(selectedPrehliadky == null || selectedPrehliadky.type != DMPrehliadkyMaster.ePAKETY && selectedPrehliadky.groupNr != -1) {
-            pos = prehliadkyAdapter.getAllPacketsPos();
-//            selectedPrehliadky = prehliadkyAdapter.getItem(pos);
-            doFilter = true;
+        final int pos = prehliadkyAdapter.getAllPacketsPos();
+        if(pos > 0) {
             listMaster.smoothScrollToPosition(pos);
-//            listMaster.setSelection(pos);
-//            listMaster.getChildAt(pos).setSelected(true);
             masterClicked(null, pos);
         }
-
-
-        paketArrayAdapter.getFilter().filter(query);
     }
 }

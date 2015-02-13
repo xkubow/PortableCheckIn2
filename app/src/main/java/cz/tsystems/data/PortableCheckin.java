@@ -640,13 +640,13 @@ public class PortableCheckin extends Application {
             packets = null;
     }
 
-    static public List<DMPacket> getPaket(final int groupNr) {
-        if(groupNr == -1)
-            return packets;
+    static public List<DMPacket> getPaket(final int groupNr, final String query) {
+        boolean noQuery = (query == null || query.length() == 0);
         List<DMPacket> filtered = new ArrayList<DMPacket>();
         for(Iterator<DMPacket> iterator = packets.iterator(); iterator.hasNext();) {
             DMPacket paket = iterator.next();
-            if(paket.group_nr == groupNr)
+            String packetDescription = paket.workshop_packet_description;
+            if ((noQuery || packetDescription.toLowerCase().contains(query)) && (paket.group_nr == groupNr || groupNr == -1))
                 filtered.add(paket);
         }
 

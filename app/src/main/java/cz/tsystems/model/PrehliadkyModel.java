@@ -94,7 +94,7 @@ public class PrehliadkyModel extends Model {
                 final DMPacket packet = i.next();
                 if (!groupsNr.contains(packet.group_nr)) {
                     groupsNr.add(packet.group_nr);
-                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, String.format("%s [%d]", packet.group_text, PortableCheckin.getPaket(packet.group_nr).size()), packet.group_nr, false,DMPrehliadkyMaster.ePAKETY));
+                    prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, String.format("%s [%d]", packet.group_text, PortableCheckin.getPaket(packet.group_nr, null).size()), packet.group_nr, false,DMPrehliadkyMaster.ePAKETY));
                 }
             }
         }

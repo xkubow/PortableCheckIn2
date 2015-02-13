@@ -26,13 +26,10 @@ import cz.tsystems.portablecheckin.R;
 public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements PinnedSectionListView.PinnedSectionListAdapter {
     Context context;
     boolean isUnitPaket;
-    List<DMPacket> filteredData;
-    List<DMPacket> mOriginalValues;
 
 
     public PacketsArrayAdapter(Context context, int resource, int textViewResourceId, List<DMPacket> objects, final boolean isUnitPaket) {
         super(context, resource, textViewResourceId, objects);
-        filteredData = objects;
         this.context = context;
         this.isUnitPaket = isUnitPaket;
     }
@@ -97,63 +94,9 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
         return v;
     }
 
-//    @Override
-//    public DMPacket getItem(int position) {
-//        return filteredData.get(position);
-//    }
-
     @Override
     public boolean isItemViewTypePinned(int viewType) {
         return false;
     }
 
-    @Override
-    public Filter getFilter() {
-//http://stackoverflow.com/questions/13371160/arrayadapter-filtering-with-multiple-search-terms
-        Filter filter = new Filter() {
-
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
-                List<DMPacket> FilteredArrList = new ArrayList<DMPacket>();
-
-                if (mOriginalValues == null) {
-                    mOriginalValues = new ArrayList<DMPacket>(filteredData); // saves the original data in mOriginalValues
-                }
-
-                /********
-                 *
-                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
-                 *  else does the Filtering and returns FilteredArrList(Filtered)
-                 *
-                 ********/
-                if (constraint == null || constraint.length() == 0) {
-
-                    // set the Original result to return
-                    results.count = mOriginalValues.size();
-                    results.values = mOriginalValues;
-                } else {
-                    constraint = constraint.toString().toLowerCase();
-                    for (int i = 0; i < mOriginalValues.size(); i++) {
-                        String data = mOriginalValues.get(i).workshop_packet_description;
-                        if (data.toLowerCase().startsWith(constraint.toString())) {
-                            FilteredArrList.add(mOriginalValues.get(i));
-                        }
-                    }
-                    // set the Filtered result to return
-                    results.count = FilteredArrList.size();
-                    results.values = FilteredArrList;
-                }
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredData = (List<DMPacket>) results.values; // has the filtered values
-                notifyDataSetChanged();  // notifies the data with new filtered values
-            }
-        };
-
-        return filter;
-    }
 }

@@ -413,6 +413,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         });
 
         // Associate searchable configuration with the SearchView
+//        getActionBar().set
+//        menu.findItem(R.id.search).setEnabled(false);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView =
@@ -424,9 +426,9 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 ServiceActivity serviceActivity = (ServiceActivity) theFragments.get(eTabService);
-                serviceActivity.packetQuery = query;
+                serviceActivity.packetQuery = query.toLowerCase();
                 if(getActionBar().getSelectedTab().getPosition() == eTabService)
-                    serviceActivity.filterPackets(query);
+                    serviceActivity.filterPackets();
                 else {
                     getActionBar().setSelectedNavigationItem(eTabService);
                 }
@@ -452,7 +454,15 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                Log.d(TAG, "Closing SerachView");
                 return false;
+            }
+        });
+
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "Focus changed");
             }
         });
 
