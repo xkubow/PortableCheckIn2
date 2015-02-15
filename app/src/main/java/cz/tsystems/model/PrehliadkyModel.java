@@ -53,7 +53,7 @@ public class PrehliadkyModel extends Model {
         Log.d(TAG, Locale.getDefault().getLanguage() + ", " + String.valueOf(scenar.check_scenario_id));
         Log.d(TAG, String.valueOf(c.getCount()));
         while(!c.isAfterLast()&& !c.isBeforeFirst()) {
-            DMPrehliadkyMaster prehliadkyMaster = new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), (c.getInt(c.getColumnIndex("MANDATORY"))==1),DMPrehliadkyMaster.eUNIT);
+            DMPrehliadkyMaster prehliadkyMaster = new DMPrehliadkyMaster(lastId++, c.getString(c.getColumnIndex("TEXT")), c.getInt(c.getColumnIndex("CHCK_UNIT_ID")), c.getString(c.getColumnIndex("MANDATORY")).equalsIgnoreCase("true"),DMPrehliadkyMaster.eUNIT);
             if(prehliadkyMaster.mandatory)
                 PortableCheckin.selectedScenar.mandatoryCount++;
             prehliadkyMasterList.add(prehliadkyMaster);

@@ -256,11 +256,11 @@ public class PortableCheckin extends Application {
         checkin.check_scenario_id = selectedScenar.check_scenario_id;
         checkin.fuel_id = 1;
         setSelectedBrand(brandId);
+//        setSelectedScenar(checkin.check_scenario_id);
 		setOffers(this.getOffers(brandId));
 		loadSilhouette();
         loadUnits();
         deletePackets();
-        setSelectedScenar(checkin.check_scenario_id);
 	}
 	
 

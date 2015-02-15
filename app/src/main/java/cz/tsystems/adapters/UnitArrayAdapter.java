@@ -12,7 +12,9 @@ import cz.tsystems.portablecheckin.R;
 import cz.tsystems.portablecheckin.UnitServiceDialog;
 
 import android.content.Context;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -81,7 +83,6 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         serviseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 showServiceView((Button) v);
             }
         });
@@ -93,6 +94,14 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
             public void onClick(View v) {
                 Button btnOdloz = (Button) v;
                 DMUnit u = UnitArrayAdapter.this.getItem((int)btnOdloz.getTag());
+                if(u.chck_status_id != null) {
+                    if(u.chck_required_id != null && u.chck_required_id == DMUnit.eRequired_odlozit) {
+                        u.chck_status_id = null;
+                        u.chck_required_id = null;
+                        btnOdloz.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
+                    }
+                    return;
+                }
                 u.chck_status_id = DMUnit.eStatus_problem;
                 u.chck_required_id = DMUnit.eRequired_odlozit;
                 u.sell_price = null;
@@ -128,11 +137,16 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
             } else
                 chkUnit.setChecked((unit.chck_status_id == 1));
         }
+
+        v.setOnTouchListener(new OnSwipeTouchListener());
+
 		return v;
 	}
 
     private void showServiceView(final Button unitButtonView) {
         final DMUnit u = data.get((Integer)unitButtonView.getTag());
+        if(u.chck_status_id != 0)
+            return;
         final List<DMPacket> packetList = new ArrayList<DMPacket>();
         List<DMPacket> packets = app.getPackets();
         if(packets != null) {
@@ -206,57 +220,61 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         return false;
     }
 
+    public class OnSwipeTouchListener implements View.OnTouchListener {
 
-/*    private class UnitFilter extends Filter {
+        private final GestureDetector gestureDetector = new GestureDetector(new GestureListener());
 
         @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            FilterResults results = new FilterResults();
-            String obligatoryStr = constraint.toString();
+        public boolean onTouch(View v, MotionEvent event) {
+//            super.onTouch(v,event);
+//            return false;
+            return gestureDetector.onTouchEvent(event);
+        }
 
-            if (obligatoryStr == null || obligatoryStr.length() == 0){
-                List<DMUnit> list = new ArrayList<DMUnit>(data);
-                results.values = list;
-                results.count = list.size();
-            }else{
-                final ArrayList<DMUnit> list = new ArrayList<DMUnit>(data);
-                final ArrayList<DMUnit> nlist = new ArrayList<DMUnit>();
-                int count = list.size();
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
-                for (int i = 0; i<count; i++){
-                    final DMUnit unit = list.get(i);
+            private static final int SWIPE_THRESHOLD = 100;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
 
-                    final long obligatory_equipment = unit.chck_unit_id;
-                    final long value = Long.parseLong(obligatoryStr);
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
-                    //TODO do the filtering
-
-                    if(value == obligatory_equipment){
-                        nlist.add(unit);
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                        }
+                    } else {
+                        if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffY > 0) {
+                                onSwipeBottom();
+                            } else {
+                                onSwipeTop();
+                            }
+                        }
                     }
-                    results.values = nlist;
-                    results.count = nlist.size();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
+                return result;
             }
-            return results;
         }
+        public void onSwipeRight() {}
+        public void onSwipeLeft() {}
+        public void onSwipeTop() {}
+        public void onSwipeBottom() {}
+    }
 
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (List<DMUnit>)results.values;
-            notifyDataSetChanged();
-            clear();
-            int count = filteredData.size();
-            for(int i = 0; i<count; i++){
-                add(filteredData.get(i));
-                notifyDataSetInvalidated();
-            }
-            if(filteredData == null)
-                filteredData =  new ArrayList<DMUnit>();
-
-        }
-
-    }*/
 }

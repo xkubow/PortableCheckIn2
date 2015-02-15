@@ -2,102 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.3\support-annotations-21.0.3.jar"
+        jar="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\support-annotations-21.0.3-039465bcacbc4807b84be940584ec81caa2ca51c.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\additionnal.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="bd9e8dc422bb8c8405359947fe9f4282b49f57f4">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\additionnal-7071107a205568ba91566ecbd245a66cd4b1b3df.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\mail.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="428e267abff0d10802ccde86b915da2c20471160">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\mail-974644b4041b1fe0a5b73a08bc97776867b77087.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\classes-0ff107008db82c99181488a30581899365eef25d.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\classes-2245eb502c1ce675a4e8c8f3d6161c3fc4081756.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\libs\internal_impl-21.0.3.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\internal_impl-21.0.3-d04aedf30663ab008d0d6fb9606c1a9b62332c15.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\libs\nineoldandroids-2.4.0.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\nineoldandroids-2.4.0-96dbe398bcbea5da3c84105ce96b0104b7fa7ad9.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\jackson-core-2.2.2.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="d20be6a5ddd6f8cfd36ebf6dea329873a1c41f1b">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\jackson-core-2.2.2-480bc3fc55601e04cdf454221338721491de91be.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\activation.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="d1257cbff6faa44c1f325ae0d9413522d4644383">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\activation-b07a18ee7be92089eb554c1cabf1c8acf1934232.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\jackson-annotations-2.2.2.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="285cb9c666f0f0f3dd8a1be04e1f457eb7b15113">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\jackson-annotations-2.2.2-7b028b2195a82fd4cc76d9577c1902940af43cfc.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\jackson-databind-2.2.2.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="3c8f6018eaa72d43b261181e801e6f8676c16ef6">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\jackson-databind-2.2.2-7e903436b5d319aa57a3f2a487dcc6ada255865a.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\section_listview\unspecified\classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="604c0fc5309be9a1a2bb30aff0b8051af226b097">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\classes-a69f014f70777dfb33daffb57dcc5a99bca0e7eb.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="e62639fd7e6bb1bbaf4e2ed72a9fc1f5ebb28458">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-cf259d9092dda6db18b6832397da6fd99713b2f9.jar" />
-    </item>
-    <item
-        jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\libs\httpmime-4.2.5.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="6efc2f9df23c2ac4d3b701a11cab9f9fa6a641d4">
-        <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\release\httpmime-4.2.5-fe99a7734b1861c414845f3bbca535b77e66afa8.jar" />
+        sha1="abe14625ee0d52cf2edd54bf2bec4670b0a8e9e4">
+        <dex dex="C:\Users\KUBO\AndroidstudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-d10f2e66fdb7faa20aaa54959a4ebeba3e067327.jar" />
     </item>
 
 </items>
