@@ -54,14 +54,20 @@ public class LoginActivity extends Activity {
 
 			Bundle extra = intent.getBundleExtra("requestData");
 			String errorMsg = intent.getStringExtra("ErrorMsg");
+
+            //updateDB();
 			
 			if(errorMsg != null && errorMsg.length() > 0)
 			{
 				app.getDialog(LoginActivity.this, "error", errorMsg, PortableCheckin.DialogType.SINGLE_BUTTON).show();
 				return;
 			}
-			
-			if(extra.getString("ACTION").equalsIgnoreCase("Login"))
+
+            if(intent.hasExtra("Last-Modified")) {
+                PortableCheckin.updateDB(LoginActivity.this);
+                return;
+            }
+            else if(extra.getString("ACTION").equalsIgnoreCase("Login"))
 			{
 				final String userId = PortableCheckin.user.personal_id;
 				Log.d("BROADCAST", extra.getString("ACTION") + ", "+ userId);
@@ -88,8 +94,10 @@ public class LoginActivity extends Activity {
                     app.dismisProgressDialog();
                     app.getDialog(context, "Chyba", "nepodarilo sa updatnut DB", PortableCheckin.DialogType.SINGLE_BUTTON).show();
                 }
-				else
-					startApp();
+				else if(PortableCheckin.user == null)
+                    startGetLogin();
+                else
+                    startApp();
 			}
 		}
     };	
@@ -196,7 +204,7 @@ public class LoginActivity extends Activity {
     private void LoginDone()
     {
 		if(!isDBUpToDate())
-			updateDB();
+			PortableCheckin.updateDB(this);
 		else 
 			startApp();
     }
@@ -227,22 +235,6 @@ public class LoginActivity extends Activity {
 			return true;
 		else
 			return false;
-    }
-    
-    private void updateDB()
-    {
-		Intent msgIntent = new Intent(this, CommunicationService.class);
-	
-		msgIntent.putExtra("ACTIONURL", "database/StaticData");
-    	msgIntent.putExtra("ACTION", "GetStaticData");		
-		this.startService(msgIntent);
-
-		msgIntent.putExtra("ACTIONURL", "silhouette/SFiles");
-    	msgIntent.putExtra("ACTION", "GetSilhouette");		
-		this.startService(msgIntent);
-		msgIntent.putExtra("ACTIONURL", "pchi/Banners");
-    	msgIntent.putExtra("ACTION", "GetBanners");		
-		this.startService(msgIntent);    	
     }
     
     @Override

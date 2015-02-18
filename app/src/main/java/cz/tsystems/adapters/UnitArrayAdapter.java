@@ -5,13 +5,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
 import cz.tsystems.portablecheckin.UnitServiceDialog;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,8 +25,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gc.materialdesign.views.ButtonFlat;
+import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.views.CheckBox;
 import com.hb.views.PinnedSectionListView;
 
 public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSectionListView.PinnedSectionListAdapter{
@@ -72,9 +81,19 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         chkUnit.setOncheckListener(new com.gc.materialdesign.views.CheckBox.OnCheckListener() {
             @Override
             public void onCheck(com.gc.materialdesign.views.CheckBox checkBox, boolean isChecked) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
                 int position = (Integer)checkBox.getTag();
-                DMUnit unit = UnitArrayAdapter.this.getItem(position);
-                unit.chck_status_id = checkBox.isChecked()?1:0;
+                DMUnit u = UnitArrayAdapter.this.getItem(position);
+                if(u.chck_status_id != null) {
+                    if(u.chck_status_id == DMUnit.eStatus_problem
+                            && u.chck_required_id == null) {
+                        checkBox.setStaticChecked(true);
+                        setDefaultUnit(checkBox, position);
+                    }
+                    return;
+                }
+                if(checkBox.isChecked())
+                    u.chck_status_id = DMUnit.eStatus_problem;
             }
         });
 
@@ -92,14 +111,15 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         odlozButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
                 Button btnOdloz = (Button) v;
-                DMUnit u = UnitArrayAdapter.this.getItem((int)btnOdloz.getTag());
+                final int position = (int)btnOdloz.getTag();
+                DMUnit u = UnitArrayAdapter.this.getItem(position);
                 if(u.chck_status_id != null) {
-                    if(u.chck_required_id != null && u.chck_required_id == DMUnit.eRequired_odlozit) {
-                        u.chck_status_id = null;
-                        u.chck_required_id = null;
-                        btnOdloz.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
-                    }
+                    if(u.chck_status_id == DMUnit.eStatus_problem
+                            && u.chck_required_id != null
+                            && u.chck_required_id == DMUnit.eRequired_odlozit)
+                        setDefaultUnit(v, position);
                     return;
                 }
                 u.chck_status_id = DMUnit.eStatus_problem;
@@ -126,6 +146,10 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         serviseButton.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_grey));
         odlozButton.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
         chkUnit.setStaticChecked(false);
+        chkUnit.setVisibility(View.VISIBLE);
+        serviseButton.setVisibility(View.VISIBLE);
+        odlozButton.setVisibility(View.VISIBLE);
+
         if(unit.chck_status_id != null) {
             if (unit.chck_required_id != null) {
                 if (unit.chck_required_id == DMUnit.eRequired_odlozit)
@@ -135,18 +159,115 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 else
                     serviseButton.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_petrol));
             } else
-                chkUnit.setChecked((unit.chck_status_id == 1));
+                chkUnit.setChecked((unit.chck_status_id == DMUnit.eStatus_problem));
         }
 
-        v.setOnTouchListener(new OnSwipeTouchListener());
+/*        final ButtonFloat btnDell = (ButtonFloat) v.findViewById(R.id.btnDell);
+        btnDell.setTag(position);
+        btnDell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
+                RelativeLayout vg = (RelativeLayout) v.getParent();
+                DMUnit u = getItem((int)v.getTag());
+                u.chck_status_id = null;
+                u.chck_required_id = null;
+                u.workshop_packet = null;
+                u.workshop_packet_number = null;
+                u.workshop_packet_description = null;
+                u.spare_part_dispon_id = null;
+                u.economic = null;
+                u.chck_required_txt = null;
+                u.sell_price = null;
+
+                CheckBox chkBox = (CheckBox) vg.findViewById(R.id.checkBox);
+                chkBox.setChecked(false);
+                chkBox.setVisibility(View.VISIBLE);
+                Button btnn = (Button) vg.findViewById(R.id.btnService);
+                btnn.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_grey));
+                btnn.setVisibility(View.VISIBLE);
+                btnn = (Button) vg.findViewById(R.id.btnOdloz);
+                btnn.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
+                btnn.setVisibility(View.VISIBLE);
+                ((TextView)vg.findViewById(R.id.lblRequired)).setText("");
+                ((TextView)vg.findViewById(R.id.lblCena)).setText("");
+
+                v.setVisibility(View.INVISIBLE);
+            }
+        });
+        btnDell.setVisibility(View.INVISIBLE);
+
+        v.setOnTouchListener(new OnSwipeTouchListener());*/
 
 		return v;
 	}
 
+    private void setDefaultUnit(final View v, final int position) {
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+        // Setting Dialog Title
+//        alertDialogBuilder.setTitle("Alert Dialog");
+
+        // Setting Dialog Message
+        alertDialogBuilder.setMessage(context.getResources().getString(R.string.ZmazUnit));
+
+        // Setting Icon to Dialog
+//        alertDialog.setIcon(R.drawable.tick)tick;
+
+        alertDialogBuilder.setPositiveButton(context.getResources().getString(R.string.Ano),
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
+                RelativeLayout vg = (RelativeLayout) v.getParent();
+                DMUnit u = getItem(position);
+                u.chck_status_id = null;
+                u.chck_required_id = null;
+                u.workshop_packet = null;
+                u.workshop_packet_number = null;
+                u.workshop_packet_description = null;
+                u.spare_part_dispon_id = null;
+                u.economic = null;
+                u.chck_required_txt = null;
+                u.sell_price = null;
+
+                CheckBox chkBox = (CheckBox) vg.findViewById(R.id.checkBox);
+                chkBox.setChecked(false);
+                chkBox.setVisibility(View.VISIBLE);
+                Button btnn = (Button) vg.findViewById(R.id.btnService);
+                btnn.setBackground(context.getResources().getDrawable(R.drawable.ic_tools_grey));
+                btnn.setVisibility(View.VISIBLE);
+                btnn = (Button) vg.findViewById(R.id.btnOdloz);
+                btnn.setBackground(context.getResources().getDrawable(R.drawable.ic_drawer_grey));
+                btnn.setVisibility(View.VISIBLE);
+                ((TextView)vg.findViewById(R.id.lblRequired)).setText("");
+                ((TextView)vg.findViewById(R.id.lblCena)).setText("");
+                dialog.dismiss();
+            } });
+
+        // Setting OK Button
+        alertDialogBuilder.setNegativeButton(context.getResources().getString(R.string.Ne),
+                new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialogBuilder.create().show();
+
+    }
+
     private void showServiceView(final Button unitButtonView) {
-        final DMUnit u = data.get((Integer)unitButtonView.getTag());
-        if(u.chck_status_id != 0)
+        final int position = (Integer)unitButtonView.getTag();
+        final DMUnit u = data.get(position);
+        if(u.chck_status_id != null) {
+            if(u.chck_status_id == DMUnit.eStatus_problem
+                    && u.chck_required_id != null
+                    && u.chck_required_id != DMUnit.eRequired_odlozit)
+                setDefaultUnit(unitButtonView, position);
             return;
+        }
         final List<DMPacket> packetList = new ArrayList<DMPacket>();
         List<DMPacket> packets = app.getPackets();
         if(packets != null) {
@@ -172,6 +293,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
             public void OnOkClick(final DMPacket selectedPaked, final String cena){
                 if(selectedPaked == null) //Nevybrany paket
                     return;
+                ((FragmentPagerActivity)context).unsavedCheckin();
                 u.chck_status_id = DMUnit.eStatus_problem;
                 if(selectedPaked.workshop_packet_number != null) {
                     u.workshop_packet_number = selectedPaked.workshop_packet_number;
@@ -221,6 +343,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
     }
 
     public class OnSwipeTouchListener implements View.OnTouchListener {
+        View theView;
 
         private final GestureDetector gestureDetector = new GestureDetector(new GestureListener());
 
@@ -228,13 +351,14 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         public boolean onTouch(View v, MotionEvent event) {
 //            super.onTouch(v,event);
 //            return false;
+            theView = v;
             return gestureDetector.onTouchEvent(event);
         }
 
         private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
-            private static final int SWIPE_THRESHOLD = 100;
-            private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+            private static final int SWIPE_THRESHOLD = 50;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 50;
 
             @Override
             public boolean onDown(MotionEvent e) {
@@ -271,8 +395,18 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 return result;
             }
         }
-        public void onSwipeRight() {}
-        public void onSwipeLeft() {}
+        public void onSwipeRight() {
+            theView.findViewById(R.id.checkBox).setVisibility(View.VISIBLE);
+            theView.findViewById(R.id.btnService).setVisibility(View.VISIBLE);
+            theView.findViewById(R.id.btnOdloz).setVisibility(View.VISIBLE);
+            theView.findViewById(R.id.btnDell).setVisibility(View.INVISIBLE);
+        }
+        public void onSwipeLeft() {
+            theView.findViewById(R.id.checkBox).setVisibility(View.INVISIBLE);
+            theView.findViewById(R.id.btnService).setVisibility(View.INVISIBLE);
+            theView.findViewById(R.id.btnOdloz).setVisibility(View.INVISIBLE);
+            theView.findViewById(R.id.btnDell).setVisibility(View.VISIBLE);
+        }
         public void onSwipeTop() {}
         public void onSwipeBottom() {}
     }

@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -57,7 +58,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 //	SectionsPagerAdapter mSectionsPagerAdapter;
     final String TAG = FragmentPagerActivity.class.getSimpleName();
     public static final int eTabVozidlo = 0, eTabPoskodenie = 1, eTabService = 2, eTabNabidka = 3;
-    public static int eGRID_RESULT = 2;
+    public static final int eGRID_RESULT = 2, eLoginActivity = 1, ePoznamkaActivity = 10;
 	private Time stopTime;
 	private BaseFragment theFragment;
     private Boolean checkLogin = true, newCheckin = false;
@@ -67,6 +68,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     Button btnBrand;
 	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
     Menu myMenu;
+    Bundle lastActionbundle = null;
     private int largestHeight;
 
     public void setCheckLogin(Boolean checkLogin) {
@@ -79,61 +81,85 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		public void onReceive(Context context, Intent intent) {
 
             String errorMsg = intent.getStringExtra("ErrorMsg");
+            String action = intent.getAction();
 
             if(errorMsg != null && errorMsg.length() > 0)
             {
                 app.getDialog(FragmentPagerActivity.this, "error", errorMsg, PortableCheckin.DialogType.SINGLE_BUTTON).show();
                 return;
             }
-
-            String action = intent.getAction();
-            final Bundle b = intent.getExtras().getBundle("requestData");
-            if(b != null && b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
-                if(getActionBar().getSelectedTab().getPosition() == 2)
-                    updateServiceFragment(); //TODO dakedy padne kvoli broadcastreciveru
-            }
-            if (b != null && b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
-
-                if(PortableCheckin.selectedSilhouette.getPhotosCount() > 0) {
-                    Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
-                    msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
-                    msgIntent.putExtra("ACTIONURL", "pchi/SavePhotos/");
-                    msgIntent.putExtra("ACTION", "SavePhotos");
-                    msgIntent.putExtra("checkinID", String.valueOf(app.getCheckin().checkin_id));
-                    app.showProgrssDialog(FragmentPagerActivity.this);
-                    FragmentPagerActivity.this.startService(msgIntent);
+            if(intent.hasExtra("requestData")) {
+                final Bundle b = intent.getExtras().getBundle("requestData");
+                if(intent.hasExtra("Last-Modified")) {
+                    lastActionbundle = b;
+                    PortableCheckin.updateDB(FragmentPagerActivity.this);
                     return;
-                } else
-                    saveCheckingDone();
-            } else if(b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
-                    saveCheckingDone();
-            } else if (b.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
-
-                final boolean isCheckin = (PortableCheckin.checkin.checkin_id != null && PortableCheckin.checkin.checkin_id > 0);
-
-                MenuItem button = myMenu.findItem(R.id.action_send);
-                Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
-                button.setIcon(resIcon);
-
-                if(!isCheckin) {
-                    ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
-                    tab = getActionBar().getTabAt(eTabService);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
-                    tab = getActionBar().getTabAt(eTabNabidka);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
-                } else {
-                    ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
-                    tab = getActionBar().getTabAt(eTabService);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
-                    tab = getActionBar().getTabAt(eTabNabidka);
-                    tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
                 }
 
+                if (b != null && b.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
+                    if (getActionBar().getSelectedTab().getPosition() == 2)
+                        updateServiceFragment(); //TODO dakedy padne kvoli broadcastreciveru
+                }
 
-            } else if(b.getString("ACTION").equalsIgnoreCase("XyzmoResponse")) {
-                getProtokol();
+                if(b != null && b.getString("ACTION").equalsIgnoreCase("GetStaticData")
+                        || b.getString("ACTION").equalsIgnoreCase("GetSilhouette")
+                        || b.getString("ACTION").equalsIgnoreCase("GetBanners")) {
+                    if (intent.getByteExtra("loadDataDone", (byte) 0) != (byte) 7)
+                        return;
+                    else {
+                        SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+                        SharedPreferences.Editor spe = sp.edit();
+                        spe.putInt("MINOR_VER", app.getTheDBProvider().getDBVersion());
+                        spe.commit();
+
+                        Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+                        msgIntent.putExtras(lastActionbundle);
+                        FragmentPagerActivity.this.startService(msgIntent);
+                        lastActionbundle = null;
+                        return;
+                    }
+                }
+                else if (b != null && b.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
+
+                    if (PortableCheckin.selectedSilhouette.getPhotosCount() > 0) {
+                        Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+                        msgIntent.putExtra("ACTIONURL", "pchi/DataForCheckIn");
+                        msgIntent.putExtra("ACTIONURL", "pchi/SavePhotos/");
+                        msgIntent.putExtra("ACTION", "SavePhotos");
+                        msgIntent.putExtra("checkinID", String.valueOf(app.getCheckin().checkin_id));
+                        app.showProgrssDialog(FragmentPagerActivity.this);
+                        FragmentPagerActivity.this.startService(msgIntent);
+                        return;
+                    } else
+                        saveCheckingDone();
+                } else if (b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
+                    saveCheckingDone();
+                } else if (b.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
+
+                    final boolean isCheckin = (PortableCheckin.checkin.checkin_id != null && PortableCheckin.checkin.checkin_id > 0);
+
+                    unsavedCheckin();
+
+                    if (!isCheckin) {
+                        ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                        tab = getActionBar().getTabAt(eTabService);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                        tab = getActionBar().getTabAt(eTabNabidka);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.VISIBLE);
+                    } else {
+                        ActionBar.Tab tab = getActionBar().getTabAt(eTabNabidka);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                        tab = getActionBar().getTabAt(eTabService);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                        tab = getActionBar().getTabAt(eTabNabidka);
+                        tab.getCustomView().findViewById(R.id.tab_badge).setVisibility(View.INVISIBLE);
+                    }
+
+
+                } else if (b.getString("ACTION").equalsIgnoreCase("XyzmoResponse")) {
+                    getProtokol();
+                }
             }
 
 
@@ -149,6 +175,12 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
         button.setIcon(resIcon);
         app.dismisProgressDialog();
+    }
+
+    public void unsavedCheckin() {
+        MenuItem button = myMenu.findItem(R.id.action_send);
+        Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+        button.setIcon(resIcon);
     }
 
     @Override
@@ -263,21 +295,28 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if (requestCode == 2) {
-			if (resultCode == RESULT_OK) {
-                if(data.getExtras() == null)
-                    return;
+		switch(requestCode) {
+            case eGRID_RESULT:
+                if (resultCode == RESULT_OK) {
+                    if(data.getExtras() == null)
+                        return;
 
-				switch (data.getExtras().getInt("type")) {
-				case BaseGridActivity.eGRDPLANZAK:
-					loadCheckinData(data);
-					break;				
-				default:
-					break;
-				}
-			}
-		} else if (requestCode == 1) {
-            app.dismisProgressDialog();
+                    switch (data.getExtras().getInt("type")) {
+                    case BaseGridActivity.eGRDPLANZAK:
+                        loadCheckinData(data);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                break;
+		    case eLoginActivity:
+                app.dismisProgressDialog();
+                break;
+            case ePoznamkaActivity:
+                if(data.getExtras().getBoolean("dataChanged"))
+                    unsavedCheckin();
+                break;
         }
 
 	}
@@ -308,7 +347,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             if (PortableCheckin.user == null) {
                 Intent it = new Intent(this, LoginActivity.class);
                 it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(it, 1);
+                startActivityForResult(it, eLoginActivity);
             } else if (stopTime != null) {
                 Time now = new Time();
                 now.setToNow();
@@ -316,7 +355,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 if (backgroundTime > 30000) {
                     Intent it = new Intent(this, LoginActivity.class);
                     it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivityForResult(it, 1);
+                    startActivityForResult(it, eLoginActivity);
                 }
                 stopTime = null;
             }
@@ -380,7 +419,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             public boolean onMenuItemClick(MenuItem item) {
                 checkLogin = false;
                 Intent myIntent = new Intent(FragmentPagerActivity.this, Poznamka.class);
-                startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
+                startActivityForResult(myIntent, FragmentPagerActivity.ePoznamkaActivity);
                 return false;
             }
         });

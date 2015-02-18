@@ -31,7 +31,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -64,12 +63,13 @@ public class MainActivity extends BaseFragment {
 	final String TAG = MainActivity.class.getSimpleName();	
 	private RelativeLayout values1, values2;
 	private DatePicker theDatePicker;
-	private final SimpleDateFormat sdfrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//	private final SimpleDateFormat sdfrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private final SimpleDateFormat sdto = new SimpleDateFormat("MM.yyyy");
-    BaseEditText txtRZV, txtSTKDate, txtEmiseDate, txtScenar, txtZakaznik, txtStavTachometru, txtVozPristavil;
+//    private final String dateMMYYYYregex = "^([1-9]|0[1-9]|1[012]).(19|20)\\d\\d";
+    BaseEditText txtRZV, txtSTKDate, txtEmiseDate, txtZakaznik, txtStavTachometru, txtVozPristavil, txtPredajDate, txtModelYear;
 	Spinner spScenare, spTypPaliva;
 	vinEditText txtVIN;
-	Button btnSPZ, btnSTK, btnEmise;// btnPalivo;// btnScenare;
+	Button btnSPZ, btnSTK, btnEmise, btnDatumProdeje, btnModelYear;
     com.gc.materialdesign.views.Switch chkPoistPrip, chkOtp, chkServisKniz;
     ButtonFloat fbtPZ, fbtMajak, fbtMegafon;
     Slider stavPaliva, stavInterieru, stavOleja;
@@ -81,6 +81,8 @@ public class MainActivity extends BaseFragment {
         public void onFocusChange(View v, boolean hasFocus) {
             EditText et = (EditText) v;
 
+            if(hasFocus) // len pri rusenia focusu - ukoncenia editacie
+                return;
             try {
                 if(txtRZV == et)
                     app.getCheckin().license_tag = et.getText().toString();
@@ -93,16 +95,15 @@ public class MainActivity extends BaseFragment {
                 else if(txtStavTachometru == et)
                     app.getCheckin().odometer = (et.getText().length()>0)?Double.valueOf(et.getText().toString()):null;
                 else if(txtSTKDate == et)
-                    app.getCheckin().ti_valid_until =  sdfrom.parse(et.getText().toString());
+                        app.getCheckin().ti_valid_until = sdto.parse(et.getText().toString());
                 else if(txtEmiseDate == et)
-                    app.getCheckin().ec_valid_until =  sdfrom.parse(et.getText().toString());
+                    app.getCheckin().ec_valid_until =  sdto.parse(et.getText().toString());
 
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
     };
-
 
 
     TextWatcher textWatcher = new TextWatcher() {
@@ -121,6 +122,8 @@ public class MainActivity extends BaseFragment {
 
             if(getActivity() == null)
                 return;
+
+            ((FragmentPagerActivity)getActivity()).unsavedCheckin();
 
             int povinneNevyplnene = 0;
             povinneNevyplnene += (txtRZV.length() > 0)?1:0;
@@ -143,6 +146,7 @@ public class MainActivity extends BaseFragment {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if(scenarClicked) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 Cursor cursor = (Cursor) spScenare.getSelectedItem();
                 app.getCheckin().check_scenario_id = cursor.getInt(cursor.getColumnIndex("CHECK_SCENARIO_ID"));
                 app.setSelectedScenar(app.getCheckin().check_scenario_id);
@@ -160,6 +164,7 @@ public class MainActivity extends BaseFragment {
 		
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            ((FragmentPagerActivity)getActivity()).unsavedCheckin();
 			txtSTKDate.setText(++monthOfYear + "." + year);
 			txtEmiseDate.setText(monthOfYear + "." + year);			
 			Calendar c = Calendar.getInstance();
@@ -174,6 +179,7 @@ public class MainActivity extends BaseFragment {
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
+            ((FragmentPagerActivity)getActivity()).unsavedCheckin();
 			txtEmiseDate.setText(++monthOfYear + "." + year);
 			Calendar c = Calendar.getInstance();
 			c.set(year, monthOfYear, 1, 0, 0, 0);
@@ -214,10 +220,14 @@ public class MainActivity extends BaseFragment {
 				getSTKDatePicker();	
 			else if(theButton.equals(btnEmise))
 				getEmiseDatePicker();
+            else if(theButton.equals(btnDatumProdeje))
+                getModelYear(theButton);
+            else if(theButton.equals(btnModelYear))
+                getModelYear(theButton);
 		}
 	};
-	
-	private TextView.OnEditorActionListener vinEditorActionListener =  new TextView.OnEditorActionListener() {
+
+    private TextView.OnEditorActionListener vinEditorActionListener =  new TextView.OnEditorActionListener() {
 		
 		@Override
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -282,10 +292,6 @@ public class MainActivity extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.activity_main, container, false);
 		
-//		View baseContainer = rootView.findViewById(R.id.baseContainer);
-//		View layout = rootView.findViewById(R.id.dataContainer);
-//		View topContainer = rootView.findViewById(R.id.TopContainer);
-		
 		values1 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout1);
 		values2 = (RelativeLayout) rootView.findViewById(R.id.mainValuelayout2);
 
@@ -301,6 +307,8 @@ public class MainActivity extends BaseFragment {
         txtStavTachometru = (BaseEditText) values2.findViewById(R.id.txtStavTachomeru);
 		txtSTKDate = (BaseEditText)values1.findViewById(R.id.txtSTK);
 		txtEmiseDate = (BaseEditText)values2.findViewById(R.id.txtEmise);
+        txtPredajDate = (BaseEditText)values1.findViewById(R.id.txtPredajDat);
+        txtModelYear = (BaseEditText)values1.findViewById(R.id.txtModelYear);
 		spScenare = (Spinner)values1.findViewById(R.id.spScenar);
         spTypPaliva = (Spinner)values1.findViewById(R.id.spTypPaliva);
 
@@ -327,6 +335,8 @@ public class MainActivity extends BaseFragment {
 		btnSPZ = (Button) values1.findViewById(R.id.btnSPZ);
 		btnSTK = (Button) values1.findViewById(R.id.btnSTK);
 		btnEmise = (Button) values2.findViewById(R.id.btnEmise);
+        btnDatumProdeje = (Button) values1.findViewById(R.id.btnProdejDat);
+        btnModelYear = (Button) values1.findViewById(R.id.btnModelYearDate);
 
         chkPoistPrip = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkPoist_prp);
         chkOtp  = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkOTP);
@@ -399,6 +409,7 @@ public class MainActivity extends BaseFragment {
         spTypPaliva.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 Cursor c = (Cursor)spTypPaliva.getSelectedItem();
                 app.getCheckin().fuel_id = c.getShort(c.getColumnIndex("FUEL_ID"));
             }
@@ -442,23 +453,28 @@ public class MainActivity extends BaseFragment {
     private void setClickLiseners() {
 		btnSPZ.setOnClickListener(theButtonClickLisener);
 		btnSTK.setOnClickListener(theButtonClickLisener);
-		btnEmise.setOnClickListener(theButtonClickLisener);	
+		btnEmise.setOnClickListener(theButtonClickLisener);
+        btnDatumProdeje.setOnClickListener(theButtonClickLisener);
+        btnModelYear.setOnClickListener(theButtonClickLisener);
 
         chkPoistPrip.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
             @Override
             public void onCheck(boolean isChecked) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().insurance_case = isChecked;
             }
         });
         chkServisKniz.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
             @Override
             public void onCheck(boolean isChecked) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().servbook_exists = isChecked;
             }
         });
         chkOtp.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
             @Override
             public void onCheck(boolean isChecked) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().crw_exists = isChecked;
             }
         });
@@ -470,6 +486,7 @@ public class MainActivity extends BaseFragment {
         stavPaliva.setOnValueChangedListener(new Slider.OnValueChangedListener() {
             @Override
             public void onValueChanged(int value) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().fuel_level = (short) value;
             }
         });
@@ -477,6 +494,7 @@ public class MainActivity extends BaseFragment {
         stavInterieru.setOnValueChangedListener(new Slider.OnValueChangedListener() {
             @Override
             public void onValueChanged(int value) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().interior_state = (short) value;
             }
         });
@@ -484,6 +502,7 @@ public class MainActivity extends BaseFragment {
         stavOleja.setOnValueChangedListener(new Slider.OnValueChangedListener() {
             @Override
             public void onValueChanged(int value) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().oil_level = (short) value;
             }
         });
@@ -542,11 +561,24 @@ public class MainActivity extends BaseFragment {
         Intent myIntent = new Intent(getActivity(), PlanedOrdersGrid.class);
         getActivity().startActivityForResult(myIntent, FragmentPagerActivity.eGRID_RESULT);
 	}
+
+    /** find a member field by given name and hide it */
+    private void findAndHideField(DatePicker datepicker, String name) {
+        try {
+            Field field = DatePicker.class.getDeclaredField(name);
+            field.setAccessible(true);
+            View fieldInstance = (View) field.get(datepicker);
+            fieldInstance.setVisibility(View.GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	private void getSTKDatePicker()
 	{
         Calendar c = Calendar.getInstance();
-        String strDate = txtSTKDate.getText().toString(); 
+        String strDate = txtSTKDate.getText().toString();
+
 		if(strDate.length() > 0)
 		{
 			String parts[] = strDate.split("[.]");
@@ -562,6 +594,12 @@ public class MainActivity extends BaseFragment {
         int day = 1;
        
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), DialogFragment.STYLE_NO_FRAME | DialogFragment.STYLE_NORMAL, onSTKDateChangedListener, year, month, day);
+
+//        pre-Honeycomb fields:
+        findAndHideField(dialog.getDatePicker(), "mDayPicker");
+//        Honeycomb(+) fields:
+        findAndHideField(dialog.getDatePicker(), "mDaySpinner");
+        dialog.getDatePicker().getCalendarView().setVisibility(View.GONE);
         dialog.show();
 	}
 	
@@ -584,8 +622,37 @@ public class MainActivity extends BaseFragment {
         int day = 1;
        
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), DialogFragment.STYLE_NO_FRAME | DialogFragment.STYLE_NORMAL, onEmiseDateChangedListener, year, month, day);
+        findAndHideField(dialog.getDatePicker(), "mMonthPicker");
+//        Honeycomb(+) fields:
+        findAndHideField(dialog.getDatePicker(), "mDaySpinner");
+        dialog.getDatePicker().getCalendarView().setVisibility(View.GONE);
         dialog.show();		
 	}
+
+    private void getModelYear(Button theButton) {
+        Calendar c = Calendar.getInstance();
+        final String dateStr = txtModelYear.getText().toString();
+        c.set(Calendar.YEAR, Integer.parseInt(dateStr));
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.MONTH, 1);
+
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), DialogFragment.STYLE_NO_FRAME | DialogFragment.STYLE_NORMAL, new OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
+                txtModelYear.setText(String.valueOf(year));
+                btnModelYear.setEnabled(true);
+            }
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+
+        findAndHideField(dialog.getDatePicker(), "mDayPicker");
+        findAndHideField(dialog.getDatePicker(), "mDaySpinner");
+        findAndHideField(dialog.getDatePicker(), "mMounthPicker");
+        findAndHideField(dialog.getDatePicker(), "mMonthSpinner");
+        dialog.getDatePicker().getCalendarView().setVisibility(View.GONE);
+
+        dialog.show();
+    }
 	
 
 	

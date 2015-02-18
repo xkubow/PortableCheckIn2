@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.base.LowerCaseNamingStrategy;
+import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.model.PrehliadkyModel;
 import cz.tsystems.model.UnitsModel;
 import cz.tsystems.portablecheckin.R;
@@ -28,6 +31,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
@@ -926,4 +930,29 @@ public class PortableCheckin extends Application {
         this.actualActivity = actualActivity;
     }
 
+    static public void updateDB(Context context)
+    {
+        Intent msgIntent = new Intent(context, CommunicationService.class);
+
+        msgIntent.putExtra("ACTIONURL", "database/StaticData");
+        msgIntent.putExtra("ACTION", "GetStaticData");
+        context.startService(msgIntent);
+
+        msgIntent.putExtra("ACTIONURL", "silhouette/SFiles");
+        msgIntent.putExtra("ACTION", "GetSilhouette");
+        context.startService(msgIntent);
+        msgIntent.putExtra("ACTIONURL", "pchi/Banners");
+        msgIntent.putExtra("ACTION", "GetBanners");
+        context.startService(msgIntent);
+    }
+
+    public static boolean isMatch(String s, String pattern) {
+        try {
+            Pattern patt = Pattern.compile(pattern);
+            Matcher matcher = patt.matcher(s);
+            return matcher.matches();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
 }

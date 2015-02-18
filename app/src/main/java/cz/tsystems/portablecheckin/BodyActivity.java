@@ -62,6 +62,7 @@ public class BodyActivity extends BaseFragment {
     ImageView imgPreview;
     View rootView;
     boolean isTakeImage;
+    final int pointSize = 50;
 
 	private OnClickListener btnPhotoClickLisener = new OnClickListener() {
 
@@ -80,6 +81,7 @@ public class BodyActivity extends BaseFragment {
 		public boolean onTouch(View v, MotionEvent event) {
             Button button = (Button) v;
             if (event.getAction() == MotionEvent.ACTION_UP ) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 if(moved) {
                     moved = false;
                     return true;
@@ -92,7 +94,7 @@ public class BodyActivity extends BaseFragment {
 			else if (event.getAction() == MotionEvent.ACTION_MOVE  ){
                 moved = true;
                 pointsLayout.getLocationInWindow(location);
-                float X = event.getRawX() - location[0] - 20;
+                float X = event.getRawX() - location[0] - pointSize/2;
                 float Y = event.getRawY() - location[1];
                 final float XBoudary = pointsLayout.getWidth()-v.getWidth();
                 final float YBoudary = pointsLayout.getHeight()-v.getHeight();
@@ -106,7 +108,7 @@ public class BodyActivity extends BaseFragment {
                     Y = YBoudary;
 
 				RelativeLayout.LayoutParams params = (LayoutParams) v.getLayoutParams();
-				params.setMargins((int)X,  (int)Y-20, 0, 0);
+				params.setMargins((int)X,  (int)Y-pointSize/2, 0, 0);
 				button.setLayoutParams(params);
                 DMDamagePoint point = app.getSilhouette().getDMPoint(getRbtnSilueteIndex(), Integer.valueOf(button.getText().toString()) - 1);
                 point.setX((int)X);
@@ -126,6 +128,7 @@ public class BodyActivity extends BaseFragment {
             view.setScaleType(ImageView.ScaleType.MATRIX);
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                	final int X = (int)event.getX();// - 20;
                	final int Y = (int)event.getY();
 	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?1:2);
@@ -140,15 +143,15 @@ public class BodyActivity extends BaseFragment {
    private void addPoint(final int x, final int y, final int index, final int typ) {
 		selectedPoint = new Button(app);
 		selectedPoint.setOnTouchListener(btnPointTouchListener);
-		 selectedPoint.setLayoutParams(new RelativeLayout.LayoutParams(40, 40));
+		 selectedPoint.setLayoutParams(new RelativeLayout.LayoutParams(pointSize, pointSize));
 		if(typ == 1)
 			selectedPoint.setBackgroundResource(R.drawable.stop);			
 		else
 			selectedPoint.setBackgroundResource(R.drawable.point);
-		RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(40, 40);
+		RelativeLayout.LayoutParams lay = new RelativeLayout.LayoutParams(pointSize, pointSize);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		lay.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		lay.setMargins(x, y-20, 0, 0);
+		lay.setMargins(x, y-pointSize/2, 0, 0);
 		selectedPoint.setText(String.valueOf(index));
 		pointsLayout.addView(selectedPoint, lay);
    }
@@ -426,6 +429,7 @@ public class BodyActivity extends BaseFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (requestCode == PortableCheckin.REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            ((FragmentPagerActivity)getActivity()).unsavedCheckin();
             File file = new File(mCurrentPhotoPath.replaceFirst("file:", ""));
             if(!file.exists()) {
                 Log.e(TAG, "File not exists : " + mCurrentPhotoPath);
@@ -448,6 +452,7 @@ public class BodyActivity extends BaseFragment {
 	}
 
     public void deleteImage(int id){
+        ((FragmentPagerActivity)getActivity()).unsavedCheckin();
         View imageView = imageLayout.findViewById(id);
         String imageName = (String)imageView.getTag();
         File storageDir = Environment.getExternalStoragePublicDirectory(

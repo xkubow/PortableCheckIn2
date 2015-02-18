@@ -6,6 +6,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Base64;
 import android.util.Log;
 import android.app.Activity;
@@ -37,14 +38,18 @@ public class WelcomeActivity extends Activity {
 
 	@Override
 	protected void onStart() {
-		Intent it = new Intent(this, LoginActivity.class);
-		it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivityForResult(it, 1);
-		
-		super.onStart();		
+        Intent it = new Intent(this, LoginActivity.class);
+        it.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(it, 1);
+        super.onStart();
 	}
 
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 		if (requestCode == 1) {
 			if (resultCode == RESULT_OK) {
@@ -52,7 +57,7 @@ public class WelcomeActivity extends Activity {
 				
 				Intent i = new Intent(this, FragmentPagerActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				startActivity(i);
+                WelcomeActivity.this.startActivity(i);
 			}
 			if (resultCode == RESULT_CANCELED) {
 				// Write your code if there's no result
@@ -61,7 +66,32 @@ public class WelcomeActivity extends Activity {
 		}
 
 	}
-	
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
     @Override
     public void onStop() {
     	// TODO Auto-generated method stub

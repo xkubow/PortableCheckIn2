@@ -28,6 +28,7 @@
         <activity
             android:name="cz.tsystems.portablecheckin.WelcomeActivity"
             android:background="@drawable/welcome_bg"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/NoActionBarTheme" >
             <intent-filter>
@@ -37,11 +38,13 @@
         </activity>
         <activity
             android:name=".LoginActivity"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
         <activity
             android:name="cz.tsystems.base.FragmentPagerActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <!--action android:name="android.intent.action.SEARCH" /-->
@@ -55,62 +58,66 @@
         </activity>
         <activity
             android:name="cz.tsystems.communications.NotificationReceiverActivity"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/TransparentActivity" />
         <activity
             android:name="cz.tsystems.grids.BaseGridActivity"
             android:label="@string/title_activity_base_grid"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/PopupTheme" />
         <activity
             android:name="cz.tsystems.grids.PlanedOrdersGrid"
             android:label="@string/title_activity_base_grid"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.ZakaznikInfo"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.VozidloInfo"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.History"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.PlanActivities"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.portablecheckin.Poznamka"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.Siluets"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.OdlozenePolozky"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.grids.SDA"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.portablecheckin.Protocol"
-            android:label="Zaakznik info"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.portablecheckin.MailActivity"
             android:label="@string/Mail"
+            android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
 

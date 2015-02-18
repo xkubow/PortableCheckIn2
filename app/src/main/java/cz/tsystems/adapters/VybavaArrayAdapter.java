@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMVybava;
 import cz.tsystems.portablecheckin.R;
 import android.content.Context;
@@ -58,6 +59,7 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> implements Pinned
             if(selectedText == null || selectedText.getEditableText() != s)
                 return;
 
+            ((FragmentPagerActivity)context).unsavedCheckin();
             final int pos = (int) selectedText.getTag(R.id.listPosition);
             getItem(pos).text = s.toString();
             ViewHolder vh = (ViewHolder) selectedText.getTag(R.id.ViewHolder);
@@ -149,6 +151,7 @@ public class VybavaArrayAdapter extends ArrayAdapter<DMVybava> implements Pinned
         viewHolder.checkBox.setOncheckListener(new com.gc.materialdesign.views.CheckBox.OnCheckListener() {
             @Override
             public void onCheck(com.gc.materialdesign.views.CheckBox checkBox, boolean isChecked) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
                 DMVybava vybava = filteredData.get((Integer) checkBox.getTag());
                 vybava.checked = checkBox.isChecked();
             }

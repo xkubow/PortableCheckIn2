@@ -96,15 +96,17 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_below="@+id/spScenar"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="5dp"
             android:ems="10"
             android:inputType="text"
-            android:tag="MY"
             android:layout_alignLeft="@+id/spScenar"
             android:layout_alignStart="@+id/spScenar"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentEnd="false"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:textColor="@color/black"
+            android:visibility="invisible" />
 
         <com.gc.materialdesign.views.Switch
             android:id="@+id/chkPoist_prp"
@@ -132,7 +134,9 @@
             android:layout_alignStart="@id/txtSPZ"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:inputType="number|textPassword" />
+            android:inputType="number|textPassword"
+            android:enabled="false"
+            android:textColor="@color/black"            />
 
         <com.gc.materialdesign.views.Switch
             android:id="@+id/chkOTP"
@@ -196,13 +200,15 @@
             android:id="@+id/txtModelYear"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignBaseline="@+id/txtPredajDat"
             android:layout_alignBottom="@+id/txtPredajDat"
             android:layout_alignRight="@+id/spScenar"
-            android:layout_toRightOf="@+id/txtPredajDat"
             android:ems="10"
             android:inputType="text"
-            android:tag="MY" />
+            android:tag="MY"
+            android:layout_marginLeft="5dp"
+            android:enabled="false"
+            android:layout_alignStart="@id/txtSPZ"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/lblScenar"
@@ -328,6 +334,40 @@
             android:layout_marginBottom="10dp"
             android:layout_marginRight="30dp" />
 
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:id="@+id/btnProdejDat"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_event_grey600_16dp"
+            android:layout_alignBottom="@+id/txtPredajDat"
+            android:layout_alignEnd="@+id/txtPredajDat"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="0dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="/"
+            android:id="@+id/lblSlash"
+            android:layout_alignBottom="@+id/txtPredajDat"
+            android:layout_toEndOf="@id/txtPredajDat"
+            android:textSize="30dp"
+            android:gravity="center_vertical"
+            android:visibility="invisible" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:id="@+id/btnModelYearDate"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_event_grey600_16dp"
+            android:layout_marginRight="0dp"
+            android:layout_alignBottom="@+id/txtModelYear"
+            android:layout_alignEnd="@+id/txtModelYear"
+            android:layout_marginBottom="10dp" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -412,7 +452,9 @@
             android:layout_alignStart="@+id/txtVIN"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:inputType="number|textPassword" />
+            android:inputType="number|textPassword"
+            android:enabled="false"
+            android:textColor="@color/black"            />
 
         <com.gc.materialdesign.views.Switch
             android:id="@+id/chkServisKnizka"

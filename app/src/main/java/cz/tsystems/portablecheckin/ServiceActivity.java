@@ -190,15 +190,9 @@ public class ServiceActivity extends BaseFragment {
             vybavaAdapter.notifyDataSetChanged();
         } else if (type == DMPrehliadkyMaster.eSLUZBY) {
             List<DMService> service = ((PortableCheckin) getActivity().getApplicationContext()).getServiceList();
-
-//            if (serviceAdapter == null) {
-//                serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
-//                listDetail.setAdapter(serviceAdapter);
-//            } else
             if (serviceAdapter == null || listDetail.getAdapter() != serviceAdapter) {
                 serviceAdapter = new ServiceArrayAdapter(getActivity(), 0, android.R.layout.simple_list_item_1, service);
                 listDetail.setAdapter(serviceAdapter);
-//                serviceAdapter.notifyDataSetChanged();
             }
         } else if (type == DMPrehliadkyMaster.eUNIT) {
             List<DMUnit> unit = ((PortableCheckin) getActivity().getApplicationContext()).getUnitListByUnitId(selectedPrehliadky.unitId);

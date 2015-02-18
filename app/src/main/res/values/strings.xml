@@ -136,7 +136,7 @@
     <string name="pp_nd_c">PP/ND č.</string>
     <string name="os_c">Os. č.</string>
     <string name="stav_oleje">Stav oleje</string>
-    <string name="stav_oleje_indicator">MIn,OK,Max</string>
+    <string name="stav_oleje_indicator">Min,OK,Max</string>
     <string name="min">Min</string>
     <string name="OK">OK</string>
     <string name="Max">Max</string>
@@ -193,7 +193,7 @@
 
     <string name="Nahled">Náhled</string>
     <string name="Smazat_foto">Smazat foto</string>
-    <string name="PozadPoleNevypl">Jedno nebo více poZˇadovaných polí není vyplněno</string>
+    <string name="PozadPoleNevypl">Jedno nebo více požadovaných polí není vyplněno</string>
     <string name="Subject">Předmět</string>
     <string name="Message">Správa</string>
     <string name="Send">Odeslat</string>
@@ -201,5 +201,9 @@
     <string name="XyzmoURI">SIGNificant server URL</string>
     <string name="XyzmoExterUse">Použití exetrní SIGNificant aplikace</string>
     <string name="search_packets">Vyhledávaní paketů</string>
+    <string name="action_Odhlaseni">Odhlášení</string>
+    <string name="ZmazUnit">Chcete zmazat dany unit?</string>
+    <string name="Ano">Ano</string>
+    <string name="Ne">Ne</string>
 
 </resources>

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.PortableCheckin;
 
 /**
@@ -21,6 +22,7 @@ import cz.tsystems.data.PortableCheckin;
 public class Poznamka extends Activity {
     PortableCheckin app;
     EditText txtProtokol, txtZakazList;
+    boolean dataChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class Poznamka extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                dataChanged = true;
                 app.getCheckin().note_protocol = s.toString();
             }
         });
@@ -94,6 +97,7 @@ public class Poznamka extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                dataChanged = true;
                 app.getCheckin().note_order_list = s.toString();
             }
         });
@@ -107,6 +111,7 @@ public class Poznamka extends Activity {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
                 Intent intent = new Intent();
+                intent.putExtra("dataChanged", dataChanged);
                 this.setResult(RESULT_OK, intent);
                 this.finish();
                 return true;

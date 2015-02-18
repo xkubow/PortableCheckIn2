@@ -75,6 +75,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -247,80 +248,6 @@ public class CommunicationService extends IntentService {
 		}
 	}
 
-  /*  public void sendMime(Bundle data) {
-
-        HttpClient client = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-        HttpResponse response;
-        String valSeparator = "?";
-        StringBuilder total;
-        final String boundary = "--234t2f3452435gf2ewq";
-        String line;
-
-        try {
-            String theUrl = URL + "/" + data.getString("ACTIONURL");
-
-            Set<String> keys = data.keySet();
-            for (String key : keys) {
-                final Object value = data.get(key);
-                if (key.equalsIgnoreCase("ACTION")
-                        || key.equalsIgnoreCase("ACTIONURL"))
-                    continue;
-                theUrl += valSeparator + key + "="
-                        + URLEncoder.encode(value.toString(), "UTF-8");
-                valSeparator = "&";
-            }
-
-            Log.d("Message type", data.getString("ACTION") + ", " + theUrl);
-            HttpPost post = new HttpPost(theUrl);
-            MultipartEntity multipartEntity = createImageMIME(boundary);
-
-            post.addHeader(HTTP.CONTENT_TYPE, "multipart/mixed; boundary=" + boundary);
-            post.addHeader("PCHI-DEVICE-NAME", app.getLocalHostName());
-            Log.d("DEVICEID", app.getDeviceID());
-            post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
-            post.addHeader("Authorization", "basic " + app.getLogin());
-            post.addHeader("accept-language", "cz");
-
-            if(data.getString("ACTION").equals("SavePhotos")) {
-                post.setEntity(multipartEntity);
-            }
-
-            showNotification(data);
-            response = client.execute(post);
-
-			*//* Checking response *//*
-            if (response != null) {
-
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    decodeError(response);
-                    return;
-                }
-
-                InputStream in = response.getEntity().getContent();
-                InputStreamReader is = new InputStreamReader(in, "UTF-8");
-                BufferedReader r = new BufferedReader(is);
-                total = new StringBuilder();
-                while ((line = r.readLine()) != null)
-                    total.append(line);
-
-                try {
-                    decodeMessage(data, total.toString());
-                } catch (JsonProcessingException e) {
-                    sendErrorMsg(e.getLocalizedMessage());
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    sendErrorMsg(e.getLocalizedMessage());
-                    e.printStackTrace();
-                }
-
-            }
-        } catch (Exception e) {
-            sendErrorMsg(e.getLocalizedMessage() );
-            e.printStackTrace();
-        }
-    }*/
-
     public void sendMime(Bundle data) {
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
@@ -471,23 +398,19 @@ public class CommunicationService extends IntentService {
         } finally {
             conn.disconnect();
         }
-
         try {
-            decodeMessage(data,"");
+            decodeMessage(data, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
 		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 		HttpResponse response;
 		String valSeparator = "?";
-		StringBuilder total;
-		String line;
-		
+
 		try {
 			String theUrl = URL + "/" + data.getString("ACTIONURL");
 
@@ -511,6 +434,22 @@ public class CommunicationService extends IntentService {
 			get.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
 			get.addHeader("Authorization", "basic " + app.getLogin());
 			get.addHeader("accept-language", "cz");
+            get.addHeader(
+                    "PCHI-DEVICE-VERSION",
+                    String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "GENERATION_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "MAJOR_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "COMMUNICATION_VER", -1)));
+            get.addHeader("if-Unmodified-Since", getSharedPreferences(
+                    "cz.tsystems.portablecheckin", 0).getString(
+                    "DB_UPDATE_DATE", "16 Feb 2011 14:59:59 GMT"));
 			showNotification(data);
             Log.d(TAG, "starting request");
 			response = client.execute(get);
@@ -520,7 +459,10 @@ public class CommunicationService extends IntentService {
 			if (response != null) {
 
 				if (response.getStatusLine().getStatusCode() != 200) {
-					decodeError(response);
+                    if(response.getStatusLine().getStatusCode() == 412)
+                        updateDB(data, response.getFirstHeader("Last-Modified").getValue());
+                    else
+					    decodeError(response);
 					return;
 				}
 
@@ -529,15 +471,8 @@ public class CommunicationService extends IntentService {
                     decodeByteResponse(data, response);
                 }
                 else {
-                    InputStream in = response.getEntity().getContent();
-                    InputStreamReader is = new InputStreamReader(in, "UTF-8");
-                    BufferedReader r = new BufferedReader(is);
-                    total = new StringBuilder();
-                    while ((line = r.readLine()) != null)
-                        total.append(line);
-
                     try {
-                        decodeMessage(data, total.toString());
+                        decodeMessage(data, response);
                     } catch (JsonProcessingException e) {
                         sendErrorMsg(e.getLocalizedMessage());
                         e.printStackTrace();
@@ -559,6 +494,14 @@ public class CommunicationService extends IntentService {
             sendErrorMsg(e.getLocalizedMessage());
 		}
 	}
+
+    private void updateDB(Bundle data, String updateDBDate) {
+
+        Intent i = new Intent("recivedData");
+        i.putExtra("Last-Modified", updateDBDate);
+        i.putExtra("requestData", data);
+        sendBroadcast(i);
+    }
 
     public void sendPostJson(Bundle data) {
         HttpClient client = new DefaultHttpClient();
@@ -591,6 +534,19 @@ public class CommunicationService extends IntentService {
             post.addHeader("PCHI-DEVICE-ID", app.getDeviceID());
             post.addHeader("Authorization", "basic " + app.getLogin());
             post.addHeader("accept-language", "cz");
+            post.addHeader(
+                    "PCHI-DEVICE-VERSION",
+                    String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "GENERATION_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "MAJOR_VER", -1))
+                            + "."
+                            + String.valueOf(getSharedPreferences(
+                            "cz.tsystems.portablecheckin", 0).getInt(
+                            "COMMUNICATION_VER", -1)));
 
             if(data.getString("ACTION").equals("SaveCheckin")) {
                 JSONObject jsonObject = getSaveCheckinData();
@@ -610,15 +566,15 @@ public class CommunicationService extends IntentService {
                     return;
                 }
 
-                InputStream in = response.getEntity().getContent();
+/*                InputStream in = response.getEntity().getContent();
                 InputStreamReader is = new InputStreamReader(in, "UTF-8");
                 BufferedReader r = new BufferedReader(is);
                 total = new StringBuilder();
                 while ((line = r.readLine()) != null)
-                    total.append(line);
+                    total.append(line);*/
 
                 try {
-                    decodeMessage(data, total.toString());
+                    decodeMessage(data, response);
                 } catch (JsonProcessingException e) {
                     sendErrorMsg(e.getLocalizedMessage());
                     e.printStackTrace();
@@ -642,8 +598,25 @@ public class CommunicationService extends IntentService {
 //		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 
-	private void decodeError(HttpResponse response) {
-		sendErrorMsg(response.toString() );
+	private void decodeError(HttpResponse response) throws JsonProcessingException, IOException {
+        InputStream in = null;
+        BufferedReader r = null;
+        StringBuilder total = null;
+        String line;
+
+        in = response.getEntity().getContent();
+        InputStreamReader is = new InputStreamReader(in, "UTF-8");
+        r = new BufferedReader(is);
+        total = new StringBuilder();
+        while ((line = r.readLine()) != null)
+            total.append(line);
+        JsonNode node = null;
+        JsonNode root = mapper.readTree(total.toString());
+
+        if((node = root.path("Message")) != null ) {
+            sendErrorMsg(node.asText() );
+        } else
+            sendErrorMsg(response.toString() + "\n" + total.toString() );
 	}
 
     private void decodeByteResponse(Bundle data, HttpResponse response) throws IOException {
@@ -671,21 +644,35 @@ public class CommunicationService extends IntentService {
         sendBroadcast(i);
     }
 
-	private void decodeMessage(Bundle data, String response)
+	private void decodeMessage(Bundle data, HttpResponse response)
 			throws JsonProcessingException, IOException {
+        StringBuilder responseStr = null;
+        String line;
+
+        Log.d(TAG, ".decodeMessage :" +data.getString("ACTION"));
+
+        if(response != null) {
+            InputStream in = response.getEntity().getContent();
+            InputStreamReader is = new InputStreamReader(in, "UTF-8");
+            BufferedReader r = new BufferedReader(is);
+            responseStr = new StringBuilder();
+            while ((line = r.readLine()) != null)
+                responseStr.append(line);
+        }
+
 		Intent i = new Intent("recivedData");
 		if (data.getString("ACTION").equalsIgnoreCase("Login"))
-			decodeLogin(response);
+			decodeLogin(responseStr.toString());
 		else if (data.getString("ACTION").equalsIgnoreCase("GetStaticData")) {
-			decodeStaticData(response);
+			decodeStaticData(responseStr.toString(), response.getFirstHeader("Last-Modified").getValue());
 			Log.v(TAG, "DB Data DONE");
 			loadDataDone |= eDone.eDBDATA.getValue();
 		} else if (data.getString("ACTION")
 				.equalsIgnoreCase("CheckinOrderList"))
-			app.setPlanZakazk(mapper.readTree(response));
+			app.setPlanZakazk(mapper.readTree(responseStr.toString()));
 		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")
-                && response.length()>0) {
-            JsonNode root = mapper.readTree(response);
+                && responseStr.length()>0) {
+            JsonNode root = mapper.readTree(responseStr.toString());
             PortableCheckin.deletePackets();
             app.checkin = new DMCheckin();
             app.setVozInfo(root.path("CUSTOMER_VEHICLE_INFO"));
@@ -711,16 +698,16 @@ public class CommunicationService extends IntentService {
             app.setOffers(root.path("OFFER"));
 
             int readedLength = 0;
-            while(readedLength < response.length()) {
-                final int lengthToRead = (response.length()-readedLength > 3500)?3500:response.length()-readedLength;
-                final String substring = response.substring(readedLength, readedLength+lengthToRead);
+            while(readedLength < responseStr.length()) {
+                final int lengthToRead = (responseStr.length()-readedLength > 3500)?3500:responseStr.length()-readedLength;
+                final String substring = responseStr.substring(readedLength, readedLength+lengthToRead);
                 Log.i(TAG, String.format("CheckinData: %s", substring));
                 readedLength += substring.length();
             }
 
         } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
-            Log.v(TAG, response);
-            JsonNode root = mapper.readTree(response);
+            Log.v(TAG, responseStr.toString());
+            JsonNode root = mapper.readTree(responseStr.toString());
             app.setPackets(root.path("WORKSHOP_PACKET_DMS"));
 		} else if (data.getString("ACTION").equalsIgnoreCase("GetSilhouette")) {
 			loadDataDone |= eDone.eSILUETMIME.getValue();
@@ -730,7 +717,7 @@ public class CommunicationService extends IntentService {
 			Log.v(TAG, String.format("Banners DONE :%d", loadDataDone));
 		} else if (data.getString("ACTION").equalsIgnoreCase("SaveCheckin")) {
             i.putExtra("recivedData", data);
-            JsonNode result = mapper.readTree(response).path("RESULT");
+            JsonNode result = mapper.readTree(responseStr.toString()).path("RESULT");
             boolean dms_save_status = result.path("SAVE_DMS_STATUS").booleanValue();
             boolean save_status = result.path("SAVE_STATUS").booleanValue();
             app.getCheckin().checkin_id = result.path("CHECKIN_ID").intValue();
@@ -739,20 +726,20 @@ public class CommunicationService extends IntentService {
         } else if(data.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
             Log.d(TAG, "Photos has been saved");
         } else if(data.getString("ACTION").equalsIgnoreCase("GetWorkstepId")) {
-            JsonNode result = mapper.readTree(response);
+            JsonNode result = mapper.readTree(responseStr.toString());
             i.putExtra("WorkstepId", result.path("WorkstepId").textValue());
             Log.d(TAG, "got workstepId :" + response);
         } else if(data.getString("ACTION").equalsIgnoreCase("XyzmoResponse")) {
             Log.d(TAG, "Signing sinchronized");
         }
 
+        Log.d(TAG, "decoding done sending loadDataDone");
 		i.putExtra("requestData", data);
 		i.putExtra("loadDataDone", loadDataDone);
         sendBroadcast(i);
-//		LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 	}
 
-	private void decodeStaticData(String response)
+	private void decodeStaticData(String response, String lastModified)
 			throws JsonProcessingException, IOException {
 
 		dbProvider = app.getTheDBProvider();
@@ -803,6 +790,13 @@ public class CommunicationService extends IntentService {
 		doInserTable("SYS_CONFIG");
 		doInserTable("TYPE_CODE");
 		doInserTable("WORKSHOP_PACKET_BRIDGE");
+
+        short dbVer = dbProvider.getDBVersion();
+
+        SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+        SharedPreferences.Editor spe= sp.edit();
+        spe.putString("DB_UPDATE_DATE", lastModified);
+        spe.commit();
 	}
 
 	private void doInserTable(final String tableName) {
@@ -881,7 +875,6 @@ public class CommunicationService extends IntentService {
         return null;
     }
 
-
 	void parseMIME(Bundle data, HttpResponse response)
 			throws JsonProcessingException, IOException {
 		try {
@@ -927,7 +920,7 @@ public class CommunicationService extends IntentService {
 			e.printStackTrace();
 		}
 
-		decodeMessage(data, "");
+		decodeMessage(data, null);
 	}
 
 	final public void parseSilhouettes(final MimeMultipart multipart,
@@ -954,6 +947,7 @@ public class CommunicationService extends IntentService {
 			app.getTheDBProvider().insertBaner(Integer.parseInt(BannerIds),
 					buffer);
 		}
+        Log.d(TAG, "Parsing Banners DONE");
 	}
 
 	private void saveBytes(BodyPart imagePart) throws MessagingException,
