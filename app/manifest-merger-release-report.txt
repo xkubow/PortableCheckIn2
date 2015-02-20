@@ -21,6 +21,7 @@ MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from PortableCheckIn2:materialDesign:unspecified:7:5
 MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from PortableCheckIn2:section_listview:unspecified:7:5
+MERGED from PortableCheckIn2:jniBitmapOperationsLibrary:unspecified:7:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:9:9
 		INJECTED from AndroidManifest.xml:0:0

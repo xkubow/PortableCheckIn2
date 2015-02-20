@@ -3,6 +3,7 @@ package cz.tsystems.portablecheckin;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.gc.materialdesign.views.ButtonFlat;
 
 import java.util.List;
 
@@ -25,13 +28,17 @@ public class UnitServiceDialog extends Dialog {
     private DMUnit unit;
     private DMPacket selectedPaked;
     private EditText txtCena;
-    private int selectedPosition;
+    private View selectedView;
 
     AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             //TODO osselectuj posledne znacene http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
-            selectedPaked = (DMPacket)parent.getItemAtPosition(position);//packetList.get(position);
+            if(selectedView != null)
+                selectedView.setBackgroundColor(Color.WHITE);
+            selectedView = view;
+            selectedView.setBackgroundColor(getContext().getResources().getColor(R.color.grid_caption));
+                    selectedPaked = (DMPacket)parent.getItemAtPosition(position);//packetList.get(position);
             if(selectedPaked.sell_price != null )
                 txtCena.setText(String.valueOf(selectedPaked.sell_price));
             else
@@ -50,7 +57,7 @@ public class UnitServiceDialog extends Dialog {
         LayoutInflater li = LayoutInflater.from(context);
         View view = li.inflate(R.layout.activity_unit_service, null);
         txtCena = (EditText)view.findViewById(R.id.txtCena);
-        Button btnOk = (Button)view.findViewById(R.id.btnOk);
+        ButtonFlat btnOk = (ButtonFlat)view.findViewById(R.id.btnOk);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

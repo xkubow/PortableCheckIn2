@@ -15,6 +15,7 @@ import cz.tsystems.base.SilhouetteImageView;
 import cz.tsystems.base.SilhouetteImgListener;
 import cz.tsystems.data.DMDamagePoint;
 import cz.tsystems.data.PortableCheckin;
+import cz.tsystems.grids.BaseGridActivity;
 import cz.tsystems.grids.Siluets;
 
 import android.app.Activity;
@@ -40,6 +41,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -47,14 +49,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Toast;
+
 
 public class BodyActivity extends BaseFragment {
     final String TAG = BodyActivity.class.getSimpleName();
 	PortableCheckin app;
 	RelativeLayout values1, pointsLayout;
-	RadioGroup rbtnSilouettes;
-	LinearLayout imageLayout;
+	RadioGroup rbtnSilouettes, rdbStavExterieru;
+    LinearLayout imageLayout;
     SilhouetteImageView imgView;
 	Button selectedPoint, btnSiluets;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
@@ -189,6 +191,15 @@ public class BodyActivity extends BaseFragment {
 			}
 		});
 
+        rdbStavExterieru = (RadioGroup)rootView.findViewById(R.id.rdbExterier);
+        rdbStavExterieru.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                short checkedRadioButton = (short)rdbStavExterieru.getCheckedRadioButtonId();
+                app.getCheckin().exterior_state = checkedRadioButton;
+            }
+        });
+
         btnSiluets = (Button)rootView.findViewById(R.id.btnSiulety);
         btnSiluets.setOnClickListener(new OnClickListener() {
             @Override
@@ -204,6 +215,8 @@ public class BodyActivity extends BaseFragment {
 	
 	@Override
 	public void onStart() {
+        int rdbPos =  (int)app.getCheckin().exterior_state-1;
+        rdbStavExterieru.check(((RadioButton)rdbStavExterieru.getChildAt(rdbPos)).getId());
         super.onStart();
 		// TODO Auto-generated method stub
 	}
@@ -448,7 +461,9 @@ public class BodyActivity extends BaseFragment {
             io.execute(mCurrentPhotoPath.replaceFirst("file:", ""), myDir.getAbsolutePath());
 //            progressBar.setTag(io);
 
-	    }
+	    } else if(requestCode == FragmentPagerActivity.eGRID_RESULT && data.getIntExtra("type",0) == BaseGridActivity.eSILHOUETTES) {
+            changeSiluet();
+        }
 	}
 
     public void deleteImage(int id){

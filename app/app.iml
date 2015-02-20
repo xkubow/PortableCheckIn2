@@ -95,6 +95,7 @@
     <orderEntry type="library" exported="" name="additionnal" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.2.5" level="project" />
     <orderEntry type="library" exported="" name="activation" level="project" />
+    <orderEntry type="module" module-name="jniBitmapOperationsLibrary" exported="" />
     <orderEntry type="module" module-name="section_listview" exported="" />
     <orderEntry type="module" module-name="materialDesign" exported="" />
   </component>

@@ -38,4 +38,5 @@ dependencies {
     compile files('libs/mail.jar')
     compile project(':materialDesign')
     compile project(':section_listview')
+    compile project(':jniBitmapOperationsLibrary')
 }

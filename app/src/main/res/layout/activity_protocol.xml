@@ -11,6 +11,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentEnd="false"
-            android:scaleType="centerInside" />
+            android:scaleType="centerInside"
+            android:background="@color/blue" />
 
 </RelativeLayout>

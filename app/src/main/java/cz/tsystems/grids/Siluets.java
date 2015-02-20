@@ -3,6 +3,8 @@ package cz.tsystems.grids;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -28,7 +30,8 @@ import cz.tsystems.portablecheckin.R;
 public class Siluets extends Activity {
     PortableCheckin app;
     SilhouetteCursorAdapter silhouetteCursorAdapter;
-    protected ListView listView;
+    public ListView listView;
+
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

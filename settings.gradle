@@ -1,2 +1,3 @@
+include ':jniBitmapOperationsLibrary'
 include ':app', 'section_listview'
 include ':materialDesign'

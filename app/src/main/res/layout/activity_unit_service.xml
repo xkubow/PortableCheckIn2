@@ -33,9 +33,9 @@
         android:singleLine="true"
         android:gravity="center_vertical|right" />
 
-    <Button
+    <com.gc.materialdesign.views.ButtonFlat
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="OK"
         android:id="@+id/btnOk"
         android:layout_alignParentBottom="true"

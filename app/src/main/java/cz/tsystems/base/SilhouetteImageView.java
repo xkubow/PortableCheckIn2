@@ -44,9 +44,9 @@ public class SilhouetteImageView extends ImageView {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        PortableCheckin.silhuetteSize.setHeight(h);
+/*        PortableCheckin.silhuetteSize.setHeight(h);
         PortableCheckin.silhuetteSize.setWidth(w);
-        onSizeChanget.onSizeChanged(w,h);
+        onSizeChanget.onSizeChanged(w,h);*/
     }
 
     public void setImageListener(SilhouetteImgListener imgListener) {

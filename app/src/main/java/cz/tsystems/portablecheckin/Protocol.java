@@ -18,7 +18,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,7 +52,11 @@ public class Protocol extends Activity implements View.OnTouchListener {
     PortableCheckin app;
     ProgressBar progressBar;
     Bitmap protokol_bmp;
+    Bitmap tempBitmap;
     String fileNamePDF;
+    Canvas canvas;
+    Paint p = new Paint();
+
 
     @SuppressWarnings("unused")
     private static final float MIN_ZOOM = 1f,MAX_ZOOM = 1f;
@@ -80,6 +87,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
     PointF mid = new PointF();
     float oldDist = 1f;
     float endY, endX;
+    float lastY, lastX;
     String workstepId;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -122,7 +130,11 @@ public class Protocol extends Activity implements View.OnTouchListener {
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         addContentView(progressBar, layoutParams);
 
+        p.setAntiAlias(true);
+        p.setFilterBitmap(true);
+
         requestReportImg();
+        lastY = 0;
     }
 
     private void requestReportPDF() {
@@ -177,32 +189,18 @@ public class Protocol extends Activity implements View.OnTouchListener {
         try {
             FileInputStream fileInputStream = null;
 
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(filename, options);
 
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, imgProtocol.getWidth(), imgProtocol.getHeight());
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false;
-            protokol_bmp = BitmapFactory.decodeFile(filename, options);
-//            Bitmap theBitmap = Bitmap.createBitmap(protokol_bmp, 0,0,protokol_bmp.getWidth(), protokol_bmp.getHeight());
-            imgProtocol.setImageBitmap(protokol_bmp);
-            imgProtocol.setScaleType(ImageView.ScaleType.MATRIX);
+            protokol_bmp = BitmapFactory.decodeFile(filename);
+            tempBitmap = Bitmap.createBitmap(imgProtocol.getMeasuredWidth(), imgProtocol.getMeasuredHeight(), Bitmap.Config.RGB_565);
+            tempBitmap.eraseColor(Color.WHITE);
+            canvas = new Canvas(tempBitmap);
+            canvas.drawBitmap(protokol_bmp, new Matrix(), p);
+            Protocol.this.imgProtocol.setImageBitmap(tempBitmap);
             imgProtocol.setImageMatrix(matrix);
             base.set(0,0);
 
-            endY = findViewById(R.id.contetView).getMeasuredHeight() - imgProtocol.getDrawable().getIntrinsicHeight();
-            endX = findViewById(R.id.contetView).getMeasuredWidth() - imgProtocol.getDrawable().getIntrinsicWidth();
+            endY = findViewById(R.id.contetView).getMeasuredHeight() - protokol_bmp.getHeight();//imgProtocol.getDrawable().getIntrinsicHeight();
             Protocol.this.progressBar.setVisibility(View.GONE);
-/*        try {
-            fileInputStream = new FileInputStream(new File(filename));
-            Bitmap bitmap = BitmapFactory.decodeStream(fileInputStream);
-            imgProtocol.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,7 +209,6 @@ public class Protocol extends Activity implements View.OnTouchListener {
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
-// Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -248,30 +245,17 @@ public class Protocol extends Activity implements View.OnTouchListener {
                 start.set(event.getX(), event.getY());
                 Log.d(TAG, "mode=DRAG"); // write to LogCat
                 mode = DRAG;
+                lastY = 0;
                 break;
 
             case MotionEvent.ACTION_UP: // first finger lifted
 
             case MotionEvent.ACTION_POINTER_UP: // second finger lifted
 
-                if(mode == DRAG) {
-                    base.x += dx;
+                if(mode == DRAG)
                     base.y += dy;
-                }
                 mode = NONE;
                 Log.d(TAG, "mode=NONE");
-                break;
-
-            case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
-
-                oldDist = spacing(event);
-                Log.d(TAG, "oldDist=" + oldDist);
-                if (oldDist > 5f) {
-                    savedMatrix.set(matrix);
-                    midPoint(mid, event);
-                    mode = ZOOM;
-                    Log.d(TAG, "mode=ZOOM");
-                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -281,62 +265,25 @@ public class Protocol extends Activity implements View.OnTouchListener {
                     imgProtocol.getImageMatrix().getValues(matrixValues);
                     matrix.set(savedMatrix);
 
-                    dx = event.getX() - start.x;
                     dy = event.getY() - start.y;
-                    Log.d(TAG, "-----------------------------------------------------------------------------");
-                    Log.d(TAG, String.valueOf(dx) +","+ String.valueOf(dy));
                     matrix.getValues(theMatrix);
 
-                    if((matrixValues[Matrix.MTRANS_X] + dx) < 0) {
-                        Log.d(TAG, "DX:0 <- " + dx + "+" +matrixValues[Matrix.MTRANS_X]);
-                        theMatrix[Matrix.MTRANS_X] = 0;
-                        matrix.setValues(theMatrix);
-                        dx = 0;
-                    }
-                    if((matrixValues[Matrix.MTRANS_X] + dx) > endX){//imgProtocol.getDrawable().getIntrinsicWidth()) {
-                        Log.d(TAG, "DX:0 <- " + dx + "+" +matrixValues[Matrix.MTRANS_X]);
-                        theMatrix[Matrix.MTRANS_X] = endX;
-                        matrix.setValues(theMatrix);
-                        dx = 0;
-                    }
-                    if((dy + matrixValues[Matrix.MTRANS_Y]) < endY) {//-(imgProtocol.getDrawable().getIntrinsicHeight() /*- imgProtocol.getHeight()/2*/)) {
-                        Log.d(TAG, "DY:0 <- " + dy + "+" + matrixValues[Matrix.MTRANS_Y]);
-                        theMatrix[Matrix.MTRANS_Y] = endY;
-                        matrix.setValues(theMatrix);
-                        dy = 0;
-                    }
-                    else if((dy + matrixValues[Matrix.MTRANS_Y]) > 0) {
-                        Log.d(TAG, "DY 2:0 <- " + dy + "+" + matrixValues[Matrix.MTRANS_Y]);
-                        theMatrix[Matrix.MTRANS_Y] = 0;
-                        matrix.setValues(theMatrix);
-                        dy = 0;
-                    }
+                    if(dy+base.y < endY)
+                        dy = lastY;
+                    else if((dy + base.y) > 0)
+                        dy = lastY;
 
-                    Log.d(TAG, String.valueOf(dx) + "," + String.valueOf(dy) + " : "
-                            + String.valueOf(matrixValues[Matrix.MTRANS_X]) + "," + String.valueOf(matrixValues[Matrix.MTRANS_Y]));
+                    Log.d(TAG, String.valueOf(dy) + " : "
+                            + String.valueOf(matrixValues[Matrix.MTRANS_Y]));
 
-                    matrix.postTranslate(dx, dy); // create the transformation in the matrix  of points
-                    Log.d(TAG, String.valueOf(theMatrix[Matrix.MTRANS_X]) +","+ String.valueOf(theMatrix[Matrix.MTRANS_Y]) );
+                    lastY = dy;
+                    matrix.postTranslate(0, dy);
                 }
-                else if (mode == ZOOM)
-                {
-                    // pinch zooming
-                    float newDist = spacing(event);
-                    Log.d(TAG, "newDist=" + newDist);
-                    if (newDist > 5f)
-                    {
-                        matrix.set(savedMatrix);
-                        scale = newDist / oldDist; // setting the scaling of the
-                        // matrix...if scale > 1 means
-                        // zoom in...if scale < 1 means
-                        // zoom out
-                        matrix.postScale(scale, scale, mid.x, mid.y);
-                    }
-                }
-                break;
         }
 
-        view.setImageMatrix(matrix); // display the transformation on screen
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(protokol_bmp, matrix, p);
+        Protocol.this.imgProtocol.setImageBitmap(tempBitmap);
         return true; // indicate event was handled
     }
 

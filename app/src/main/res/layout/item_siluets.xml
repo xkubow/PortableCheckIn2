@@ -6,30 +6,28 @@
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:id="@+id/ingSilhouette1"
-        android:layout_weight="1"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_weight="1" />
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:id="@+id/ingSilhouette2"
         android:layout_weight="1"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="0dp" />
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:id="@+id/ingSilhouette3"
         android:layout_weight="1"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="0dp" />
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:id="@+id/ingSilhouette4"
         android:layout_weight="1"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="0dp" />
 </LinearLayout>

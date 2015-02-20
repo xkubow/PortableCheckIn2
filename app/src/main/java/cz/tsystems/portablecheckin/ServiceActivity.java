@@ -141,7 +141,7 @@ public class ServiceActivity extends BaseFragment {
                     txtBadge.setText(String.valueOf(openedCount) + "/" + badgeStr[1]);
                 }
 
-                if (badgeStr[0].equalsIgnoreCase(badgeStr[1]))
+                if ((Integer.valueOf(badgeStr[0])+1) == Integer.valueOf(badgeStr[1]))
                     txtBadge.setVisibility(View.INVISIBLE);
             }
 
