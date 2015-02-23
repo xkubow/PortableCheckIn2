@@ -26,6 +26,7 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.print.PrintAttributes;
+import android.print.PrintManager;
 import android.print.pdf.PrintedPdfDocument;
 import android.util.FloatMath;
 import android.util.Log;
@@ -42,6 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
 
+import cz.tsystems.adapters.ProtocolPrintAdapter;
 import cz.tsystems.communications.CommunicationService;
 import cz.tsystems.data.PortableCheckin;
 
@@ -369,14 +371,35 @@ public class Protocol extends Activity implements View.OnTouchListener {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 getWorkstepId();
-//https://developer.android.com/training/printing/custom-docs.html
-                PrintAttributes printAttributes;
-                PrintedPdfDocument mpdf = new PrintedPdfDocument(this, printAttributes);
+                return false;
+            }
+        });
+        menu.findItem(R.id.actin_print).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                printProtocol();
                 return false;
             }
         });
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    void printProtocol() {
+        File file = new File(fileNamePDF);
+        //https://developer.android.com/training/printing/custom-docs.html
+
+        if (file.exists()) {
+            Uri path = Uri.fromFile(file);
+            PrintManager printManager = (PrintManager) this
+                    .getSystemService(Context.PRINT_SERVICE);
+
+            String jobName = this.getString(R.string.app_name) +
+                    " PCHI_Protocol";
+
+            printManager.print(jobName, new ProtocolPrintAdapter(this, path.getPath()),
+                    null);
+        }
     }
 
     void sharePDF() {
