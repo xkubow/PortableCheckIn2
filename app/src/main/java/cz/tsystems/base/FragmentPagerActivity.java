@@ -66,7 +66,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	PortableCheckin app;
 	List<Fragment> theFragments = new ArrayList<Fragment>(4);
     Button btnBrand;
-	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption;
+	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption, txtBadge1, txtBadge3, txtBadge4;
     Menu myMenu;
     Bundle lastActionbundle = null;
     private int largestHeight;
@@ -225,7 +225,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	}
 
-    public static View renderTabView(Context context, int tabnr) {
+    public View renderTabView(Context context, int tabnr) {
         FrameLayout view = (FrameLayout ) LayoutInflater.from(context).inflate(R.layout.textview_tab, null);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         TextView txtBadge = (TextView) view.findViewById(R.id.tab_badge);
@@ -234,6 +234,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         switch(tabnr) {
             case eTabVozidlo:
                 txtTabText.setText(R.string.VOZIDLO);
+                FragmentPagerActivity.this.txtBadge1 = txtBadge;
                 txtBadge.setVisibility(View.VISIBLE);
                 txtBadge.setText("0/6");
                 break;
@@ -243,11 +244,13 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 break;
             case eTabService:
                 txtTabText.setText(R.string.PROHLIDKA);
+                FragmentPagerActivity.this.txtBadge3 = txtBadge;
                 txtBadge.setVisibility(View.VISIBLE);
                 txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
                 break;
             case eTabNabidka:
                 txtTabText.setText(R.string.NABIDKA);
+                FragmentPagerActivity.this.txtBadge4 = txtBadge;
                 txtBadge.setVisibility(View.VISIBLE);
                 txtBadge.setText("");
                 break;
@@ -263,9 +266,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 	}
 
     public void updateFragments() {
+
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
         Iterator<ActivityManager.RunningAppProcessInfo> iter = runningAppProcesses.iterator();
+
+        FragmentPagerActivity.this.txtBadge1.setVisibility(View.VISIBLE);
+        FragmentPagerActivity.this.txtBadge3.setVisibility(View.VISIBLE);
+        FragmentPagerActivity.this.txtBadge4.setVisibility(View.VISIBLE);
 
         while(iter.hasNext()){
             ActivityManager.RunningAppProcessInfo next = iter.next();
@@ -278,6 +286,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 break;
             }
         }
+
+        ((ServiceActivity) theFragments.get(2)).resetService();
 
         MainActivity mainActivity = (MainActivity) theFragments.get(0);
         mainActivity.isNewCheckin = true;

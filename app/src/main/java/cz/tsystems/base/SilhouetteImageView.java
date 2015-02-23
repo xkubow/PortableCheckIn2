@@ -18,7 +18,7 @@ import cz.tsystems.data.PortableCheckin;
 public class SilhouetteImageView extends ImageView {
     Context context;
     PortableCheckin app;
-    SilhouetteImgListener onSizeChanget;
+    SilhouetteImgListener onSizeChanget = null;
 
     public SilhouetteImageView(Context context) {
         super(context);
@@ -44,9 +44,13 @@ public class SilhouetteImageView extends ImageView {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh){
-/*        PortableCheckin.silhuetteSize.setHeight(h);
-        PortableCheckin.silhuetteSize.setWidth(w);
-        onSizeChanget.onSizeChanged(w,h);*/
+        super.onSizeChanged(w,h,oldw,oldh);
+        if(PortableCheckin.silhuetteSize != null) {
+            PortableCheckin.silhuetteSize.setHeight(h);
+            PortableCheckin.silhuetteSize.setWidth(w);
+        }
+        if(onSizeChanget != null)
+            onSizeChanget.onSizeChanged(w,h);
     }
 
     public void setImageListener(SilhouetteImgListener imgListener) {

@@ -25,6 +25,8 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.pdf.PrintedPdfDocument;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Menu;
@@ -367,6 +369,9 @@ public class Protocol extends Activity implements View.OnTouchListener {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 getWorkstepId();
+//https://developer.android.com/training/printing/custom-docs.html
+                PrintAttributes printAttributes;
+                PrintedPdfDocument mpdf = new PrintedPdfDocument(this, printAttributes);
                 return false;
             }
         });

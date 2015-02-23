@@ -242,4 +242,8 @@ public class ServiceActivity extends BaseFragment {
             masterClicked(null, pos);
         }
     }
+
+    public void resetService() {
+        selectedPrehliadky = null;
+    }
 }

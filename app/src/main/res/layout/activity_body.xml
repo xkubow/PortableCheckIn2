@@ -141,6 +141,7 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="@string/A"
+            android:tag="0"
             android:layout_margin="10dp" />
 
         <RadioButton
@@ -148,6 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/B"
+            android:tag="1"
             android:layout_margin="10dp" />
 
         <RadioButton
@@ -155,6 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/C"
+            android:tag="2"
             android:layout_margin="10dp" />
     </RadioGroup>
 

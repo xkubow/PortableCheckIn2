@@ -91,7 +91,7 @@ public class PortableCheckin extends Application {
 	static public DMCheckin checkin;
 	static public DMUser user;
 	static public DMSetting setting;
-    static public Size silhuetteSize;
+    static public Size silhuetteSize = new Size();
 	
 	static public TypeReference<List<DMCustomerInfo>> customerInfoTypeRef = new TypeReference<List<DMCustomerInfo>>(){};
 	static public List<DMCustomerInfo> custumerInfoList;

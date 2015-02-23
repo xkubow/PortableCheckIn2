@@ -26,7 +26,7 @@
         jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\jniBitmapOperationsLibrary\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="2bfbbde7b27b4d00bb3ec0f0c18e4f505dd15d7d">
+        sha1="6db902a5d31708a943d9fc524aeac033a301feb7">
         <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-3409c8a3a6af48e9142b2762743e8589e0a623dd.jar" />
     </item>
     <item
@@ -89,7 +89,7 @@
         jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\section_listview\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="92a546ede5ef4df8232d6c31463bf954a936fd36">
+        sha1="ed1aadb6b19fb7917d3fe24ba23d95dd2fc3bf7b">
         <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-a69f014f70777dfb33daffb57dcc5a99bca0e7eb.jar" />
     </item>
     <item
@@ -103,7 +103,7 @@
         jar="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\exploded-aar\PortableCheckIn2\materialDesign\unspecified\classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="c976b6ba5688adb795d71908c563b0a30fdcf534">
+        sha1="2dd668524595e8c320fe71a3149d2eca80e0652d">
         <dex dex="C:\Users\kubisj\AndroidStudioProjects\PortableCheckIn2\app\build\intermediates\pre-dexed\debug\classes-cf259d9092dda6db18b6832397da6fd99713b2f9.jar" />
     </item>
 

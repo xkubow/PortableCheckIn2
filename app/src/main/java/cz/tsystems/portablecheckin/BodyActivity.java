@@ -195,8 +195,8 @@ public class BodyActivity extends BaseFragment {
         rdbStavExterieru.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                short checkedRadioButton = (short)rdbStavExterieru.getCheckedRadioButtonId();
-                app.getCheckin().exterior_state = checkedRadioButton;
+                RadioButton rb = (RadioButton) group.findViewById(checkedId);
+                app.getCheckin().exterior_state = (short) (Short.valueOf(rb.getTag().toString())+1);
             }
         });
 

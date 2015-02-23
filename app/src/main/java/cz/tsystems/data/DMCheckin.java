@@ -24,7 +24,7 @@ public class DMCheckin {
     public Date ec_valid_until;
     public int check_scenario_id;
     public short interior_state;
-    public short exterior_state = 0;
+    public short exterior_state = 2;
     public String note_order_list;
     public Date closed;
     public Date printed;

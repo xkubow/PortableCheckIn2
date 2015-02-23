@@ -148,7 +148,8 @@ public class CommunicationService extends IntentService {
 				|| intent.getStringExtra("ACTION").equalsIgnoreCase(
 						"GetBanners"))
 			sendGetMime(intent.getExtras());
-        else if(intent.getStringExtra("ACTION").equalsIgnoreCase("SaveCheckin"))
+        else if(intent.getStringExtra("ACTION").equalsIgnoreCase("SaveCheckin")
+                ||intent.getStringExtra("ACTION").equalsIgnoreCase("SendEmail"))
             sendPostJson(intent.getExtras());
 //            getSaveCheckinData();
 		else
