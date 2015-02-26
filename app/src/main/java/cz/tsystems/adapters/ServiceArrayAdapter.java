@@ -62,8 +62,6 @@ public class ServiceArrayAdapter extends ArrayAdapter<DMService> implements Pinn
                 return;
             ViewHolder vh = (ViewHolder) selectedText.getTag(R.id.ViewHolder);
             final int pos = (int) selectedText.getTag(R.id.listPosition);
-            Log.d(TAG, "--------------------------------------------------------------------");
-            Log.d(TAG, String.valueOf(pos) + ", " + selectedText.toString() + ", " + vh.txtService.toString());
             getItem(pos).text = s.toString();
             vh.checkBox.setChecked((s.length()>0));
             getItem(pos).setChecked(vh.checkBox.isChecked());

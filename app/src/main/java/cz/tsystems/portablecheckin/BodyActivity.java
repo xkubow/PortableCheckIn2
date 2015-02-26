@@ -365,7 +365,6 @@ public class BodyActivity extends BaseFragment {
                 parent.removeView(progressView);
             }
 
-
             View imgView = new View(getActivity());
             imgView.setId(View.generateViewId());
             imgView.setTag(thefileName);
@@ -483,7 +482,12 @@ public class BodyActivity extends BaseFragment {
     public void showImage(int id){
         View imageView = imageLayout.findViewById(id);
         String imageName = (String)imageView.getTag();
-        File storageDir = Environment.getExternalStoragePublicDirectory(
+
+        Intent i = new Intent(getActivity(), PhotoNahled.class);
+        i.putExtra("photoName", imageName);
+        getActivity().startActivity(i);
+
+/*        File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         File checkinPhotoDir = new File(storageDir, "CheckInPhotos");
         File imgFile = new File(checkinPhotoDir, imageName);
@@ -504,7 +508,7 @@ public class BodyActivity extends BaseFragment {
             });
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imgPreview.setImageBitmap(bitmap);
-        }
+        }*/
     }
 
 

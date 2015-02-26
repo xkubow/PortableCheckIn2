@@ -45,6 +45,11 @@ public class VehicleInfoAdapter extends ArrayAdapter<DMVehicleInfo> implements P
 	}
 
     @Override
+    public boolean isEnabled (int position) {
+        return false;
+    }
+
+    @Override
     public boolean isItemViewTypePinned(int viewType) {
         return false;
     }

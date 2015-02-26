@@ -13,6 +13,7 @@ import com.hb.views.PinnedSectionListView;
 
 import java.util.List;
 
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMOffers;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
@@ -22,9 +23,11 @@ import cz.tsystems.portablecheckin.R;
  */
 public class OffersArrayAdapter extends ArrayAdapter<DMOffers> implements PinnedSectionListView.PinnedSectionListAdapter{
     PortableCheckin app;
+    Context context;
 
     public OffersArrayAdapter(Context context, int resource, List<DMOffers> objects) {
         super(context, resource, objects);
+        this.context = context;
         app = (PortableCheckin)context.getApplicationContext();
     }
 
@@ -60,6 +63,7 @@ public class OffersArrayAdapter extends ArrayAdapter<DMOffers> implements Pinned
         chkOffer.setOncheckListener(new CheckBox.OnCheckListener() {
             @Override
             public void onCheck(CheckBox checkBox, boolean isChecked) {
+                ((FragmentPagerActivity)context).unsavedCheckin();
                 final int pos = (int)checkBox.getTag();
                 getItem(pos).checked = isChecked;
             }

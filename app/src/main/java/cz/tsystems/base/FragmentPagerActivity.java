@@ -64,12 +64,13 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     private Boolean checkLogin = true, newCheckin = false;
 	FragmentManager fm;
 	PortableCheckin app;
-	List<Fragment> theFragments = new ArrayList<Fragment>(4);
+	public List<Fragment> theFragments = new ArrayList<Fragment>(4);
     Button btnBrand;
 	TextView lblLoggetUser, lblCheckinNR, lblVehicleCaption, txtBadge1, txtBadge3, txtBadge4;
     Menu myMenu;
     Bundle lastActionbundle = null;
     private int largestHeight;
+    boolean doProtokol = false;
 
     public void setCheckLogin(Boolean checkLogin) {
         this.checkLogin = checkLogin;
@@ -130,10 +131,11 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                         app.showProgrssDialog(FragmentPagerActivity.this);
                         FragmentPagerActivity.this.startService(msgIntent);
                         return;
-                    } else
-                        saveCheckingDone();
+                    } else if(!saveCheckingDone())
+                        return;
                 } else if (b.getString("ACTION").equalsIgnoreCase("SavePhotos")) {
-                    saveCheckingDone();
+                    if(!saveCheckingDone())
+                        return;
                 } else if (b.getString("ACTION").equalsIgnoreCase("DataForCheckIn")) {
 
                     final boolean isCheckin = (PortableCheckin.checkin.checkin_id != null && PortableCheckin.checkin.checkin_id > 0);
@@ -164,23 +166,37 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 
 			theFragment = (BaseFragment) theFragments.get(getActionBar().getSelectedTab().getPosition());
-//			Log.d("FRAGMENT", theFragment.getClass().getSimpleName());
 			theFragment.showData(intent);
 		}
 	};
 
-    private void saveCheckingDone() {
-        MenuItem button = myMenu.findItem(R.id.action_send);
-        Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
-        resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
-        button.setIcon(resIcon);
+    private boolean saveCheckingDone() {
+        if(myMenu != null) {
+            MenuItem button = myMenu.findItem(R.id.action_send);
+            Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+            resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
+            button.setIcon(resIcon);
+            button.setEnabled(false);
+            button.setChecked(true);
+        }
+
+        if(doProtokol) {
+            doProtokol = false;
+            getProtokol();
+            return false;
+        }
         app.dismisProgressDialog();
+        return true;
     }
 
     public void unsavedCheckin() {
+        if(myMenu == null)
+            return;
         MenuItem button = myMenu.findItem(R.id.action_send);
         Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
         button.setIcon(resIcon);
+        button.setEnabled(true);
+        button.setChecked(false);
     }
 
     @Override
@@ -221,6 +237,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabService)).setTabListener(this));
 		actionBar.addTab(actionBar.newTab().setCustomView(renderTabView(FragmentPagerActivity.this, eTabNabidka)).setTabListener(this));
 
+        setTitle("");
         app.setActualActivity(this);
 
 	}
@@ -287,7 +304,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
         }
 
-        ((ServiceActivity) theFragments.get(2)).resetService();
+        ((ServiceActivity) theFragments.get(eTabService)).resetService();
 
         MainActivity mainActivity = (MainActivity) theFragments.get(0);
         mainActivity.isNewCheckin = true;
@@ -324,7 +341,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 app.dismisProgressDialog();
                 break;
             case ePoznamkaActivity:
-                if(data.getExtras().getBoolean("dataChanged"))
+                if(data != null && data.hasExtra("dataChanged") && data.getExtras().getBoolean("dataChanged"))
                     unsavedCheckin();
                 break;
         }
@@ -387,6 +404,18 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             this.startService(msgIntent);
         }
 
+        if(intent.hasExtra("OpenPlanedOrderList")
+                && intent.getBooleanExtra("OpenPlanedOrderList",false)
+                && PortableCheckin.setting.auto_show_planned)
+        {
+            intent.removeExtra("OpenPlanedOrderList");
+            app.showProgrssDialog(this);
+            Intent msgIntent = new Intent(this, CommunicationService.class);
+            msgIntent.putExtra("ACTIONURL", "pchi/CheckinOrderList");
+            msgIntent.putExtra("ACTION", "CheckinOrderList");
+            startService(msgIntent);
+        }
+
 
 		registerRecaiver();
 		super.onResume();
@@ -433,30 +462,26 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 return false;
             }
         });
-        menu.findItem(R.id.action_Protokol).setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
+
+        MenuItem button = myMenu.findItem(R.id.action_Protokol);
+        button.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                getProtokol();
-                return  false;
+                doProtokol = true;
+                if (menu.findItem(R.id.action_send).isChecked())
+                    getProtokol();
+                else
+                    odesliData();
+                return false;
             }
         });
-        menu.findItem(R.id.action_send).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+        button = menu.findItem(R.id.action_send);
+        button.setChecked(false);
+        button.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                boolean doSave = true;
-                doSave &= getActionBar().getTabAt(eTabVozidlo).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
-                doSave &= getActionBar().getTabAt(eTabService).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
-                doSave &= getActionBar().getTabAt(eTabNabidka).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
-
-                if(doSave) {
-                    app.showProgrssDialog(FragmentPagerActivity.this);
-                    Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
-                    msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
-                    msgIntent.putExtra("ACTION", "SaveCheckin");
-                    startService(msgIntent);
-                } else
-                    app.getDialog(FragmentPagerActivity.this, "", getResources().getString(R.string.PozadPoleNevypl), PortableCheckin.DialogType.SINGLE_BUTTON).show();
-
+                odesliData();
                 return false;
             }
         });
@@ -517,6 +542,22 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
         return super.onCreateOptionsMenu(menu);
 	}
+
+    void odesliData() {
+        boolean doSave = true;
+        doSave &= getActionBar().getTabAt(eTabVozidlo).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+        doSave &= getActionBar().getTabAt(eTabService).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+        doSave &= getActionBar().getTabAt(eTabNabidka).getCustomView().findViewById(R.id.tab_badge).getVisibility() == View.INVISIBLE;
+
+        if(doSave) {
+            app.showProgrssDialog(FragmentPagerActivity.this, getResources().getString(R.string.Odesilam_data));
+            Intent msgIntent = new Intent(FragmentPagerActivity.this, CommunicationService.class);
+            msgIntent.putExtra("ACTIONURL", "pchi/SaveCheckin");
+            msgIntent.putExtra("ACTION", "SaveCheckin");
+            startService(msgIntent);
+        } else
+            app.getDialog(FragmentPagerActivity.this, "", getResources().getString(R.string.PozadPoleNevypl), PortableCheckin.DialogType.SINGLE_BUTTON).show();
+    }
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
@@ -626,7 +667,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Context Menu");
+//        menu.setHeaderTitle("Context Menu");
         menu.add(0, v.getId(), 0, getResources().getString(R.string.Smazat_foto));
         menu.add(0, v.getId(), 1, getResources().getString(R.string.Nahled));
     }

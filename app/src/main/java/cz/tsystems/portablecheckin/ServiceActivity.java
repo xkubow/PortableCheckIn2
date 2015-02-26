@@ -9,6 +9,7 @@ import cz.tsystems.adapters.ServiceArrayAdapter;
 import cz.tsystems.adapters.UnitArrayAdapter;
 import cz.tsystems.adapters.VybavaArrayAdapter;
 import cz.tsystems.base.BaseFragment;
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMBaseItem;
 import cz.tsystems.data.DMPrehliadkyMaster;
 import cz.tsystems.data.DMService;
@@ -97,7 +98,7 @@ public class ServiceActivity extends BaseFragment {
                             break;
                     }
                     if(item != null) {
-
+                        ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                         if(item.getEditable()) {
                             EditText editText = (EditText)view.findViewById(R.id.txtVybavaText);
                             editText.requestFocusFromTouch();
@@ -111,6 +112,7 @@ public class ServiceActivity extends BaseFragment {
                     DMUnit item = unitAdapter.getItem(position);
 
                     if(item != null && item.chck_status_id != null) {
+                        ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                         item.chck_status_id = (item.chck_status_id == 1)?0:1;
                         b.setChecked(item.chck_status_id == 1);
                     }
@@ -157,7 +159,7 @@ public class ServiceActivity extends BaseFragment {
     
     @Override
     public void onResume() {
-    	refreshMaster();
+   	    refreshMaster();
         if(selectedPrehliadky != null)
             refreshDetail(null);
         filterPackets();

@@ -8,6 +8,8 @@ import android.widget.EditText;
 
 import java.util.Locale;
 
+import cz.tsystems.data.PortableCheckin;
+
 public class vinEditText extends EditText {
 	private boolean offTextChange;
 
@@ -35,7 +37,7 @@ public class vinEditText extends EditText {
 	
 	@Override
 	protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-		// TODO Auto-generated method stub
+        super.onTextChanged(text, start, lengthBefore, lengthAfter);
 		if(offTextChange)
 			return;
 		StringBuilder sb = new StringBuilder(this.getText().toString().replace(" ", "").toUpperCase(Locale.US));
@@ -45,18 +47,19 @@ public class vinEditText extends EditText {
 		if(len > 17)
 			sb.delete(17, len);
 //		Log.d("TEXT", sb.toString() + ", len:" + sb.length());
-		if(len >= 17)
-		{
+		if(len >= 3)
 			sb.insert(3, ' ');
+        if(len >= 7)
 			sb.insert(7, ' ');
+        if(len >= 10)
 			sb.insert(10, ' ');
+        if(len >= 14)
 			sb.insert(14, ' ');
-		}
 		offTextChange = true;
 		this.setText(sb.toString());
+        setSelection(sb.length());
 		offTextChange = false;
-		super.onTextChanged(text, start, lengthBefore, lengthAfter);
-	}
+    }
 
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {

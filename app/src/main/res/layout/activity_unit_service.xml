@@ -14,7 +14,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txtCena"
         android:layout_above="@+id/btnOk"
-        android:choiceMode="singleChoice"/>
+        android:choiceMode="singleChoice"
+        android:layout_marginTop="16dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -34,7 +35,7 @@
         android:gravity="center_vertical|right" />
 
     <com.gc.materialdesign.views.ButtonFlat
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="60dp"
         android:text="OK"
         android:id="@+id/btnOk"

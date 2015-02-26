@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -99,5 +100,20 @@ public class Siluets extends Activity {
 //        silhouetteCursorAdapter = new SilhouetteCursorAdapter( this, cursor);
         SilhouetteCursorAdapter simpleCursorAdapter = new SilhouetteCursorAdapter(this, R.layout.item_siluets, cursor, new String[] {"img1", "img3", "img2", "img4"}, new int[] {R.id.ingSilhouette1, R.id.ingSilhouette2, R.id.ingSilhouette3, R.id.ingSilhouette4}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         listView.setAdapter(simpleCursorAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                Intent intent = new Intent();
+                intent.putExtra("type", BaseGridActivity.eSILHOUETTES);
+                this.setResult(RESULT_CANCELED, intent);
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

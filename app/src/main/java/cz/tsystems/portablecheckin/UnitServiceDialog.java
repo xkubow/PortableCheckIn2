@@ -33,7 +33,7 @@ public class UnitServiceDialog extends Dialog {
     AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TODO osselectuj posledne znacene http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
+
             if(selectedView != null)
                 selectedView.setBackgroundColor(Color.WHITE);
             selectedView = view;

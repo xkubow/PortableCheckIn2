@@ -27,7 +27,8 @@
         android:layout_height="wrap_content"
         android:descendantFocusability="blocksDescendants"
         android:background="#006384"
-        android:layout_marginLeft="40dp" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="16dp" />
 
     <EditText
         android:layout_width="100dp"

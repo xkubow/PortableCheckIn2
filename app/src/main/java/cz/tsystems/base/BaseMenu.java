@@ -10,12 +10,15 @@ import cz.tsystems.portablecheckin.SettingAppDialog;
 import cz.tsystems.portablecheckin.WelcomeActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.view.View;
 
 public final class BaseMenu extends Object {
 //	private PortableCheckin app;
@@ -54,7 +57,9 @@ public final class BaseMenu extends Object {
         SharedPreferences.Editor spe= sp.edit();
         spe.putString("DB_UPDATE_DATE", "16 Feb 2011 14:59:59 GMT");
         spe.commit();*/
-        setDefaultValues(activity.getApplicationContext());
+        PortableCheckin app = (PortableCheckin)activity.getApplicationContext();
+        app.loadDefaultCheckin();
+        ((FragmentPagerActivity) app.getActualActivity()).updateFragments();
         Intent i = new Intent(activity, WelcomeActivity.class);
         i.putExtra("Odhlaseni", true);
         activity.startActivity(i);
@@ -68,9 +73,28 @@ public final class BaseMenu extends Object {
     }
 
     private static void setDefaultValues(Context context) {
-        PortableCheckin app = (PortableCheckin)context;
-        app.loadDefaultCheckin();
-        ((FragmentPagerActivity)app.getActualActivity()).updateFragments();
+        final PortableCheckin app = (PortableCheckin)context;
+        AlertDialog.Builder builder = new AlertDialog.Builder(((PortableCheckin) context).getActualActivity());
+        builder.setTitle("")
+                .setMessage(app.getResources().getString(R.string.Smazat_aktualne_data) + " ?")
+                .setCancelable(false);
+
+        builder.setPositiveButton(R.string.Ano, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                app.loadDefaultCheckin();
+                ((FragmentPagerActivity) app.getActualActivity()).updateFragments();
+            }
+        });
+
+        builder.setNegativeButton(R.string.Ne, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
 
     static public void showStrucHistory(final Activity activity)

@@ -2,12 +2,16 @@ package cz.tsystems.portablecheckin;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +28,7 @@ public class PacketDetailDialog extends Dialog{
     private PacketDetailArrayAdapter packetDetailArrayAdapter;
     List<DMPacketDetail> packetDetailList;
     ListView listView;
+    NumberFormat numberFormat = new DecimalFormat("##0.00");
 
     AdapterView.OnItemClickListener onItemClick = new AdapterView.OnItemClickListener() {
         @Override
@@ -40,12 +45,20 @@ public class PacketDetailDialog extends Dialog{
         View view = li.inflate(R.layout.activity_packet_info, null);
         packetDetailArrayAdapter = new PacketDetailArrayAdapter(getContext(), packetDetailList);
 
+        Spanned cenaSpanned;
+
         TextView cena = (TextView) view.findViewById(R.id.cenaND);
-        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaND) + " " + PortableCheckin.setting.currency_abbrev);
+        cenaSpanned = Html.fromHtml("<b>" + context.getResources().getString(R.string.Material) + "</b>" +
+                ":<br/>" + numberFormat.format(packetDetailArrayAdapter.cenaND) + " " + PortableCheckin.setting.currency_abbrev);
+        cena.setText(cenaSpanned);
         cena = (TextView) view.findViewById(R.id.cenaPP);
-        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaPP) + " " + PortableCheckin.setting.currency_abbrev);
+        cenaSpanned = Html.fromHtml("<b>" + context.getResources().getString(R.string.Prace) + "</b>" +
+                ":<br/>" + numberFormat.format(packetDetailArrayAdapter.cenaPP) + " " + PortableCheckin.setting.currency_abbrev);
+        cena.setText(cenaSpanned);
         cena = (TextView) view.findViewById(R.id.cenaCelk);
-        cena.setText(String.valueOf(packetDetailArrayAdapter.cenaCelek) + " " + PortableCheckin.setting.currency_abbrev);
+        cenaSpanned = Html.fromHtml("<b>" + context.getResources().getString(R.string.Celkem) + "</b>" +
+                ":<br/>" + numberFormat.format(packetDetailArrayAdapter.cenaCelek) + " " + PortableCheckin.setting.currency_abbrev);
+        cena.setText(cenaSpanned);
 
         listView = (ListView) view.findViewById(R.id.packetDetailList);
         listView.setAdapter(packetDetailArrayAdapter);

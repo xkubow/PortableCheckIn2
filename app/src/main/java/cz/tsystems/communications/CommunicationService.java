@@ -509,22 +509,11 @@ public class CommunicationService extends IntentService {
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
         HttpResponse response;
         String valSeparator = "?";
-        StringBuilder total;
-        String line;
+        JSONObject jsonObject = new JSONObject();
+        ObjectMapper mapper = new ObjectMapper();
 
         try {
             String theUrl = URL + "/" + data.getString("ACTIONURL");
-
-            Set<String> keys = data.keySet();
-            for (String key : keys) {
-                final Object value = data.get(key);
-                if (key.equalsIgnoreCase("ACTION")
-                        || key.equalsIgnoreCase("ACTIONURL"))
-                    continue;
-                theUrl += valSeparator + key + "="
-                        + URLEncoder.encode(value.toString(), "UTF-8");
-                valSeparator = "&";
-            }
 
             Log.d("Message type", data.getString("ACTION") + ", " + theUrl);
             HttpPost post = new HttpPost(theUrl);
@@ -549,12 +538,22 @@ public class CommunicationService extends IntentService {
                             "cz.tsystems.portablecheckin", 0).getInt(
                             "COMMUNICATION_VER", -1)));
 
-            if(data.getString("ACTION").equals("SaveCheckin")) {
-                JSONObject jsonObject = getSaveCheckinData();
-                StringEntity entity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
-                entity.setContentType("application/json");
-                post.setEntity(entity);
+            if(data.getString("ACTION").equals("SaveCheckin"))
+                jsonObject = getSaveCheckinData();
+            else {
+                Set<String> keys = data.keySet();
+                for (String key : keys) {
+                    final Object value = data.get(key);
+                    if (key.equalsIgnoreCase("ACTION")
+                            || key.equalsIgnoreCase("ACTIONURL"))
+                        continue;
+                    jsonObject.put(key, value.toString());
+                }
             }
+
+            StringEntity entity = new StringEntity(jsonObject.toString(), HTTP.UTF_8);
+            entity.setContentType("application/json");
+            post.setEntity(entity);
 
             showNotification(data);
             response = client.execute(post);

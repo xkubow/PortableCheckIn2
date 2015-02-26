@@ -21,6 +21,9 @@ import cz.tsystems.grids.SDA;
 
 //import android.app.DialogFragment;
 import android.app.ActionBar;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.app.DatePickerDialog;
@@ -84,12 +87,21 @@ public class MainActivity extends BaseFragment {
             if(hasFocus) // len pri rusenia focusu - ukoncenia editacie
                 return;
             try {
-                if(txtRZV == et)
+                if(txtRZV == et) {
+                    if(app.getCheckin().license_tag == null || !app.getCheckin().license_tag.equalsIgnoreCase(et.getText().toString()))
+                        app.getCheckin().vehicle_id = null;
                     app.getCheckin().license_tag = et.getText().toString();
-                else if(txtVIN == et)
+                }
+                else if(txtVIN == et) {
+                    if(app.getCheckin().vin == null || !app.getCheckin().vin.equalsIgnoreCase(et.getText().toString().replaceAll(" ", "")))
+                        app.getCheckin().vehicle_id = null;
                     app.getCheckin().vin = et.getText().toString();
-                else if(txtZakaznik == et)
+                }
+                else if(txtZakaznik == et) {
+                    if(app.getCheckin().customer_label == null || !app.getCheckin().customer_label.equalsIgnoreCase(et.getText().toString().toString().replaceAll(" ", "")))
+                        app.getCheckin().customer_id = null;
                     app.getCheckin().customer_label = et.getText().toString();
+                }
                 else if(txtVozPristavil == et)
                     app.getCheckin().driver_name_surn = et.getText().toString();
                 else if(txtStavTachometru == et)
@@ -125,6 +137,7 @@ public class MainActivity extends BaseFragment {
 
             ((FragmentPagerActivity)getActivity()).unsavedCheckin();
 
+
             int povinneNevyplnene = 0;
             povinneNevyplnene += (txtRZV.length() > 0)?1:0;
             povinneNevyplnene += (txtVIN.length() > 0)?1:0;
@@ -150,7 +163,16 @@ public class MainActivity extends BaseFragment {
                 Cursor cursor = (Cursor) spScenare.getSelectedItem();
                 app.getCheckin().check_scenario_id = cursor.getInt(cursor.getColumnIndex("CHECK_SCENARIO_ID"));
                 app.setSelectedScenar(app.getCheckin().check_scenario_id);
+                app.loadVybavy();
+                app.loadServices();
                 app.loadUnits();
+                app.setPrehlaidkyOpened(false);
+                final FragmentPagerActivity fragmentPagerActivity = (FragmentPagerActivity) getActivity();
+                ((ServiceActivity) fragmentPagerActivity.theFragments.get(FragmentPagerActivity.eTabService)).resetService();
+                ActionBar.Tab tab = getActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
+                TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
+                txtBadge.setVisibility(View.VISIBLE);
+                txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
                 scenarClicked = false;
             }
 		}
@@ -436,7 +458,7 @@ public class MainActivity extends BaseFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-        getActivity().getActionBar().setTitle(R.string.Informace_o_Vozidle);
+//        getActivity().getActionBar().setTitle(R.string.Informace_o_Vozidle);
         if(isNewCheckin)
             loadDefaultCheckIn();
 	}
@@ -653,9 +675,7 @@ public class MainActivity extends BaseFragment {
 
         dialog.show();
     }
-	
 
-	
 	private void populateView() throws ParseException {
 
 		app.dismisProgressDialog();
@@ -711,9 +731,27 @@ public class MainActivity extends BaseFragment {
 
 		rg = (com.gc.materialdesign.views.Slider)values2.findViewById(R.id.slaiderInterier);
         rg.setValue(checkinData.interior_state);
+
+
+        txtVIN.setEnabled((checkinData.vehicle_id == null));
+        txtRZV.setEnabled((checkinData.vehicle_id == null));
+
+        if(PortableCheckin.plannedActivitiesList != null && PortableCheckin.plannedActivitiesList.size() > 0) {
+
+        }
+
+        setEnableButton(fbtPZ, (PortableCheckin.plannedActivitiesList != null && PortableCheckin.plannedActivitiesList.size() > 0));
+        setEnableButton(fbtMajak, (PortableCheckin.odlozenePolozky != null && PortableCheckin.odlozenePolozky.size() > 0));
+        setEnableButton(fbtMegafon, (PortableCheckin.sda != null && PortableCheckin.sda.size() > 0));
 	}
-	
-	private void populateTextsAndRbtn(ViewGroup theView) {
+
+    private void setEnableButton(ButtonFloat buttonFloat, boolean enable) {
+        buttonFloat.setEnabled(enable);
+        int color = (enable)?getResources().getColor(R.color.mainColor):Color.GRAY;
+        buttonFloat.setBackgroundColor(color);
+    }
+
+    private void populateTextsAndRbtn(ViewGroup theView) {
 		String fieldName = "";
 		DMCheckin checkinData = app.getCheckin();
 		for (int i = 0; i < theView.getChildCount(); i++) {

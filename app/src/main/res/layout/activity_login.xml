@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Uzivatel"
+            android:text="@string/Uzivate"
             android:id="@+id/lblUzivatel"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/lblPrihlasenie"
@@ -31,7 +31,7 @@
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/UserName"
+            android:hint="@string/Uzivatel"
             android:imeOptions="actionNext"
             android:inputType="text|textNoSuggestions"
             android:nextFocusDown="@+id/txtPassword"
@@ -56,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Prihlasenie"
+            android:text="@string/Prihlasenie"
             android:id="@+id/lblPrihlasenie"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
@@ -114,6 +114,25 @@
             android:layout_marginRight="20dp"
             android:layout_alignBottom="@+id/lblPrihlasenie"
             android:textColor="@color/gray" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Logovanie"
+            android:id="@+id/chkLoging"
+            android:layout_alignBottom="@+id/btnSetup"
+            android:layout_alignStart="@+id/txtLogin"
+            android:layout_alignTop="@+id/btnSetup" />
+
+        <ImageButton
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:id="@+id/btnShareLog"
+            android:layout_alignBottom="@+id/chkLoging"
+            android:layout_toEndOf="@+id/chkLoging"
+            android:background="@drawable/ic_share_grey600_16dp"
+            android:layout_marginLeft="16dp" />
+
     </RelativeLayout>
 
 </RelativeLayout>

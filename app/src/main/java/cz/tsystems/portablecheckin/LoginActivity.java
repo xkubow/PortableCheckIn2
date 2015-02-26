@@ -1,5 +1,7 @@
 package cz.tsystems.portablecheckin;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,6 +17,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,7 +27,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
@@ -35,10 +40,15 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
+
+import com.gc.materialdesign.views.Switch;
 
 public class LoginActivity extends Activity {
 	final String TAG = "LoginActivity";
@@ -47,6 +57,8 @@ public class LoginActivity extends Activity {
 	private com.gc.materialdesign.views.ButtonFlat btnSettup;
 	private PortableCheckin app;
     private TextView lblVerze;
+    android.widget.Switch chkLogin;
+    ImageButton btnShareLog;
 	
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
@@ -115,7 +127,54 @@ public class LoginActivity extends Activity {
         btnSettup = (com.gc.materialdesign.views.ButtonFlat) this.findViewById(R.id.btnSetup);
         lblVerze = (TextView) this.findViewById(R.id.lblVerze);
         
-        password.setOnEditorActionListener(new DoneOnEditorActionListener());    
+        password.setOnEditorActionListener(new DoneOnEditorActionListener());
+
+        chkLogin = (android.widget.Switch) this.findViewById(R.id.chkLoging);
+        chkLogin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+                SharedPreferences.Editor spe= sp.edit();
+                spe.putBoolean("enableLoging", isChecked);
+
+                if(isChecked)
+                    startLoging();
+            }
+        });
+        btnShareLog = (ImageButton) this.findViewById(R.id.btnShareLog);
+        btnShareLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File logDir = new File(Environment.getExternalStorageDirectory() + "/log");
+                File file[] = logDir.listFiles();
+
+/*                if(file.length == 0) {
+                    Toast.makeText(LoginActivity.this,
+                            "No Application Available to View PDF",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
+
+
+                Log.d("Files", "Size: "+ file.length);
+                File lastLogFile = new File(Environment.getExternalStorageDirectory(), "portableCheckInLog.txt");
+
+                if (lastLogFile.exists()) {
+                    Uri path = Uri.fromFile(lastLogFile);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(path, "text/plain");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                    try {
+                        startActivity(intent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(LoginActivity.this,
+                                "No Application Available to View PDF",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
         
 /* 
  *      static VERSION setting
@@ -129,13 +188,35 @@ public class LoginActivity extends Activity {
 		spe.commit();
 
 
-        lblVerze.setText(String.format("v." + BuildConfig.VERSION_NAME+"."+BuildConfig.VERSION_CODE));
+        lblVerze.setText(String.format("v. " + BuildConfig.VERSION_NAME+" ("+BuildConfig.VERSION_CODE)+")");
         	
+    }
+
+    void startLoging() {
+        try {
+            File logDir = new File(Environment.getExternalStorageDirectory() + "/log");
+            boolean success = true;
+            if (!logDir.exists()) {
+                success = logDir.mkdir();
+            }
+            if (success) {
+                File logFile = new File(Environment.getExternalStorageDirectory(), "portableCheckInLog.txt");
+                boolean fileExist = logFile.createNewFile();
+                if(fileExist) {
+                    Runtime.getRuntime().exec("logcat -d -v time -f " + logFile.getAbsolutePath());
+                }
+            } else {
+                Toast.makeText(this,
+                        "Log file doesnt been created",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }catch (IOException e){}
     }
     
     @Override
     protected void onStart() {
-    	// TODO Auto-generated method stub
+        SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+        chkLogin.setChecked(sp.getBoolean("enableLoging", false));
         IntentFilter filterSend = new IntentFilter();
         filterSend.addAction("recivedData");
         registerReceiver(receiver, filterSend);
@@ -144,13 +225,13 @@ public class LoginActivity extends Activity {
     
     public void onSettupClicked(View target) {
 		AlertDialog.Builder b = new Builder(this);
-	    b.setTitle("Settup");
+	    b.setTitle(getResources().getString(R.string.Nastavenie_prihlas_udajov));
 			
 	    final ViewGroup view = (ViewGroup) getLayoutInflater().inflate( R.layout.activity_setup, null );
 	    EditText nte = (EditText) view.findViewById(R.id.txtServiceURI);
 	    nte.setText(getSharedPreferences("cz.tsystems.portablecheckin", 0).getString("serviceURI", ""));
 	    b.setView(view);
-	    b.setPositiveButton(R.string.Setup, new OnClickListener() {
+	    b.setPositiveButton(R.string.OK, new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

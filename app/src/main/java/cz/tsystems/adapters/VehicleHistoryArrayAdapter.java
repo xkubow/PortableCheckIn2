@@ -86,7 +86,12 @@ public class VehicleHistoryArrayAdapter extends ArrayAdapter<DMVehicleHistory> i
         }
         
         return v;
-}
+    }
+
+    @Override
+    public boolean isEnabled (int position) {
+        return false;
+    }
 
     @Override
     public boolean isItemViewTypePinned(int viewType) {

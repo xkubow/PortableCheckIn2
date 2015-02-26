@@ -44,11 +44,11 @@
         android:layout_alignEnd="@+id/txtXyzmoUri"
         android:layout_marginTop="16dp" />
 
-    <Button
+    <com.gc.materialdesign.views.ButtonFlat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/OK"
-        android:id="@+id/button"
+        android:id="@+id/btnOk"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:paddingLeft="50dp"

@@ -1,6 +1,7 @@
 package cz.tsystems.data;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -529,12 +530,21 @@ public class PortableCheckin extends Application {
 
         PrehliadkyModel pm = new PrehliadkyModel(this);
         UnitsModel um = new UnitsModel(this);
+        if(prehliadkyMasters != null)
+            prehliadkyMasters.clear();
         prehliadkyMasters = pm.getPrehliadky();
         setUnitList(um.loadUnits(prehliadkyMasters));
+
         if(this.getActualActivity() != null) {
             ActionBar.Tab tab = this.getActualActivity().getActionBar().getTabAt(FragmentPagerActivity.eTabService);
             TextView txtBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
             txtBadge.setText("0/" + String.valueOf(PortableCheckin.selectedScenar.mandatoryCount));
+        }
+    }
+
+    public void setPrehlaidkyOpened(final boolean opened) {
+        for(DMPrehliadkyMaster prehliadka : prehliadkyMasters) {
+            prehliadka.opened = opened;
         }
     }
 
@@ -888,10 +898,15 @@ public class PortableCheckin extends Application {
         serviceList.add(service);
     }
 
-	public void showProgrssDialog(Context context)
+    public void showProgrssDialog(Context context)
+    {
+        showProgrssDialog(context, getResources().getString(R.string.Loading_Data));
+    }
+
+	public void showProgrssDialog(Context context, final String caption)
 	{
 		if(pPrograssDialog == null)
-			pPrograssDialog = ProgressDialog.show(context, getResources().getString(R.string.Loading_Data), getResources().getString(R.string.Please_wait), true,false);
+			pPrograssDialog = ProgressDialog.show(context, caption, getResources().getString(R.string.Please_wait), true,false);
 	}
 	
 	public void dismisProgressDialog()
@@ -954,5 +969,13 @@ public class PortableCheckin extends Application {
         } catch (RuntimeException e) {
             return false;
         }
+    }
+
+    public static void removeVehicle() {
+        PortableCheckin.checkin.checkin_number = null;
+        PortableCheckin.checkin.checkin_id = null;
+        PortableCheckin.checkin.vehicle_id = null;
+        PortableCheckin.checkin.vehicle_description = null;
+        PortableCheckin.checkin.vehicle_caption = null;
     }
 }

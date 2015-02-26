@@ -89,7 +89,8 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                             && u.chck_required_id == null) {
                         checkBox.setStaticChecked(true);
                         setDefaultUnit(checkBox, position);
-                    }
+                    } else
+                        checkBox.setStaticChecked(false);
                     return;
                 }
                 if(checkBox.isChecked())
@@ -333,6 +334,11 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 unitButtonView.setBackground(selectedPaked.getCelkyIcon(getContext()));
             }
         };
+
+        String title = u.chck_part_txt;
+        if(!u.chck_position_abbrev_txt.equalsIgnoreCase("-"))
+            title += " " + u.chck_position_txt;
+        unitServiceDialog.setTitle(title);
         unitServiceDialog.show();
 
     }

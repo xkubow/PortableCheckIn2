@@ -94,12 +94,12 @@
     </string-array>
 
     <string name="Vybavy">Výbavy</string>
-    <string name="PovinneVybavy">Povinne výbavy</string>
-    <string name="Loading_Data">Načítavam data</string>
+    <string name="PovinneVybavy">Povinné výbavy</string>
+    <string name="Loading_Data">Načítání dat</string>
     <string name="Please_wait">Prosím čekejte</string>
     <string name="Error_title">Chyba</string>
     <string name="Pozadovane">Požadováno</string>
-    <string name="FuelStav">0,¼,½,¾,P</string>
+    <string name="FuelStav">R,¼,½,¾,F</string>
     <string name="prazna">0</string>
     <string name="stvrtina">¼</string>
     <string name="polovica">½</string>
@@ -202,8 +202,21 @@
     <string name="XyzmoExterUse">Použití exetrní SIGNificant aplikace</string>
     <string name="search_packets">Vyhledávaní paketů</string>
     <string name="action_Odhlaseni">Odhlášení</string>
-    <string name="ZmazUnit">Chcete zmazat dany unit?</string>
+    <string name="ZmazUnit">Chcete zrušit danou volbu?</string>
     <string name="Ano">Ano</string>
     <string name="Ne">Ne</string>
+    <string name="lblEmail">Komu</string>
+    <string name="Uzivate">Uživatel</string>
+    <string name="Prihlasenie">Přihlášení</string>
+    <string name="Nastavenie_prihlas_udajov">Nastavení přihlašovacích údajů</string>
+    <string name="Cesta_k_middleware">Cesta k PChI middleware</string>
+    <string name="Poznamka">Poznámka</string>
+    <string name="Odesilam_data">Odesílám data</string>
+    <string name="Smazat_aktualne_data">Smazat aktuální data</string>
+    <string name="Material">Materiál</string>
+    <string name="Prace">Práce</string>
+    <string name="Celkem">Celkem</string>
+    <string name="Nastavenie">Nastavení</string>
+    <string name="Logovanie">Logovaní</string>
 
 </resources>

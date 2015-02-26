@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.hb.views.PinnedSectionListView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -123,6 +125,11 @@ public class PacketDetailArrayAdapter extends ArrayAdapter<DMPacketDetail> imple
         }
 
         return v;
+    }
+
+    @Override
+    public boolean isEnabled (int position) {
+        return false;
     }
 
     @Override

@@ -28,6 +28,7 @@ public class Poznamka extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poznamka);
+        setTitle(getResources().getString(R.string.Poznamka));
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setIcon(R.color.transparent);
@@ -45,7 +46,7 @@ public class Poznamka extends Activity {
         else
             lblLoggetUser.setText(poradce + ": ");
 
-        if(app.getCheckin().checkin_number > 0)
+        if(app.getCheckin().checkin_number != null && app.getCheckin().checkin_number > 0)
             lblCheckinNR.setText(String.valueOf(app.getCheckin().checkin_number));
         else if(app.getCheckin().planned_order_no != null && app.getCheckin().planned_order_no.length() > 0) {
             final String planZakPrefix = getResources().getString(R.string.CisloPlanZakazky);
@@ -106,10 +107,27 @@ public class Poznamka extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra("dataChanged", dataChanged);
+        this.setResult(RESULT_OK, intent);
+        super.onBackPressed();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 Intent intent = new Intent();
                 intent.putExtra("dataChanged", dataChanged);
                 this.setResult(RESULT_OK, intent);

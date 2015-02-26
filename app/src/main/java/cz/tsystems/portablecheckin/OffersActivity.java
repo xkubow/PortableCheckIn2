@@ -2,6 +2,7 @@ package cz.tsystems.portablecheckin;
 
 import cz.tsystems.adapters.OffersArrayAdapter;
 import cz.tsystems.base.BaseFragment;
+import cz.tsystems.base.FragmentPagerActivity;
 import cz.tsystems.data.DMOffers;
 import cz.tsystems.data.PortableCheckin;
 
@@ -31,6 +32,7 @@ public class OffersActivity extends BaseFragment {
         offerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 CheckBox chkOffer = (CheckBox) view.findViewById(R.id.chkOffer);
                 DMOffers offer = (DMOffers) offerList.getAdapter().getItem(position);
                 chkOffer.setChecked(!offer.checked);

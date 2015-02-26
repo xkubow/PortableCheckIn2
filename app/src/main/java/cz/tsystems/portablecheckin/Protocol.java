@@ -8,6 +8,7 @@ package cz.tsystems.portablecheckin;
 // http://launch.xyzmo.com/SignificantAndroidAppLauncher.aspx?WorkstepId=3BFACA02133062BA56C8B6B76D8DC6919F0206C73BE2928762CFFDDA3F830BA1C5F38E7F9414ABA0BF530531AEF8BF31&server=beta2.testlab.xyzmo.com&port=57003&protocol=http
 **/
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -74,24 +75,17 @@ public class Protocol extends Activity implements View.OnTouchListener {
     private float dy; // postTranslate Y distance
     private float[] matrixValues = new float[9];
     private float[] theMatrix = new float[9];
-    float matrixX = 0; // X coordinate of matrix inside the ImageView
-    float matrixY = 0; // Y coordinate of matrix inside the ImageView
-    float width = 0; // width of drawable
-    float height = 0; // height of drawable
 
     // The 3 states (events) which the user is trying to perform
     static final int NONE = 0;
     static final int DRAG = 1;
-    static final int ZOOM = 2;
     int mode = NONE;
 
     // these PointF objects are used to record the point(s) the user is touching
     PointF base = new PointF();
     PointF start = new PointF();
-    PointF mid = new PointF();
-    float oldDist = 1f;
-    float endY, endX;
-    float lastY, lastX;
+    float endY;
+    float lastY;
     String workstepId;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -102,6 +96,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
                 final Bundle b = intent.getBundleExtra("requestData");
                 if(b != null && b.getString("ACTION").equalsIgnoreCase("GetProtokolImg")) {
                     Protocol.this.setProtocolImg(intent.getStringExtra("pdfFileName"));
+                    imgProtocol.setOnTouchListener(Protocol.this);
                     requestReportPDF();
                 } else if(b != null && b.getString("ACTION").equalsIgnoreCase("ChiReport")) {
                     fileNamePDF = intent.getStringExtra("pdfFileName");
@@ -121,7 +116,6 @@ public class Protocol extends Activity implements View.OnTouchListener {
         app = (PortableCheckin)getApplicationContext();
         imgProtocol = (ImageView) findViewById(R.id.imgProtocol);
         imgProtocol.setBackgroundColor(getResources().getColor(R.color.white));
-        imgProtocol.setOnTouchListener(this);
         findViewById(R.id.contetView).setBackgroundColor(getResources().getColor(R.color.white));
         setTitle(R.string.Protokol);
 
@@ -130,6 +124,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
         getActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_18dp);
 
         progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleLarge);
+//        progressBar.setBackgroundColor(Color.BLUE);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);// progressBar.getLayoutParams();
         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         addContentView(progressBar, layoutParams);
@@ -385,6 +380,7 @@ public class Protocol extends Activity implements View.OnTouchListener {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @SuppressLint("NewApi")
     void printProtocol() {
         File file = new File(fileNamePDF);
         //https://developer.android.com/training/printing/custom-docs.html

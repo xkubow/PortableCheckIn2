@@ -62,8 +62,8 @@
         <Button
             android:id="@+id/btnSPZ"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="32dip"
-            android:layout_height="32dip"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/car147"
@@ -175,8 +175,8 @@
         <Button
             android:id="@+id/btnSTK"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/ic_event_grey600_16dp"
             android:layout_alignRight="@+id/txtSTK"
             android:layout_alignBottom="@+id/txtSTK"
@@ -360,8 +360,8 @@
         <Button
             style="?android:attr/buttonStyleSmall"
             android:id="@+id/btnModelYearDate"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="@drawable/ic_event_grey600_16dp"
             android:layout_marginRight="0dp"
             android:layout_alignBottom="@+id/txtModelYear"
@@ -492,8 +492,8 @@
         <Button
             android:id="@+id/btnEmise"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignRight="@+id/txtStavTachomeru"
             android:background="@drawable/ic_event_grey600_16dp"
             android:layout_alignBottom="@+id/txtEmise"

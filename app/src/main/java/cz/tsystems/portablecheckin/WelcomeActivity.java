@@ -53,10 +53,9 @@ public class WelcomeActivity extends Activity {
 
 		if (requestCode == 1) {
 			if (resultCode == RESULT_OK) {
-				Log.d("CREATING ACTIVITY", "???");
-				
 				Intent i = new Intent(this, FragmentPagerActivity.class);
 				i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.putExtra("OpenPlanedOrderList", true);
                 WelcomeActivity.this.startActivity(i);
 			}
 			if (resultCode == RESULT_CANCELED) {

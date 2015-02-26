@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--nefunguje versionName treba nastavovat v gradle-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cz.tsystems.portablecheckin"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.1.0"
+    android:installLocation="auto" >
 
     <uses-sdk
         android:minSdkVersion="18"
@@ -117,6 +119,11 @@
         <activity
             android:name="cz.tsystems.portablecheckin.MailActivity"
             android:label="@string/Mail"
+            android:screenOrientation="userLandscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.portablecheckin.PhotoNahled"
             android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />

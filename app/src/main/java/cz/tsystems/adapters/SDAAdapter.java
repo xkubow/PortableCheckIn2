@@ -48,6 +48,11 @@ public class SDAAdapter extends ArrayAdapter<DMSDA> implements PinnedSectionList
     }
 
     @Override
+    public boolean isEnabled (int position) {
+        return false;
+    }
+
+    @Override
     public boolean isItemViewTypePinned(int viewType) {
         return false;
     }

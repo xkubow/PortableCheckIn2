@@ -45,6 +45,11 @@ public class PlannedActivitiesAdapter extends ArrayAdapter<DMPlannedActivities> 
 	}
 
     @Override
+    public boolean isEnabled (int position) {
+        return false;
+    }
+
+    @Override
     public boolean isItemViewTypePinned(int viewType) {
         return false;
     }

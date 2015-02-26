@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.Switch;
 
 /**
@@ -37,8 +38,14 @@ public class SettingAppDialog extends Dialog {
         this.context = context;
         LayoutInflater li = LayoutInflater.from(context);
         View view = li.inflate(R.layout.activity_setting_app, null);
+        SharedPreferences sp = context.getSharedPreferences("cz.tsystems.portablecheckin", context.MODE_PRIVATE);
+
         txtXyzmoUri = (EditText) view.findViewById(R.id.txtXyzmoUri);
+        txtXyzmoUri.setText(sp.getString("XyzmoURI",""));
         chkUseExternXyzmo = (Switch) view.findViewById(R.id.chkUseExternalXyzmo);
+        chkUseExternXyzmo.setChecked(sp.getBoolean("useExternXyzmo", false));
+        ButtonFlat btnOk = (ButtonFlat)view.findViewById(R.id.btnOk);
+        btnOk.setOnClickListener(onClickListener);
 
         this.setOnDismissListener(onDismissListener);
 

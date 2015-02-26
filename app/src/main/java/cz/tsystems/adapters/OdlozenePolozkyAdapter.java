@@ -49,6 +49,11 @@ public class OdlozenePolozkyAdapter  extends ArrayAdapter<DMOdlozenePolozky> imp
     }
 
     @Override
+    public boolean isEnabled (int position) {
+        return false;
+    }
+
+    @Override
     public boolean isItemViewTypePinned(int viewType) {
         return false;
     }
