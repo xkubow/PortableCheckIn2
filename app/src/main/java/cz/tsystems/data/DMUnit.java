@@ -2,6 +2,8 @@ package cz.tsystems.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,7 +17,7 @@ import java.util.Locale;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DMUnit implements Comparable<DMUnit> {
+public class DMUnit implements Comparable<DMUnit>, Parcelable {
     public static int eStatus_problem = 1;
     public static int eRequired_opravit = 1;
     public static int eRequired_vymenit = 2;
@@ -156,5 +158,16 @@ public class DMUnit implements Comparable<DMUnit> {
 		return (this.chck_part_position_id == another.chck_part_position_id
 				&& this.chck_unit_id == another.chck_unit_id)?1:0;
 	}
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 
 }

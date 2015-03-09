@@ -13,10 +13,12 @@ import android.widget.TextView;
 
 import com.hb.views.PinnedSectionListView;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.tsystems.data.DMPacket;
+import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.PacketDetailDialog;
 import cz.tsystems.portablecheckin.R;
 
@@ -55,9 +57,10 @@ public class PacketsArrayAdapter extends ArrayAdapter<DMPacket> implements Pinne
             tv.setText(packet.restrictions);
 
             tv = (TextView)v.findViewById(R.id.lblCena);
-            if(packet.sell_price != null)
-                tv.setText(String.valueOf(packet.sell_price));
-            else
+            if(packet.sell_price != null) {
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                tv.setText(numberFormat.format(packet.sell_price) + " " + PortableCheckin.setting.currency_abbrev);
+            } else
                 tv.setText("");
 
             if(isUnitPaket) {

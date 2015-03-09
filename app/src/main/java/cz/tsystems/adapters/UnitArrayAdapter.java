@@ -1,5 +1,6 @@
 package cz.tsystems.adapters;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,11 +11,12 @@ import cz.tsystems.data.DMPacket;
 import cz.tsystems.data.DMUnit;
 import cz.tsystems.data.PortableCheckin;
 import cz.tsystems.portablecheckin.R;
-import cz.tsystems.portablecheckin.UnitServiceDialog;
+import cz.tsystems.portablecheckin.UnitServiceActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -72,7 +74,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
 
         text = (TextView) v.findViewById(R.id.lblCena);
         if(unit.sell_price != null)
-            text.setText(unit.getSellPriceAsString(getContext()) +" "+ PortableCheckin.setting.currency_abbrev);
+            text.setText(NumberFormat.getNumberInstance().format(unit.sell_price)+" "+ PortableCheckin.setting.currency_abbrev);
         else
             text.setText("");
 
@@ -269,7 +271,7 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
                 setDefaultUnit(unitButtonView, position);
             return;
         }
-        final List<DMPacket> packetList = new ArrayList<DMPacket>();
+/*        final List<DMPacket> packetList = new ArrayList<DMPacket>();
         List<DMPacket> packets = app.getPackets();
         if(packets != null) {
             Iterator<DMPacket> packetIterator = app.getPackets().iterator();
@@ -339,8 +341,15 @@ public class UnitArrayAdapter extends ArrayAdapter<DMUnit> implements PinnedSect
         if(!u.chck_position_abbrev_txt.equalsIgnoreCase("-"))
             title += " " + u.chck_position_txt;
         unitServiceDialog.setTitle(title);
-        unitServiceDialog.show();
+        unitServiceDialog.show();*/
 
+
+        Intent myIntent = new Intent(getContext(), UnitServiceActivity.class);
+        myIntent.putExtra("unit_id", u.chck_unit_id);
+        myIntent.putExtra("part_id", u.chck_part_id);
+        myIntent.putExtra("part_position_id", u.chck_part_position_id);
+
+        ((FragmentPagerActivity)context).startActivityForResult(myIntent, FragmentPagerActivity.eUnitServiceActivity);
     }
 
     @Override

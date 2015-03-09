@@ -283,3 +283,13 @@ ADDED from AndroidManifest.xml:125:9
 		ADDED from AndroidManifest.xml:126:13
 	android:launchMode
 		ADDED from AndroidManifest.xml:128:13
+activity#cz.tsystems.portablecheckin.UnitServiceActivity
+ADDED from AndroidManifest.xml:130:9
+	android:screenOrientation
+		ADDED from AndroidManifest.xml:132:13
+	android:theme
+		ADDED from AndroidManifest.xml:134:13
+	android:name
+		ADDED from AndroidManifest.xml:131:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:133:13

@@ -58,7 +58,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 //	SectionsPagerAdapter mSectionsPagerAdapter;
     final String TAG = FragmentPagerActivity.class.getSimpleName();
     public static final int eTabVozidlo = 0, eTabPoskodenie = 1, eTabService = 2, eTabNabidka = 3;
-    public static final int eGRID_RESULT = 2, eLoginActivity = 1, ePoznamkaActivity = 10;
+    public static final int eGRID_RESULT = 2, eLoginActivity = 1, ePoznamkaActivity = 10, eUnitServiceActivity = 11;
 	private Time stopTime;
 	private BaseFragment theFragment;
     private Boolean checkLogin = true, newCheckin = false;
@@ -344,6 +344,13 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 if(data != null && data.hasExtra("dataChanged") && data.getExtras().getBoolean("dataChanged"))
                     unsavedCheckin();
                 break;
+            case eUnitServiceActivity :
+                if(getActionBar().getSelectedTab().getPosition() == eTabService) {
+                    ServiceActivity serviceActivity = (ServiceActivity) theFragments.get(eTabService);
+                    unsavedCheckin();
+                    serviceActivity.refreshDetail(null);
+                }
+                break;
         }
 
 	}
@@ -447,6 +454,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         checkLogin = false;
         Intent myIntent = new Intent(FragmentPagerActivity.this, Protocol.class);
         startActivity(myIntent);
+        app.dismisProgressDialog();
     }
 
 	@Override
@@ -625,6 +633,8 @@ public class FragmentPagerActivity extends Activity implements TabListener {
                 app.setSelectedBrand(cursor.getString(cursor.getColumnIndex("BRAND_ID")));
                 setBrandImage();
                 dialog.dismiss();
+                theFragment = (BaseFragment) theFragments.get(getActionBar().getSelectedTab().getPosition());
+                theFragment.updateData(null);
             }
         });
 
@@ -633,15 +643,15 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
     public void setBrand(final String brandId) {
         if(brandId != null && brandId.length() > 0) {
-            btnBrand.setEnabled(false);
             if(app.getCheckin().checkin_id != null)
                 app.selectedBrand = app.getBrand(app.getCheckin().brand_id); // vybavy aj servisi uz existuju zo serveru
             else
                 app.setSelectedBrand(brandId); // nastavuju sa aj vybavy aj servisi
             setBrandImage();
-        } else {
-            btnBrand.setEnabled(true);
         }
+
+        btnBrand.setEnabled(PortableCheckin.checkin.vehicle_id == null || PortableCheckin.checkin.checkin_id == null);
+
     }
 
     public void setCheckinNr() {

@@ -12,27 +12,29 @@
         android:id="@+id/serviceList"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtCena"
         android:layout_above="@+id/btnOk"
         android:choiceMode="singleChoice"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:layout_toStartOf="@+id/rlKalkulacka"
+        android:layout_alignParentTop="true" />
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/txtCena"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:background="@color/grid_caption"
         android:digits="0123456789.,"
-        android:layout_toStartOf="@+id/lblMena"
         android:paddingRight="10dp"
         android:textColor="@color/black"
         android:singleLine="true"
-        android:gravity="center_vertical|right" />
+        android:gravity="center_vertical|right"
+        android:layout_toEndOf="@+id/serviceList"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="0dp"
+        android:layout_toLeftOf="@+id/lblMena"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <com.gc.materialdesign.views.ButtonFlat
         android:layout_width="150dp"
@@ -47,10 +49,154 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/lblMena"
-        android:layout_alignTop="@+id/txtCena"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/serviceList"
         android:background="@color/grid_caption"
         android:textColor="@color/black"
-        android:gravity="center_vertical" />
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_alignBottom="@+id/txtCena"
+        android:paddingRight="2dp" />
+
+    <RelativeLayout
+        android:layout_width="302dp"
+        android:layout_height="fill_parent"
+        android:id="@+id/rlKalkulacka"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/serviceList"
+        android:layout_below="@+id/txtCena">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="1"
+            android:id="@+id/btn1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/kalk_cisla_bg"
+            android:layout_marginTop="1dp" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="2"
+            android:id="@+id/btn2"
+            android:layout_alignBaseline="@+id/btn1"
+            android:layout_alignBottom="@+id/btn1"
+            android:layout_toEndOf="@+id/btn1"
+            android:background="@drawable/kalk_cisla_bg"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="3"
+            android:id="@+id/btn3"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/btn2"
+            android:background="@drawable/kalk_cisla_bg"
+            android:layout_marginTop="1dp" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="4"
+            android:id="@+id/btn4"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn1"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="5"
+            android:id="@+id/btn5"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_below="@+id/btn1"
+            android:layout_toEndOf="@+id/btn4"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="6"
+            android:id="@+id/btn6"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn2"
+            android:layout_toEndOf="@+id/btn5"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="7"
+            android:id="@+id/btn7"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn4"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="8"
+            android:id="@+id/btn8"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_below="@+id/btn4"
+            android:layout_toEndOf="@+id/btn7"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="9"
+            android:id="@+id/btn9"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn5"
+            android:layout_toEndOf="@+id/btn8"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="C"
+            android:id="@+id/btnC"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn7"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="0"
+            android:id="@+id/btn0"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_below="@+id/btn7"
+            android:layout_toEndOf="@+id/btnC"
+            android:background="@drawable/kalk_cisla_bg" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text=","
+            android:id="@+id/btnComa"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_below="@+id/btn8"
+            android:layout_toEndOf="@+id/btn0"
+            android:background="@drawable/kalk_cisla_bg" />
+
+    </RelativeLayout>
 </RelativeLayout>

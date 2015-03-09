@@ -22,7 +22,7 @@ public class DMCheckin {
     public String note_protocol;
     public Date ti_valid_until;
     public Date ec_valid_until;
-    public int check_scenario_id;
+    public Integer check_scenario_id;
     public short interior_state;
     public short exterior_state = 2;
     public String note_order_list;

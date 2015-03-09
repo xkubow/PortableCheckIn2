@@ -119,6 +119,10 @@ public class BodyActivity extends BaseFragment {
             return true;
 		}
 	};
+
+    int getPoitType() {
+        return chkPointType.isChecked()?2:1;
+    }
 	
 	OnTouchListener imageOnTouchListener = new OnTouchListener()
     {
@@ -133,8 +137,8 @@ public class BodyActivity extends BaseFragment {
                 ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                	final int X = (int)event.getX();// - 20;
                	final int Y = (int)event.getY();
-	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, chkPointType.isChecked()?1:2);
-	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), chkPointType.isChecked()?1:2);
+	           	app.getSilhouette().addPoint(getRbtnSilueteIndex(), X, Y, getPoitType());
+	           	addPoint(X, Y, app.getSilhouette().getPoints(getRbtnSilueteIndex()).size(), getPoitType());
                 break;
             }
             return true;
@@ -248,7 +252,7 @@ public class BodyActivity extends BaseFragment {
 		imageLayout.removeAllViews();
 		imgView.setImageBitmap(app.getSilhouette().getImage(checkedRadioButton));
 
-		chkPointType.setChecked(false);
+		chkPointType.setChecked(true);
         reloadPoits();
 		
 		for(String photoPath : app.getSilhouette().getPhotoNames(getRbtnSilueteIndex()))

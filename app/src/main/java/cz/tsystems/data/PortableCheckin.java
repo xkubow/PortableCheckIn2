@@ -275,7 +275,11 @@ public class PortableCheckin extends Application {
 	public void setSelectedScenar(DMScenar newSelectedScenar) {
 		this.selectedScenar = newSelectedScenar;
 	}
-	public void setSelectedScenar(int scenarId) {
+	public void setSelectedScenar(Integer scenarId) {
+        if(scenarId == null) {
+            checkin.check_scenario_id = 1;
+            scenarId =  1;
+        }
 		this.selectedScenar = this.getScenarForId(scenarId);
         //TODO vymaz stare volne vybavy a nacitaj nove pre dany scenar
 	}
@@ -292,6 +296,8 @@ public class PortableCheckin extends Application {
 	public void setSelectedBrand(final String brandId) {
 		this.selectedBrand = this.getBrand(brandId);
 		checkin.brand_id = brandId;
+        checkin.silhouette_id = selectedBrand.silhouette_id;
+        loadSilhouette();
 		loadVybavy();
         loadServices();
         setOffers(this.getOffers(brandId));
@@ -546,6 +552,16 @@ public class PortableCheckin extends Application {
         for(DMPrehliadkyMaster prehliadka : prehliadkyMasters) {
             prehliadka.opened = opened;
         }
+    }
+
+    public DMUnit getUnit(final int unit_id, final int part_position_id) {
+        if(this.unitList == null)
+            return null;
+        List<DMUnit> units = getUnitListByUnitId(unit_id);
+        for(DMUnit unit : units)
+            if(unit.chck_part_position_id == part_position_id)
+                return unit;
+        return null;
     }
 
 	public List<DMUnit> getUnitListByUnitId(final long id) {

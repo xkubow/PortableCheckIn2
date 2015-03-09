@@ -14,7 +14,8 @@
         android:background="@drawable/brand_nologo"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="16dp"
+        android:enabled="true" />
 
     <TextView
         android:id="@+id/lblCheckIn_nr"

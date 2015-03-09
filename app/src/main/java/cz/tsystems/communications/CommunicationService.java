@@ -672,6 +672,15 @@ public class CommunicationService extends IntentService {
 			app.setPlanZakazk(mapper.readTree(responseStr.toString()));
 		else if (data.getString("ACTION").equalsIgnoreCase("DataForCheckIn")
                 && responseStr.length()>0) {
+
+            int readedLength = 0;
+            while(readedLength < responseStr.length()) {
+                final int lengthToRead = (responseStr.length()-readedLength > 3500)?3500:responseStr.length()-readedLength;
+                final String substring = responseStr.substring(readedLength, readedLength+lengthToRead);
+                Log.i(TAG, String.format("CheckinData: %s", substring));
+                readedLength += substring.length();
+            }
+
             JsonNode root = mapper.readTree(responseStr.toString());
             PortableCheckin.deletePackets();
             app.checkin = new DMCheckin();
@@ -696,14 +705,6 @@ public class CommunicationService extends IntentService {
             app.setUnits(root.path("UNIT"));
             app.setCheckedPackets(root.path("WORKSHOP_PACKET"));
             app.setOffers(root.path("OFFER"));
-
-            int readedLength = 0;
-            while(readedLength < responseStr.length()) {
-                final int lengthToRead = (responseStr.length()-readedLength > 3500)?3500:responseStr.length()-readedLength;
-                final String substring = responseStr.substring(readedLength, readedLength+lengthToRead);
-                Log.i(TAG, String.format("CheckinData: %s", substring));
-                readedLength += substring.length();
-            }
 
         } else if (data.getString("ACTION").equalsIgnoreCase("WorkshopPackets")) {
             Log.v(TAG, responseStr.toString());

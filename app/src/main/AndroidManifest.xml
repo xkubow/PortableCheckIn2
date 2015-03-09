@@ -2,7 +2,7 @@
 <!--nefunguje versionName treba nastavovat v gradle-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cz.tsystems.portablecheckin"
-    android:versionCode="3"
+    android:versionCode="4"
     android:versionName="1.1.0"
     android:installLocation="auto" >
 
@@ -124,6 +124,11 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name="cz.tsystems.portablecheckin.PhotoNahled"
+            android:screenOrientation="userLandscape"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="cz.tsystems.portablecheckin.UnitServiceActivity"
             android:screenOrientation="userLandscape"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
