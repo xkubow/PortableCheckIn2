@@ -194,7 +194,8 @@ public class CommunicationService extends IntentService {
 
 	public void sendGetMime(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
-		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        final int timeOut = app.getSharedPreferences("cz.tsystems.portablecheckin", app.MODE_PRIVATE).getInt("TimeOut",1000);
+		HttpConnectionParams.setConnectionTimeout(client.getParams(), timeOut);
 		HttpResponse response;
 		String valSeparator = "?";
 
@@ -250,8 +251,9 @@ public class CommunicationService extends IntentService {
 	}
 
     public void sendMime(Bundle data) {
-        HttpClient client = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+//        HttpClient client = new DefaultHttpClient();
+//        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        final int timeOut = app.getSharedPreferences("cz.tsystems.portablecheckin", app.MODE_PRIVATE).getInt("TimeOut",1000);
         String valSeparator = "?";
         String lineEnd = "\r\n";
         String twoHyphens = "--";
@@ -280,7 +282,7 @@ public class CommunicationService extends IntentService {
             java.net.URL connectURL = new URL(theUrl);
             // Open a HTTP connection to the URL
             conn = (HttpURLConnection) connectURL.openConnection();
-            conn.setConnectTimeout(50000);
+            conn.setConnectTimeout(timeOut);
             // Allow Inputs
             if(!conn.getDoInput())
                 conn.setDoInput(true);
@@ -408,7 +410,8 @@ public class CommunicationService extends IntentService {
 
     public void sendGetJson(Bundle data) {
 		HttpClient client = new DefaultHttpClient();
-		HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        final int timeOut = app.getSharedPreferences("cz.tsystems.portablecheckin", app.MODE_PRIVATE).getInt("TimeOut",1000);
+		HttpConnectionParams.setConnectionTimeout(client.getParams(), timeOut);
 		HttpResponse response;
 		String valSeparator = "?";
 
@@ -506,7 +509,8 @@ public class CommunicationService extends IntentService {
 
     public void sendPostJson(Bundle data) {
         HttpClient client = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+        final int timeOut = app.getSharedPreferences("cz.tsystems.portablecheckin", app.MODE_PRIVATE).getInt("TimeOut",1000);
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), timeOut);
         HttpResponse response;
         String valSeparator = "?";
         JSONObject jsonObject = new JSONObject();

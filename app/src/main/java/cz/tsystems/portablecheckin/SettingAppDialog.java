@@ -7,17 +7,22 @@ import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
 
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.views.Switch;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 /**
  * Created by kubisj on 10.2.2015.
  */
 public class SettingAppDialog extends Dialog {
     Context context;
-    EditText txtXyzmoUri;
-    Switch chkUseExternXyzmo;
+    EditText txtXyzmoUri, txtTimeOut;
+    Switch chkUseExternXyzmo, chkPacketDetail;
+    SeekBar sbPhotoResolution;
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -44,6 +49,14 @@ public class SettingAppDialog extends Dialog {
         txtXyzmoUri.setText(sp.getString("XyzmoURI",""));
         chkUseExternXyzmo = (Switch) view.findViewById(R.id.chkUseExternalXyzmo);
         chkUseExternXyzmo.setChecked(sp.getBoolean("useExternXyzmo", false));
+        txtTimeOut = (EditText) view.findViewById(R.id.txtTimeOut);
+        txtTimeOut.setText(String.valueOf(sp.getInt("TimeOut", 1000)));
+        chkPacketDetail = (Switch) view.findViewById(R.id.chkPacketDetail);
+        chkPacketDetail.setChecked(sp.getBoolean("PacketDetail", false));
+        sbPhotoResolution = (SeekBar) view.findViewById(R.id.sbPhotoResolution);
+        sbPhotoResolution.setProgress(sp.getInt("PhotoResolution", 80));
+
+
         ButtonFlat btnOk = (ButtonFlat)view.findViewById(R.id.btnOk);
         btnOk.setOnClickListener(onClickListener);
 
@@ -55,11 +68,21 @@ public class SettingAppDialog extends Dialog {
     public void setSharetPreferences() {
         SharedPreferences sp = context.getSharedPreferences("cz.tsystems.portablecheckin", context.MODE_PRIVATE);
         SharedPreferences.Editor spe= sp.edit();
+
         if (txtXyzmoUri.getText().length() > 0)
             spe.putString("XyzmoURI", txtXyzmoUri.getText().toString());
         else
             spe.remove("XyzmoURI");
         spe.putBoolean("useExternXyzmo", chkUseExternXyzmo.isChecked());
+
+        try {
+            spe.putInt("TimeOut", NumberFormat.getNumberInstance().parse(txtTimeOut.getText().toString()).intValue());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        spe.putBoolean("PacketDetail", chkPacketDetail.isChecked());
+        spe.putInt("PhotoResolution", sbPhotoResolution.getProgress());
         spe.commit();
     }
 

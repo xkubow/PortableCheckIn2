@@ -162,7 +162,7 @@
             android:layout_toLeftOf="@+id/btnPalivo"
             android:orientation="horizontal"
             android:tag="FUEL_LEVEL"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="10dp"
             android:background="#006384"
             materialdesign:max="4"
             materialdesign:min="0"
@@ -170,7 +170,8 @@
             materialdesign:indicatorValues="@string/FuelStav"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_alignStart="@id/txtSPZ" />
+            android:layout_alignStart="@id/txtSPZ"
+            android:layout_marginLeft="-20dp" />
 
         <Button
             android:id="@+id/btnSTK"
@@ -469,7 +470,8 @@
             android:layout_alignStart="@+id/txtVIN"
             android:background="#006384"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="-10dp" />
 
         <com.gc.materialdesign.views.Slider
             android:id="@+id/slaiderInterier"
@@ -485,9 +487,10 @@
             materialdesign:min="0"
             materialdesign:showNumberIndicator="true"
             materialdesign:indicatorValues="@string/stavInterier"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+            android:layout_marginLeft="-10dp" />
 
         <Button
             android:id="@+id/btnEmise"
@@ -615,7 +618,7 @@
             android:tag="FUEL_LEVEL"
             android:layout_alignParentLeft="false"
             android:layout_below="@+id/slaiderInterier"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="20dp"
             android:layout_alignStart="@id/txtVIN"
             android:layout_alignParentStart="false"
             android:background="#006384"
@@ -624,7 +627,8 @@
             materialdesign:showNumberIndicator="true"
             materialdesign:indicatorValues="@string/stav_oleje_indicator"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="-10dp" />
 
 
         <TextView

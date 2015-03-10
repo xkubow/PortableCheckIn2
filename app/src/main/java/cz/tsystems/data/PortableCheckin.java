@@ -33,6 +33,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
@@ -108,6 +109,16 @@ public class PortableCheckin extends Application {
 	public void onCreate() {
 		super.onCreate();
 		setTheDBProvider();
+
+        SharedPreferences sp = getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE);
+        SharedPreferences.Editor spe= sp.edit();
+        if(!sp.contains("PacketDetail"))
+            spe.putBoolean("PacketDetail", false);
+        if(!sp.contains("TimeOut"))
+            spe.putInt("TimeOut", 5000);
+        if(!sp.contains("PhotoResolution"))
+            spe.putInt("PhotoResolution", 80);
+        spe.commit();
 	}
  
 	@Override

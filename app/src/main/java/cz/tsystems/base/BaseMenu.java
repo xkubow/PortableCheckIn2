@@ -68,7 +68,7 @@ public final class BaseMenu extends Object {
 
     private static void showSetting(Activity activity) {
         SettingAppDialog settingAppDialog = new SettingAppDialog(activity);
-        settingAppDialog.setTitle(activity.getResources().getString(R.string.action_settings));
+        settingAppDialog.setTitle(activity.getResources().getString(R.string.Nastavenie));
         settingAppDialog.show();
     }
 

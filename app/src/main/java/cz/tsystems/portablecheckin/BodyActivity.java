@@ -21,6 +21,7 @@ import cz.tsystems.grids.Siluets;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -433,7 +434,8 @@ public class BodyActivity extends BaseFragment {
 
             imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), m, true);
             FileOutputStream out = new FileOutputStream(path);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            final int compress = getActivity().getSharedPreferences("cz.tsystems.portablecheckin", getActivity().MODE_PRIVATE).getInt("PhotoResolution",100);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, compress, out);
             exif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_NORMAL));
             exif.saveAttributes();
         }

@@ -87,7 +87,7 @@ public class PrehliadkyModel extends Model {
             prehliadkyMasterList.remove(prehliadkyMasterList.size()-1);
 
         int lastId = prehliadkyMasterList.size() -1;
-        if(PortableCheckin.packets != null) {
+        if(PortableCheckin.packets != null && PortableCheckin.packets.size() > 0) {
             prehliadkyMasterList.add(new DMPrehliadkyMaster(++lastId, String.format("%s [%d]", context.getResources().getString(R.string.All_packets), PortableCheckin.packets.size()), -1, false,DMPrehliadkyMaster.ePAKETY));
             List<Integer> groupsNr = new ArrayList<Integer>();
             for (Iterator<DMPacket> i = PortableCheckin.packets.iterator(); i.hasNext(); ) {

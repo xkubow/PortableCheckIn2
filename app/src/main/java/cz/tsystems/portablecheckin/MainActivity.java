@@ -563,7 +563,8 @@ public class MainActivity extends BaseFragment {
             msgIntent.putExtra("ACTION", "WorkshopPackets");
             msgIntent.putExtra("vin", app.getCheckin().vin);
             msgIntent.putExtra("brandId", app.getSelectedBrand().brand_id);
-            msgIntent.putExtra("detail", true);
+            final boolean detail = getActivity().getSharedPreferences("cz.tsystems.portablecheckin", getActivity().MODE_PRIVATE).getBoolean("PacketDetail",false);
+            msgIntent.putExtra("detail", detail);
             getActivity().startService(msgIntent);
 		} catch (ParseException e) {
 			e.printStackTrace();

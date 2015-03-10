@@ -21,7 +21,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/lblXyzmoUri"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="3dp" />
 
     <TextView
         android:layout_width="150dp"
@@ -32,7 +32,7 @@
         android:gravity="right"
         android:layout_below="@+id/txtXyzmoUri"
         android:layout_alignStart="@+id/lblXyzmoUri"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="16dp"
         android:layout_alignEnd="@+id/chkUseExternalXyzmo" />
 
     <com.gc.materialdesign.views.Switch
@@ -42,7 +42,7 @@
         android:paddingTop="10dp"
         android:layout_below="@+id/lblUseExternalXyzmo"
         android:layout_alignEnd="@+id/txtXyzmoUri"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="3dp" />
 
     <com.gc.materialdesign.views.ButtonFlat
         android:layout_width="wrap_content"
@@ -53,4 +53,75 @@
         android:layout_centerHorizontal="true"
         android:paddingLeft="50dp"
         android:paddingRight="50dp" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/Zobrazovat_detail_paketu"
+        android:id="@+id/lblPacketDetail"
+        android:gravity="right"
+        android:layout_below="@+id/chkUseExternalXyzmo"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
+
+    <view
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        class="com.gc.materialdesign.views.Switch"
+        android:id="@+id/chkPacketDetail"
+        android:layout_below="@+id/lblPacketDetail"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="3dp" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/TimeOut_setting"
+        android:id="@+id/lblTimeOut"
+        android:gravity="right"
+        android:layout_below="@+id/chkPacketDetail"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtTimeOut"
+        android:layout_below="@+id/lblTimeOut"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:numeric="integer"
+        android:singleLine="true"
+        android:minLines="1"
+        android:maxLines="1"
+        android:inputType="number" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/Rozlisenie_fotografii"
+        android:id="@+id/lblPhotoResolution"
+        android:gravity="right"
+        android:layout_below="@+id/txtTimeOut"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sbPhotoResolution"
+        android:layout_below="@+id/lblPhotoResolution"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="3dp"
+        android:max="100"
+        android:progress="80"
+        android:accessibilityLiveRegion="polite" />
 </RelativeLayout>

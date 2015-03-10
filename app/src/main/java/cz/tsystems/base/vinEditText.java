@@ -40,6 +40,8 @@ public class vinEditText extends EditText {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
 		if(offTextChange)
 			return;
+        if(lengthBefore>lengthAfter)
+            return;
 		StringBuilder sb = new StringBuilder(this.getText().toString().replace(" ", "").toUpperCase(Locale.US));
 		
 		int len = sb.length();

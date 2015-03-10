@@ -218,5 +218,8 @@
     <string name="Celkem">Celkem</string>
     <string name="Nastavenie">Nastavení</string>
     <string name="Logovanie">Logovaní</string>
+    <string name="Zobrazovat_detail_paketu">Zobrazovat detail paketů</string>
+    <string name="TimeOut_setting">Hodnota time-out pre přenos fotografií do DMS</string>
+    <string name="Rozlisenie_fotografii">Rozlišení fotografií</string>
 
 </resources>
