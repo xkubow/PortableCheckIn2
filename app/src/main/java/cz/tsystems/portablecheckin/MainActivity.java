@@ -1,6 +1,8 @@
 package cz.tsystems.portablecheckin;
 
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -46,6 +48,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.EditText;
@@ -73,7 +76,7 @@ public class MainActivity extends BaseFragment {
 	Spinner spScenare, spTypPaliva;
 	vinEditText txtVIN;
 	Button btnSPZ, btnSTK, btnEmise, btnDatumProdeje, btnModelYear;
-    com.gc.materialdesign.views.Switch chkPoistPrip, chkOtp, chkServisKniz;
+    Switch chkPoistPrip, chkOtp, chkServisKniz;
     ButtonFloat fbtPZ, fbtMajak, fbtMegafon;
     Slider stavPaliva, stavInterieru, stavOleja;
 	PortableCheckin app;
@@ -105,7 +108,7 @@ public class MainActivity extends BaseFragment {
                 else if(txtVozPristavil == et)
                     app.getCheckin().driver_name_surn = et.getText().toString();
                 else if(txtStavTachometru == et)
-                    app.getCheckin().odometer = (et.getText().length()>0)?Double.valueOf(et.getText().toString()):null;
+                    app.getCheckin().odometer = (et.getText().length()>0)?NumberFormat.getInstance().parse(et.getText().toString()).doubleValue():null;
                 else if(txtSTKDate == et)
                         app.getCheckin().ti_valid_until = sdto.parse(et.getText().toString());
                 else if(txtEmiseDate == et)
@@ -360,9 +363,9 @@ public class MainActivity extends BaseFragment {
         btnDatumProdeje = (Button) values1.findViewById(R.id.btnProdejDat);
         btnModelYear = (Button) values1.findViewById(R.id.btnModelYearDate);
 
-        chkPoistPrip = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkPoist_prp);
-        chkOtp  = (com.gc.materialdesign.views.Switch) values1.findViewById(R.id.chkOTP);
-        chkServisKniz  = (com.gc.materialdesign.views.Switch) values2.findViewById(R.id.chkServisKnizka);
+        chkPoistPrip = (Switch) values1.findViewById(R.id.chkPoist_prp);
+        chkOtp  = (Switch) values1.findViewById(R.id.chkOTP);
+        chkServisKniz  = (Switch) values2.findViewById(R.id.chkServisKnizka);
 
         stavPaliva = (Slider) values1.findViewById(R.id.slaiderStavPaliva);
         stavInterieru = (Slider) values2.findViewById(R.id.slaiderInterier);
@@ -374,6 +377,10 @@ public class MainActivity extends BaseFragment {
         fbtMajak.setOnClickListener(theFloatButtonClickLisener);
         fbtMegafon = (ButtonFloat) rootView.findViewById(R.id.fbtnMegafon);
         fbtMegafon.setOnClickListener(theFloatButtonClickLisener);
+
+        setEnableButton(fbtPZ, false);
+        setEnableButton(fbtMajak, false);
+        setEnableButton(fbtMegafon, false);
 
 		return rootView;
 	}
@@ -458,7 +465,8 @@ public class MainActivity extends BaseFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-//        getActivity().getActionBar().setTitle(R.string.Informace_o_Vozidle);
+        txtVIN.setEnabled((PortableCheckin.checkin.vehicle_id == null));
+        txtRZV.setEnabled((PortableCheckin.checkin.vehicle_id == null));
         if(isNewCheckin)
             loadDefaultCheckIn();
 	}
@@ -479,27 +487,30 @@ public class MainActivity extends BaseFragment {
         btnDatumProdeje.setOnClickListener(theButtonClickLisener);
         btnModelYear.setOnClickListener(theButtonClickLisener);
 
-        chkPoistPrip.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+        chkPoistPrip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheck(boolean isChecked) {
-                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ((FragmentPagerActivity) getActivity()).unsavedCheckin();
                 app.getCheckin().insurance_case = isChecked;
             }
         });
-        chkServisKniz.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+
+        chkServisKniz.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheck(boolean isChecked) {
-                ((FragmentPagerActivity)getActivity()).unsavedCheckin();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ((FragmentPagerActivity) getActivity()).unsavedCheckin();
                 app.getCheckin().servbook_exists = isChecked;
             }
         });
-        chkOtp.setOncheckListener(new com.gc.materialdesign.views.Switch.OnCheckListener() {
+
+        chkOtp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheck(boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 ((FragmentPagerActivity)getActivity()).unsavedCheckin();
                 app.getCheckin().crw_exists = isChecked;
             }
         });
+
         chkPoistPrip.setChecked(app.getCheckin().insurance_case);
         chkOtp.setChecked(app.getCheckin().crw_exists);
         chkServisKniz.setChecked(app.getCheckin().servbook_exists);
@@ -655,9 +666,11 @@ public class MainActivity extends BaseFragment {
     private void getModelYear(Button theButton) {
         Calendar c = Calendar.getInstance();
         final String dateStr = txtModelYear.getText().toString();
-        c.set(Calendar.YEAR, Integer.parseInt(dateStr));
-        c.set(Calendar.DAY_OF_MONTH, 1);
-        c.set(Calendar.MONTH, 1);
+        if(!dateStr.isEmpty()) {
+            c.set(Calendar.YEAR, Integer.parseInt(dateStr));
+            c.set(Calendar.DAY_OF_MONTH, 1);
+            c.set(Calendar.MONTH, 1);
+        }
 
         DatePickerDialog dialog = new DatePickerDialog(getActivity(), DialogFragment.STYLE_NO_FRAME | DialogFragment.STYLE_NORMAL, new OnDateSetListener() {
             @Override
@@ -727,19 +740,17 @@ public class MainActivity extends BaseFragment {
 		app.loadSilhouette();
 		((FragmentPagerActivity)getActivity()).updateData();
 
-        com.gc.materialdesign.views.Slider rg = (com.gc.materialdesign.views.Slider)values1.findViewById(R.id.slaiderStavPaliva);
-        rg.setValue(checkinData.fuel_level);
+        com.gc.materialdesign.views.Slider slaider = (com.gc.materialdesign.views.Slider)values1.findViewById(R.id.slaiderStavPaliva);
+        slaider.setValue(checkinData.fuel_level);
 
-		rg = (com.gc.materialdesign.views.Slider)values2.findViewById(R.id.slaiderInterier);
-        rg.setValue(checkinData.interior_state);
+		slaider = (com.gc.materialdesign.views.Slider)values2.findViewById(R.id.slaiderInterier);
+        slaider.setValue(checkinData.interior_state);
 
+        slaider = (com.gc.materialdesign.views.Slider)values2.findViewById(R.id.slaiderStavOleje);
+        slaider.setValue(checkinData.oil_level);
 
         txtVIN.setEnabled((checkinData.vehicle_id == null));
         txtRZV.setEnabled((checkinData.vehicle_id == null));
-
-        if(PortableCheckin.plannedActivitiesList != null && PortableCheckin.plannedActivitiesList.size() > 0) {
-
-        }
 
         setEnableButton(fbtPZ, (PortableCheckin.plannedActivitiesList != null && PortableCheckin.plannedActivitiesList.size() > 0));
         setEnableButton(fbtMajak, (PortableCheckin.odlozenePolozky != null && PortableCheckin.odlozenePolozky.size() > 0));
@@ -780,7 +791,7 @@ public class MainActivity extends BaseFragment {
 
                     if(field.get(checkinData) == null)
                         continue;
-
+                    DecimalFormat nf = new DecimalFormat("#");
 					if (field.getType() == String.class)// jnCheckin.hasNonNull(fieldName))
                         editText.setText((String) field.get(checkinData));
 					else if (field.getType() == int.class)
@@ -788,9 +799,9 @@ public class MainActivity extends BaseFragment {
 					else if (field.getType() == short.class)
                         editText.setText(String.valueOf(field.getShort(checkinData)));
 					else if (field.getType() == double.class)
-                        editText.setText(String.valueOf(field.getDouble(checkinData)));
+                        editText.setText(nf.format(field.getDouble(checkinData)));
                     else if (field.getType() == Double.class)
-                        editText.setText(String.valueOf((Double)field.get(checkinData)));
+                        editText.setText(NumberFormat.getInstance().format((Double)field.get(checkinData)));
 					else if (field.getType() == Date.class)
                         editText.setText(sdto.format((Date) field.get(checkinData)));
 

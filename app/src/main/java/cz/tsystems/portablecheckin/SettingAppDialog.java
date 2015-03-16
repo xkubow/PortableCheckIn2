@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Switch;
 
 import com.gc.materialdesign.views.ButtonFlat;
-import com.gc.materialdesign.views.Switch;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

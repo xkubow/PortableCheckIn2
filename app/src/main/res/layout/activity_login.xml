@@ -122,7 +122,13 @@
             android:id="@+id/chkLoging"
             android:layout_alignBottom="@+id/btnSetup"
             android:layout_alignStart="@+id/txtLogin"
-            android:layout_alignTop="@+id/btnSetup" />
+            android:layout_alignTop="@+id/btnSetup"
+            android:thumb="@drawable/apptheme_switch_inner_holo_light"
+            android:track="@drawable/apptheme_switch_track_holo_light"
+            android:checked="false"
+            android:textOff="0"
+            android:textOn="1"
+            android:thumbTextPadding="20dp" />
 
         <ImageButton
             android:layout_width="36dp"

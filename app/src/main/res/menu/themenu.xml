@@ -53,7 +53,7 @@
         android:id="@+id/action_send"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/ic_send_white_36dp"
+        android:icon="@drawable/ic_save_white_36dp"
         />
     <item
         android:id="@+id/action_Protokol"

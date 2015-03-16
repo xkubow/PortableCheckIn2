@@ -48,8 +48,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
-import com.gc.materialdesign.views.Switch;
-
 public class LoginActivity extends Activity {
 	final String TAG = "LoginActivity";
 	private EditText login, password;
@@ -264,6 +262,12 @@ public class LoginActivity extends Activity {
     
     private void startGetLogin()
     {
+        if(getSharedPreferences("cz.tsystems.portablecheckin", MODE_PRIVATE)
+                .getString("serviceURI", "").isEmpty()) {
+            final String errorMsg = getResources().getString(R.string.serviceURIEmpty);
+            app.getDialog(LoginActivity.this, "error", errorMsg, PortableCheckin.DialogType.SINGLE_BUTTON).show();
+            return;
+        }
     	app.showProgrssDialog(this);
 		String loginStr = String.format("%s:%s", login.getText(), password.getText());
 		byte[] data = null;

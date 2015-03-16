@@ -46,8 +46,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -173,7 +175,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
     private boolean saveCheckingDone() {
         if(myMenu != null) {
             MenuItem button = myMenu.findItem(R.id.action_send);
-            Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+            Drawable resIcon = getResources().getDrawable(R.drawable.ic_save_white_36dp);
             resIcon.mutate().setColorFilter(R.color.green, PorterDuff.Mode.MULTIPLY);
             button.setIcon(resIcon);
             button.setEnabled(false);
@@ -193,7 +195,7 @@ public class FragmentPagerActivity extends Activity implements TabListener {
         if(myMenu == null)
             return;
         MenuItem button = myMenu.findItem(R.id.action_send);
-        Drawable resIcon = getResources().getDrawable(R.drawable.ic_send_white_36dp);
+        Drawable resIcon = getResources().getDrawable(R.drawable.ic_save_white_36dp);
         button.setIcon(resIcon);
         button.setEnabled(true);
         button.setChecked(false);
@@ -494,9 +496,6 @@ public class FragmentPagerActivity extends Activity implements TabListener {
             }
         });
 
-        // Associate searchable configuration with the SearchView
-//        getActionBar().set
-//        menu.findItem(R.id.search).setEnabled(false);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView searchView =
@@ -589,6 +588,14 @@ public class FragmentPagerActivity extends Activity implements TabListener {
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+//        getWindow().getDecorView().clearFocus();
+        View view = getWindow().getCurrentFocus();
+        if(view != null) {
+//            EditText myEditText = (EditText) view;
+            InputMethodManager imm = (InputMethodManager) getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
 	}
 
     @Override

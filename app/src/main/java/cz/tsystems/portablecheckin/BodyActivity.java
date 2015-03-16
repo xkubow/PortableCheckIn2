@@ -50,6 +50,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Switch;
 
 
 public class BodyActivity extends BaseFragment {
@@ -61,8 +62,7 @@ public class BodyActivity extends BaseFragment {
     SilhouetteImageView imgView;
 	Button selectedPoint, btnSiluets;
     com.gc.materialdesign.views.ButtonFloat btnPhoto;
-    com.gc.materialdesign.views.Switch chkPointType;
-    ImageView imgPreview;
+    Switch chkPointType;
     View rootView;
     boolean isTakeImage;
     final int pointSize = 50;
@@ -181,7 +181,7 @@ public class BodyActivity extends BaseFragment {
                 changeSiluet();
             }
         });
-		chkPointType = (com.gc.materialdesign.views.Switch) rootView.findViewById(R.id.chkOderky);
+		chkPointType = (Switch) rootView.findViewById(R.id.chkOderky);
 		btnPhoto = (com.gc.materialdesign.views.ButtonFloat) rootView.findViewById(R.id.btnPhoto);
 		btnPhoto.setOnClickListener(btnPhotoClickLisener);
 		imageLayout = (LinearLayout) rootView.findViewById(R.id.llPhotos);

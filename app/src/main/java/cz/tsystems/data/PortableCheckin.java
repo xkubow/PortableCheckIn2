@@ -271,6 +271,9 @@ public class PortableCheckin extends Application {
         serviceList.clear();
         checkin.check_scenario_id = selectedScenar.check_scenario_id;
         checkin.fuel_id = 1;
+        plannedActivitiesList = null;
+        odlozenePolozky = null;
+        sda = null;
         setSelectedBrand(brandId);
 //        setSelectedScenar(checkin.check_scenario_id);
 		setOffers(this.getOffers(brandId));

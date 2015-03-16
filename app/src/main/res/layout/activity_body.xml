@@ -171,15 +171,19 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/black" />
 
-    <com.gc.materialdesign.views.Switch
+    <Switch
         android:id="@+id/chkOderky"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblOderky"
         android:layout_marginLeft="50dp"
-        android:background="#006384"
-        materialdesign:checked="true"
-        android:layout_toRightOf="@+id/rdbExterier" />
+        android:layout_toRightOf="@+id/rdbExterier"
+        android:thumb="@drawable/apptheme_switch_inner_holo_light"
+        android:track="@drawable/apptheme_switch_track_holo_light"
+        android:checked="false"
+        android:textOff="0"
+        android:textOn="1"
+        android:thumbTextPadding="20dp"         />
 
     <TextView
         android:id="@+id/lblOderky"

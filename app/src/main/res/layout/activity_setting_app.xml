@@ -35,14 +35,20 @@
         android:layout_marginTop="16dp"
         android:layout_alignEnd="@+id/chkUseExternalXyzmo" />
 
-    <com.gc.materialdesign.views.Switch
+    <Switch
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:id="@+id/chkUseExternalXyzmo"
         android:paddingTop="10dp"
         android:layout_below="@+id/lblUseExternalXyzmo"
         android:layout_alignEnd="@+id/txtXyzmoUri"
-        android:layout_marginTop="3dp" />
+        android:layout_marginTop="3dp"
+        android:thumb="@drawable/apptheme_switch_inner_holo_light"
+        android:track="@drawable/apptheme_switch_track_holo_light"
+        android:checked="false"
+        android:textOff="0"
+        android:textOn="1"
+        android:thumbTextPadding="20dp" />
 
     <com.gc.materialdesign.views.ButtonFlat
         android:layout_width="wrap_content"
@@ -66,14 +72,20 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp" />
 
-    <view
+    <Switch
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         class="com.gc.materialdesign.views.Switch"
         android:id="@+id/chkPacketDetail"
         android:layout_below="@+id/lblPacketDetail"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="3dp" />
+        android:layout_marginTop="3dp"
+        android:thumb="@drawable/apptheme_switch_inner_holo_light"
+        android:track="@drawable/apptheme_switch_track_holo_light"
+        android:checked="false"
+        android:textOff="0"
+        android:textOn="1"
+        android:thumbTextPadding="20dp" />
 
     <TextView
         android:layout_width="150dp"

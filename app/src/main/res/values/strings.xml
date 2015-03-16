@@ -27,7 +27,7 @@
     <string name="PrednaCast">Přední část</string>
     <string name="Strecha">Střecha</string>
     <string name="Pohledy">Pohledy</string>
-    <string name="stavInterier">AA,A,B,CC,C</string>
+    <string name="stavInterier">AA,A,B,C,CC</string>
     <string name="A">A</string>
     <string name="B">B</string>
     <string name="C">C</string>
@@ -221,5 +221,6 @@
     <string name="Zobrazovat_detail_paketu">Zobrazovat detail paketů</string>
     <string name="TimeOut_setting">Hodnota time-out pre přenos fotografií do DMS</string>
     <string name="Rozlisenie_fotografii">Rozlišení fotografií</string>
+    <string name="serviceURIEmpty">Chyba: není vyplněna adresa serveru. Před přihlášením k aplikaci je nutné zadat adresu serveru</string>
 
 </resources>
